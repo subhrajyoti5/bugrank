@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Bug body -->
+  <ellipse cx="50" cy="55" rx="22" ry="28" fill="#0ea5e9" opacity="0.9"/>
+  
+  <!-- Bug head -->
+  <circle cx="50" cy="28" r="14" fill="#0284c7"/>
+  
+  <!-- Antennae -->
+  <path d="M 42 20 Q 35 10, 32 8" stroke="#075985" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M 58 20 Q 65 10, 68 8" stroke="#075985" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <circle cx="32" cy="8" r="2.5" fill="#075985"/>
+  <circle cx="68" cy="8" r="2.5" fill="#075985"/>
+  
+  <!-- Eyes -->
+  <circle cx="44" cy="26" r="3" fill="white"/>
+  <circle cx="56" cy="26" r="3" fill="white"/>
+  <circle cx="45" cy="26" r="1.5" fill="#1e293b"/>
+  <circle cx="57" cy="26" r="1.5" fill="#1e293b"/>
+  
+  <!-- Code brackets on body -->
+  <text x="35" y="60" font-family="monospace" font-size="20" font-weight="bold" fill="white">&lt;/&gt;</text>
+  
+  <!-- Legs -->
+  <path d="M 28 48 L 18 52" stroke="#075985" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 28 58 L 16 62" stroke="#075985" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 28 68 L 18 76" stroke="#075985" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <path d="M 72 48 L 82 52" stroke="#075985" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 72 58 L 84 62" stroke="#075985" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 72 68 L 82 76" stroke="#075985" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

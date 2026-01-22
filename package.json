@@ -1,0 +1,32 @@
+{
+  "name": "bugrank",
+  "version": "1.0.0",
+  "description": "AI-powered debugging challenge platform",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "build": "npm run build:client && npm run build:server",
+    "lint": "npm run lint --workspaces"
+  },
+  "keywords": [
+    "debugging",
+    "competitive-programming",
+    "ai",
+    "education"
+  ],
+  "author": "Bugrank Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
