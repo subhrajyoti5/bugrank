@@ -42,6 +42,10 @@ int main() {
     expectedOutput: 'Buffer initialized with size: 100',
     timeLimit: 600,
     baseScore: 100,
+    testCase: {
+      input: '',
+      expectedOutput: 'Buffer initialized with size: 100\n',
+    },
     createdAt: new Date('2026-01-01'),
   },
   {
@@ -78,6 +82,10 @@ int main() {
     expectedOutput: 'Sum: 4000000000',
     timeLimit: 600,
     baseScore: 100,
+    testCase: {
+      input: '',
+      expectedOutput: 'Sum: 4000000000\n',
+    },
     createdAt: new Date('2026-01-02'),
   },
   {
@@ -114,6 +122,10 @@ int main() {
     expectedOutput: 'Count: 1',
     timeLimit: 600,
     baseScore: 100,
+    testCase: {
+      input: '',
+      expectedOutput: 'Count: 1\n',
+    },
     createdAt: new Date('2026-01-03'),
   },
   {
@@ -153,6 +165,10 @@ int main() {
     expectedOutput: 'Circle area: 78.5',
     timeLimit: 600,
     baseScore: 150,
+    testCase: {
+      input: '',
+      expectedOutput: 'Dog sound: Woof!\n',
+    },
     createdAt: new Date('2026-01-04'),
   },
   {
@@ -204,6 +220,10 @@ int main() {
     expectedOutput: 'Dog destroyed\\nAnimal destroyed',
     timeLimit: 600,
     baseScore: 150,
+    testCase: {
+      input: '',
+      expectedOutput: 'Transfer completed efficiently\n',
+    },
     createdAt: new Date('2026-01-05'),
   },
   {
@@ -252,6 +272,10 @@ int main() {
     expectedOutput: 'String: Hello',
     timeLimit: 600,
     baseScore: 150,
+    testCase: {
+      input: '',
+      expectedOutput: 'Original: Hello\nCopy: Hello\n',
+    },
     createdAt: new Date('2026-01-06'),
   },
   {
@@ -302,6 +326,10 @@ int main() {
     expectedOutput: 'Single instance created',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Instance id: 0\nInstance id: 0\nInstance id: 0\n',
+    },
     createdAt: new Date('2026-01-07'),
   },
   {
@@ -349,6 +377,10 @@ int main() {
     expectedOutput: 'Car speed: 100, Doors: 4',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Type: Car\nSpeed: 100\n',
+    },
     createdAt: new Date('2026-01-08'),
   },
   {
@@ -396,6 +428,10 @@ int main() {
     expectedOutput: 'Resource destroyed',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Using resource\nResource destroyed\n',
+    },
     createdAt: new Date('2026-01-09'),
   },
   {
@@ -459,6 +495,10 @@ int main() {
     expectedOutput: 'Buffer operations completed',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Produced: 100\nConsumed: 100\n',
+    },
     createdAt: new Date('2026-01-10'),
   },
   {
@@ -505,6 +545,10 @@ int main() {
     expectedOutput: 'File properly closed',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Error: Insufficient funds\nBalance: 1000\n',
+    },
     createdAt: new Date('2026-01-11'),
   },
   {
@@ -552,6 +596,10 @@ int main() {
     expectedOutput: 'Middle processing\\nDerived processing',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Area: 314.159\n',
+    },
     createdAt: new Date('2026-01-12'),
   },
   {
@@ -607,6 +655,10 @@ int main() {
     expectedOutput: 'Assignment completed safely',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Value: 42\nSelf-assignment handled correctly\n',
+    },
     createdAt: new Date('2026-01-13'),
   },
   {
@@ -659,6 +711,10 @@ int main() {
     expectedOutput: 'Implementation process',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: 'Base method called\n',
+    },
     createdAt: new Date('2026-01-14'),
   },
   {
@@ -703,6 +759,10 @@ int main() {
     expectedOutput: '42',
     timeLimit: 900,
     baseScore: 200,
+    testCase: {
+      input: '',
+      expectedOutput: '42\n',
+    },
     createdAt: new Date('2026-01-15'),
   },
 ];

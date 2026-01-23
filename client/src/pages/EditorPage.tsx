@@ -176,56 +176,89 @@ const EditorPage: React.FC = () => {
                   {runResult ? 'Run Result' : 'Submission Result'}
                 </h3>
 
+                {/* Test Case Output Comparison */}
+                {(runResult?.testCaseOutput || submitResult?.testCaseOutput) && (
+                  <div className="mb-4 p-4 rounded bg-black border border-slate-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
+                        Test Case Validation
+                      </span>
+                      <span className={`text-sm font-semibold ${
+                        (runResult?.testCasePassed || submitResult?.testCasePassed)
+                          ? 'text-green-400'
+                          : 'text-red-400'
+                      }`}>
+                        {(runResult?.testCasePassed || submitResult?.testCasePassed) ? '✅ PASS' : '❌ FAIL'}
+                      </span>
+                    </div>
+                    <div className="font-mono text-xs text-slate-300 overflow-auto max-h-48 whitespace-pre-wrap break-words leading-relaxed bg-slate-950 p-3 rounded border border-slate-800">
+                      {runResult?.testCaseOutput || submitResult?.testCaseOutput}
+                    </div>
+                  </div>
+                )}
+
+                {/* Compiler Output */}
+                {(runResult?.compilerOutput || submitResult?.compilerOutput) && (
+                  <div className="mb-4 p-4 rounded bg-black border border-slate-700 font-mono text-xs text-slate-300 overflow-auto max-h-40 whitespace-pre-wrap break-words leading-relaxed">
+                    {runResult?.compilerOutput || submitResult?.compilerOutput}
+                  </div>
+                )}
+
+                {/* Submission Status Badge */}
                 {submitResult && (
-                  <div className={`mb-3 p-3 rounded text-xs ${
-                    submitResult.submission.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                  <div className={`mb-4 p-3 rounded-lg text-sm font-medium ${
+                    submitResult.submission.isCorrect 
+                      ? 'bg-green-100 text-green-900 border border-green-300' 
+                      : 'bg-red-100 text-red-900 border border-red-300'
                   }`}>
-                    <div className="flex items-center space-x-2 mb-2">
+                    <div className="flex items-center space-x-2">
                       {submitResult.submission.isCorrect ? (
                         <>
-                          <CheckCircle className="h-5 w-5 text-green-600" />
-                          <span className="font-semibold text-green-900">Correct Solution!</span>
+                          <CheckCircle className="h-5 w-5" />
+                          <span>Correct Solution!</span>
                         </>
                       ) : (
                         <>
-                          <AlertCircle className="h-5 w-5 text-red-600" />
-                          <span className="font-semibold text-red-900">Not Quite Right</span>
+                          <AlertCircle className="h-5 w-5" />
+                          <span>Not Quite Right</span>
                         </>
                       )}
                     </div>
                     {submitResult.score !== undefined && (
-                      <p className="text-sm text-gray-700">Score: <strong>{submitResult.score} points</strong></p>
+                      <p className="mt-1 text-xs">Score: <strong>{submitResult.score} points</strong></p>
                     )}
-                    <p className="text-sm text-gray-700 mt-1">{submitResult.message}</p>
                   </div>
                 )}
 
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-700">AI Accuracy Score:</span>
-                    <span className="ml-2 text-gray-900">
-                      {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.accuracyScore}/10
-                    </span>
+                {/* AI Analysis */}
+                {(runResult?.aiAnalysis || submitResult?.aiAnalysis) && !submitResult?.compilerOutput && (
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-medium text-slate-300">AI Accuracy:</span>
+                      <span className="ml-2 text-slate-400">
+                        {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.accuracyScore}/10
+                      </span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-300">Time Complexity:</span>
+                      <span className="ml-2 font-mono text-slate-400">
+                        {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.timeComplexity}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-300">Space Complexity:</span>
+                      <span className="ml-2 font-mono text-slate-400">
+                        {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.spaceComplexity}
+                      </span>
+                    </div>
+                    <div className="pt-3 border-t border-slate-700">
+                      <span className="font-medium text-slate-300 block mb-2">Feedback:</span>
+                      <p className="text-slate-400 whitespace-pre-wrap">
+                        {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.feedback}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-700">Time Complexity:</span>
-                    <span className="ml-2 font-mono text-gray-900">
-                      {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.timeComplexity}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-700">Space Complexity:</span>
-                    <span className="ml-2 font-mono text-gray-900">
-                      {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.spaceComplexity}
-                    </span>
-                  </div>
-                  <div className="pt-3 border-t border-gray-200">
-                    <span className="font-medium text-gray-700 block mb-2">Feedback:</span>
-                    <p className="text-gray-700 whitespace-pre-wrap">
-                      {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.feedback}
-                    </p>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>

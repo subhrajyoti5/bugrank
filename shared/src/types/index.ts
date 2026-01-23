@@ -10,6 +10,12 @@ export interface User {
   successfulSubmissions: number;
 }
 
+// Test Case types
+export interface TestCase {
+  input: string;
+  expectedOutput: string;
+}
+
 // Challenge types
 export interface Challenge {
   id: string;
@@ -21,6 +27,7 @@ export interface Challenge {
   expectedOutput: string;
   timeLimit: number; // seconds
   baseScore: number;
+  testCase?: TestCase; // Hidden test case for validation
   createdAt: Date;
 }
 
@@ -75,14 +82,20 @@ export enum SubmissionType {
 }
 
 export interface RunResult {
-  aiAnalysis: AIAnalysis;
-  feedback: string;
+  aiAnalysis?: AIAnalysis;
+  feedback?: string;
+  compilerOutput?: string;
+  testCaseOutput?: string;
+  testCasePassed?: boolean;
 }
 
 export interface SubmitResult {
   submission: Submission;
   score?: number;
-  aiAnalysis: AIAnalysis;
+  aiAnalysis?: AIAnalysis;
+  compilerOutput?: string;
+  testCaseOutput?: string;
+  testCasePassed?: boolean;
   message: string;
 }
 

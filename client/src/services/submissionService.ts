@@ -2,19 +2,21 @@ import apiClient from './api';
 import { RunResult, SubmitResult, ApiResponse } from '@bugrank/shared';
 
 export const submissionService = {
-  run: async (challengeId: string, code: string): Promise<RunResult> => {
+  run: async (challengeId: string, code: string, testInput?: string): Promise<RunResult> => {
     const response = await apiClient.post<ApiResponse<RunResult>>('/api/submissions/run', {
       challengeId,
       code,
+      testInput,
     });
     return response.data.data!;
   },
 
-  submit: async (challengeId: string, code: string, timeTaken: number): Promise<SubmitResult> => {
+  submit: async (challengeId: string, code: string, timeTaken: number, testInput?: string): Promise<SubmitResult> => {
     const response = await apiClient.post<ApiResponse<SubmitResult>>('/api/submissions/submit', {
       challengeId,
       code,
       timeTaken,
+      testInput,
     });
     return response.data.data!;
   },

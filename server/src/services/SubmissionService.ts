@@ -7,6 +7,7 @@ import {
   DEFAULT_SCORING_CONFIG 
 } from '@bugrank/shared';
 import { BaseService, GeminiService } from './GeminiService';
+import { CompilerService } from './CompilerService';
 import { challenges, submissions, users } from '@/data/storage';
 
 /**
@@ -15,10 +16,12 @@ import { challenges, submissions, users } from '@/data/storage';
  */
 export class SubmissionService extends BaseService {
   private geminiService: GeminiService;
+  private compilerService: CompilerService;
 
   constructor() {
     super();
     this.geminiService = new GeminiService();
+    this.compilerService = new CompilerService();
   }
 
   /**
@@ -27,8 +30,13 @@ export class SubmissionService extends BaseService {
   async runCode(
     userId: string,
     challengeId: string,
-    code: string
-  ): Promise<{ aiAnalysis: AIAnalysis; feedback: string }> {
+    code: string,
+    testInput?: string
+  ): Promise<{ 
+    compilerOutput: string;
+    aiAnalysis?: AIAnalysis; 
+    feedback?: string;
+  }> {
     this.logInfo('Running code (no scoring)', { userId, challengeId });
 
     const challenge = await this.getChallenge(challengeId);
@@ -36,7 +44,21 @@ export class SubmissionService extends BaseService {
       throw new Error('Challenge not found');
     }
 
-    // Perform AI analysis
+    // Compile and run if C++
+    if (challenge.language === 'cpp') {
+      const input = testInput || '';
+      const numChallengeId = typeof challengeId === 'string' ? parseInt(challengeId, 10) : challengeId;
+      const result = await this.compilerService.compileAndRun(code, input, numChallengeId);
+      const compilerOutput = this.compilerService.formatCompilerOutput(result.compilation, result.execution);
+      
+      this.compilerService.cleanup(numChallengeId);
+
+      return {
+        compilerOutput,
+      };
+    }
+
+    // For non-C++ languages, use AI analysis
     const aiAnalysis = await this.geminiService.analyzeCode(
       challenge.buggyCode,
       code,
@@ -44,6 +66,7 @@ export class SubmissionService extends BaseService {
     );
 
     return {
+      compilerOutput: '',
       aiAnalysis,
       feedback: this.generateFeedback(aiAnalysis, false),
     };
@@ -56,11 +79,13 @@ export class SubmissionService extends BaseService {
     userId: string,
     challengeId: string,
     code: string,
-    timeTaken: number
+    timeTaken: number,
+    testInput?: string
   ): Promise<{
     submission: Submission;
     score?: number;
-    aiAnalysis: AIAnalysis;
+    aiAnalysis?: AIAnalysis;
+    compilerOutput?: string;
     message: string;
   }> {
     this.logInfo('Submitting code for evaluation', { userId, challengeId });
@@ -74,6 +99,49 @@ export class SubmissionService extends BaseService {
     const attempts = await this.getUserAttempts(userId, challengeId);
     const linesChanged = this.calculateLinesChanged(challenge.buggyCode, code);
 
+    // Compile and run if C++
+    let compilerOutput = '';
+    let compilationSuccess = true;
+    let testCaseOutput = '';
+    let testCasePassed = true;
+    
+    if (challenge.language === 'cpp') {
+      const numChallengeId = typeof challengeId === 'string' ? parseInt(challengeId, 10) : challengeId;
+      
+      // First run with test case input
+      if (challenge.testCase) {
+        const result = await this.compilerService.compileAndRun(code, challenge.testCase.input, numChallengeId);
+        compilationSuccess = result.compilation.success && result.execution?.success;
+        
+        if (compilationSuccess) {
+          testCasePassed = this.compilerService.validateOutput(
+            result.execution!.output,
+            challenge.testCase.expectedOutput
+          );
+          testCaseOutput = this.compilerService.formatOutputComparison(
+            challenge.testCase.expectedOutput,
+            result.execution!.output
+          );
+          
+          if (!testCasePassed) {
+            compilationSuccess = false;
+          }
+        } else {
+          testCaseOutput = 'Test case compilation or execution failed';
+          testCasePassed = false;
+        }
+        
+        compilerOutput = this.compilerService.formatCompilerOutput(result.compilation, result.execution);
+      } else {
+        // No test case, just run normally
+        const result = await this.compilerService.compileAndRun(code, testInput || '', numChallengeId);
+        compilationSuccess = result.compilation.success && result.execution?.success;
+        compilerOutput = this.compilerService.formatCompilerOutput(result.compilation, result.execution);
+      }
+      
+      this.compilerService.cleanup(numChallengeId);
+    }
+
     // Perform AI analysis
     const aiAnalysis = await this.geminiService.analyzeCode(
       challenge.buggyCode,
@@ -81,8 +149,8 @@ export class SubmissionService extends BaseService {
       challenge.language
     );
 
-    // Check if solution is correct (AI accuracy >= threshold)
-    const isCorrect = aiAnalysis.accuracyScore >= DEFAULT_SCORING_CONFIG.successThreshold;
+    // Check if solution is correct (AI accuracy >= threshold AND compilation successful)
+    const isCorrect = aiAnalysis.accuracyScore >= DEFAULT_SCORING_CONFIG.successThreshold && compilationSuccess;
 
     // Calculate score ONLY if correct
     let finalScore: number | undefined;
@@ -125,6 +193,9 @@ export class SubmissionService extends BaseService {
       submission,
       score: finalScore,
       aiAnalysis,
+      compilerOutput,
+      testCaseOutput,
+      testCasePassed,
       message: this.generateFeedback(aiAnalysis, true),
     };
   }
@@ -229,14 +300,17 @@ export class SubmissionService extends BaseService {
    * Generate user-friendly feedback message
    */
   private generateFeedback(aiAnalysis: AIAnalysis, isSubmit: boolean): string {
-    if (aiAnalysis.isCorrect) {
-      return `Excellent work! ${aiAnalysis.feedback}`;
-    } else {
-      if (isSubmit) {
-        return `Not quite right. ${aiAnalysis.feedback} Try again!`;
-      } else {
-        return `${aiAnalysis.feedback} Use 'Submit' when ready for evaluation.`;
-      }
+    // For submit: return simple success/failure message
+    // Detailed feedback is shown via compiler output or AI analysis
+    if (isSubmit) {
+      return aiAnalysis.isCorrect 
+        ? `✅ Bug fixed correctly!` 
+        : `⚠️ Bug not fully fixed yet. Try again!`;
     }
+    
+    // For run: return simple message
+    return aiAnalysis.isCorrect 
+      ? `✅ Code looks good! Use Submit to score.`
+      : `⚠️ Bug still present. Keep trying!`;
   }
 }

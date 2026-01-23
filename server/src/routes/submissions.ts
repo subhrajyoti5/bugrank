@@ -12,7 +12,7 @@ const submissionService = new SubmissionService();
  */
 router.post('/run', async (req, res: Response) => {
   try {
-    const { challengeId, code } = req.body;
+    const { challengeId, code, testInput } = req.body;
     const userId = 'demo-user'; // No auth required
 
     if (!challengeId || !code) {
@@ -23,7 +23,7 @@ router.post('/run', async (req, res: Response) => {
       return;
     }
 
-    const result = await submissionService.runCode(userId, challengeId, code);
+    const result = await submissionService.runCode(userId, challengeId, code, testInput);
 
     res.json({
       success: true,
@@ -43,7 +43,7 @@ router.post('/run', async (req, res: Response) => {
  */
 router.post('/submit', async (req, res: Response) => {
   try {
-    const { challengeId, code, timeTaken } = req.body;
+    const { challengeId, code, timeTaken, testInput } = req.body;
     const userId = 'demo-user'; // No auth required
 
     if (!challengeId || !code || timeTaken === undefined) {
@@ -54,7 +54,7 @@ router.post('/submit', async (req, res: Response) => {
       return;
     }
 
-    const result = await submissionService.submitCode(userId, challengeId, code, timeTaken);
+    const result = await submissionService.submitCode(userId, challengeId, code, timeTaken, testInput);
 
     res.json({
       success: true,
