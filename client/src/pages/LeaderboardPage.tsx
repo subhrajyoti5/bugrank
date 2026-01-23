@@ -35,110 +35,114 @@ const LeaderboardPage: React.FC = () => {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Trophy className="h-6 w-6 text-yellow-500" />;
+        return <Trophy className="h-4 w-4 text-yellow-500" />;
       case 2:
-        return <Medal className="h-6 w-6 text-gray-400" />;
+        return <Medal className="h-4 w-4 text-slate-400" />;
       case 3:
-        return <Award className="h-6 w-6 text-orange-600" />;
+        return <Award className="h-4 w-4 text-orange-600" />;
       default:
-        return <span className="text-lg font-semibold text-gray-600">#{rank}</span>;
+        return <span className="text-xs font-semibold text-slate-500">#{rank}</span>;
     }
   };
 
   if (loading) {
     return (
       <div className="page-container flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-400"></div>
       </div>
     );
   }
 
   return (
     <div className="page-container">
-      <div className="content-wrapper max-w-4xl mx-auto">
-        <div className="mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Leaderboard</h1>
-          <p className="text-gray-600">
-            Top debuggers compete for glory. Rankings update hourly.
+      <div className="content-wrapper max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-5 animate-fade-in">
+          <h1 className="text-sm font-semibold text-slate-100 mb-1 uppercase tracking-wide">Leaderboard</h1>
+          <p className="text-xs text-slate-400">
+            Top debuggers compete for glory
           </p>
         </div>
 
         {userRank > 0 && userRank > 20 && (
-          <div className="card bg-primary-50 border-primary-200 mb-6 animate-slide-up">
+          <div className="bg-slate-900 border border-slate-800 rounded-md p-3 mb-4 animate-slide-up">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-primary-900 font-medium">Your Rank</p>
-                <p className="text-2xl font-bold text-primary-600">#{userRank}</p>
+                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Your Rank</p>
+                <p className="text-xl font-bold text-orange-400 mt-0.5">#{userRank}</p>
               </div>
-              <Trophy className="h-12 w-12 text-primary-400" />
+              <Trophy className="h-8 w-8 text-orange-400 opacity-50" />
             </div>
           </div>
         )}
 
-        <div className="card p-0 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        {/* Leaderboard Table */}
+        <div className="bg-slate-900 border border-slate-800 rounded-md overflow-hidden animate-slide-up" style={{ animationDelay: '0.1s' }}>
           {entries.length === 0 ? (
             <div className="text-center py-12 px-4">
-              <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Rankings Yet</h3>
-              <p className="text-gray-600">Be the first to complete a challenge!</p>
+              <Trophy className="h-12 w-12 text-slate-700 mx-auto mb-3" />
+              <h3 className="text-sm font-semibold text-slate-200 mb-1">No Rankings Yet</h3>
+              <p className="text-xs text-slate-400">Be the first to complete a challenge!</p>
             </div>
           ) : (
-            <div className="overflow-hidden">
+            <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-800 border-b border-slate-700">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wide">
                       Rank
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase tracking-wide">
                       User
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase tracking-wide">
                       Score
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase tracking-wide">
                       Solved
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-slate-800">
                   {entries.map((entry, index) => (
                     <tr
                       key={entry.userId}
-                      className={`hover:bg-gray-50 transition-colors ${
-                        entry.userId === user?.id ? 'bg-primary-50' : ''
+                      className={`transition-colors ${
+                        entry.userId === user?.id 
+                          ? 'bg-slate-800/60 hover:bg-slate-800/80' 
+                          : 'hover:bg-slate-800/40'
                       }`}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-center w-10">
+                      <td className="px-4 py-2.5 whitespace-nowrap">
+                        <div className="flex items-center justify-center w-6">
                           {getRankIcon(entry.rank)}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-3">
+                      <td className="px-4 py-2.5 whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
                           <img
                             src={
                               entry.photoURL ||
                               'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.displayName)
                             }
                             alt={entry.displayName}
-                            className="h-10 w-10 rounded-full"
+                            className="h-7 w-7 rounded-full"
                           />
                           <div>
-                            <p className="font-medium text-gray-900">{entry.displayName}</p>
+                            <p className="text-xs font-medium text-slate-200">{entry.displayName}</p>
                             {entry.userId === user?.id && (
-                              <span className="text-xs text-primary-600 font-medium">You</span>
+                              <span className="text-xs text-orange-400 font-medium">You</span>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="text-lg font-semibold text-gray-900">
+                      <td className="px-4 py-2.5 whitespace-nowrap text-right">
+                        <span className="text-sm font-bold text-orange-400">
                           {entry.totalScore}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="text-gray-600">{entry.successfulSubmissions}</span>
+                      <td className="px-4 py-2.5 whitespace-nowrap text-right">
+                        <span className="text-xs text-slate-400">{entry.successfulSubmissions}</span>
                       </td>
                     </tr>
                   ))}
@@ -148,8 +152,8 @@ const LeaderboardPage: React.FC = () => {
           )}
         </div>
 
-        <div className="mt-6 text-center text-sm text-gray-500 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <p>Leaderboard updates every hour via Cloud Functions</p>
+        <div className="mt-4 text-center text-xs text-slate-500 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <p>Leaderboard updates every hour</p>
         </div>
       </div>
     </div>

@@ -3,155 +3,706 @@ import { Challenge } from '@bugrank/shared';
 /**
  * Initial seed challenges for the platform
  * These will be loaded into memory when the server starts
+ * Focus on critical OOP concepts and OS-level bugs in C++
  */
 export const seedChallenges: Challenge[] = [
   {
     id: 'challenge-1',
-    title: 'Fix Array Index Bug',
-    description: 'This C++ code has an array index out of bounds bug. The loop iterates one time too many, causing undefined behavior. Fix the loop condition to prevent accessing an invalid index.',
+    title: 'Fix Memory Leak with Missing Destructor',
+    description: 'This C++ class has a memory leak because the destructor is not properly implemented. The dynamically allocated data is never freed. Implement a proper destructor following RAII principle.',
     difficulty: 'easy',
     language: 'cpp',
     buggyCode: `#include <iostream>
-#include <vector>
 
-int main() {
-    std::vector<int> numbers = {10, 20, 30, 40, 50};
+class DataBuffer {
+private:
+    int* buffer;
+    int size;
     
-    // Bug: Loop goes beyond array bounds
-    for(int i = 0; i <= numbers.size(); i++) {
-        std::cout << numbers[i] << " ";
+public:
+    DataBuffer(int sz) : size(sz) {
+        buffer = new int[size];
+        for(int i = 0; i < size; i++) {
+            buffer[i] = i * 10;
+        }
     }
     
+    // Bug: Missing destructor - memory leak
+    
+    void display() {
+        std::cout << "Buffer initialized with size: " << size << std::endl;
+    }
+};
+
+int main() {
+    DataBuffer buf(100);
+    buf.display();
     return 0;
 }`,
-    expectedOutput: '10 20 30 40 50',
-    timeLimit: 300,
+    expectedOutput: 'Buffer initialized with size: 100',
+    timeLimit: 600,
     baseScore: 100,
     createdAt: new Date('2026-01-01'),
   },
   {
     id: 'challenge-2',
-    title: 'Fix Memory Leak',
-    description: 'This C++ code has a memory leak because the Resource class allocates memory in the constructor but never frees it. Add a proper destructor to prevent memory leaks.',
-    difficulty: 'medium',
+    title: 'Fix Integer Overflow Bug',
+    description: 'This C++ code has an integer overflow when summing large numbers. Use appropriate data types to handle large values.',
+    difficulty: 'easy',
     language: 'cpp',
     buggyCode: `#include <iostream>
 
-class Resource {
-public:
-    int* data;
+class Calculator {
+private:
+    int sum;
     
-    Resource(int size) {
-        data = new int[size];
+public:
+    Calculator() : sum(0) {}
+    
+    void add(int value) {
+        sum += value;  // Bug: Overflow with large numbers
     }
     
-    // Bug: Missing destructor - memory leak
-    void display() {
-        std::cout << "Resource used\\n";
+    void displaySum() {
+        std::cout << "Sum: " << sum << std::endl;
     }
 };
 
 int main() {
-    Resource res(100);
-    res.display();
+    Calculator calc;
+    calc.add(2000000000);
+    calc.add(2000000000);
+    calc.displaySum();
     return 0;
 }`,
-    expectedOutput: 'Resource used',
+    expectedOutput: 'Sum: 4000000000',
     timeLimit: 600,
-    baseScore: 150,
+    baseScore: 100,
     createdAt: new Date('2026-01-02'),
   },
   {
     id: 'challenge-3',
-    title: 'Fix Null Pointer Exception',
-    description: 'This Java code attempts to use a null reference, causing a NullPointerException. Move the null check before using the variable to fix the bug.',
+    title: 'Fix Const Correctness Violation',
+    description: 'This C++ class violates const correctness by allowing modifications in const methods. Fix the const correctness issues to prevent unintended state changes.',
     difficulty: 'easy',
-    language: 'java',
-    buggyCode: `public class Main {
-    public static void main(String[] args) {
-        String text = null;
-        
-        // Bug: NullPointerException - checking null after use
-        System.out.println(text.length());
-        
-        if (text != null) {
-            System.out.println("Text is: " + text);
-        }
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+
+class Counter {
+private:
+    mutable int count;  // Should not use mutable incorrectly
+    
+public:
+    Counter() : count(0) {}
+    
+    void increment() {
+        count++;
     }
+    
+    // Bug: This method modifies state but is marked const
+    void getCount() const {
+        count++;  // This should not be allowed
+        std::cout << "Count: " << count << std::endl;
+    }
+};
+
+int main() {
+    const Counter counter;
+    counter.getCount();
+    return 0;
 }`,
-    expectedOutput: 'Null check passed',
-    timeLimit: 300,
+    expectedOutput: 'Count: 1',
+    timeLimit: 600,
     baseScore: 100,
     createdAt: new Date('2026-01-03'),
   },
   {
     id: 'challenge-4',
-    title: 'Fix Race Condition',
-    description: 'This Java code has a race condition where multiple threads access a shared counter without synchronization. Add proper synchronization to ensure thread safety.',
-    difficulty: 'hard',
-    language: 'java',
-    buggyCode: `public class Counter {
-    private int count = 0;
-    
-    // Bug: No synchronization - race condition
-    public void increment() {
-        count++;
-    }
-    
-    public int getCount() {
-        return count;
-    }
-    
-    public static void main(String[] args) throws InterruptedException {
-        Counter counter = new Counter();
-        
-        Thread t1 = new Thread(() -> {
-            for (int i = 0; i < 1000; i++) {
-                counter.increment();
-            }
-        });
-        
-        Thread t2 = new Thread(() -> {
-            for (int i = 0; i < 1000; i++) {
-                counter.increment();
-            }
-        });
-        
-        t1.start();
-        t2.start();
-        t1.join();
-        t2.join();
-        
-        System.out.println("Count: " + counter.getCount());
-    }
-}`,
-    expectedOutput: 'Count: 2000',
-    timeLimit: 900,
-    baseScore: 200,
-    createdAt: new Date('2026-01-04'),
-  },
-  {
-    id: 'challenge-5',
-    title: 'Fix Integer Overflow',
-    description: 'This C++ code has an integer overflow bug when calculating the sum of large numbers. Use appropriate data types or checks to prevent overflow.',
+    title: 'Fix Virtual Function Override Bug',
+    description: 'This C++ code has a polymorphism bug where the derived class does not properly override the virtual function due to signature mismatch or missing override keyword.',
     difficulty: 'medium',
     language: 'cpp',
     buggyCode: `#include <iostream>
 
+class Shape {
+public:
+    virtual void calculateArea() const {
+        std::cout << "Calculating area...\\n";
+    }
+    virtual ~Shape() {}
+};
+
+class Circle : public Shape {
+private:
+    double radius;
+    
+public:
+    Circle(double r) : radius(r) {}
+    
+    // Bug: Signature doesn't match - missing const
+    void calculateArea() {
+        std::cout << "Circle area: " << (3.14 * radius * radius) << std::endl;
+    }
+};
+
 int main() {
-    int a = 2000000000;
-    int b = 2000000000;
-    
-    // Bug: Integer overflow when adding large numbers
-    int sum = a + b;
-    
-    std::cout << "Sum: " << sum << std::endl;
-    
+    const Circle circle(5.0);
+    circle.calculateArea();
     return 0;
 }`,
-    expectedOutput: 'Sum: 4000000000',
+    expectedOutput: 'Circle area: 78.5',
+    timeLimit: 600,
+    baseScore: 150,
+    createdAt: new Date('2026-01-04'),
+  },
+  {
+    id: 'challenge-5',
+    title: 'Fix Missing Virtual Destructor',
+    description: 'This C++ code has a critical bug where the base class destructor is not virtual. This causes incomplete cleanup when deleting derived class objects through base class pointers.',
+    difficulty: 'medium',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+
+class Animal {
+protected:
+    char* name;
+    
+public:
+    Animal(const char* n) {
+        name = new char[50];
+        std::cout << "Animal created\\n";
+    }
+    
+    // Bug: Destructor not virtual - derived destructor won't be called
+    ~Animal() {
+        delete[] name;
+        std::cout << "Animal destroyed\\n";
+    }
+};
+
+class Dog : public Animal {
+private:
+    char* breed;
+    
+public:
+    Dog(const char* n, const char* b) : Animal(n) {
+        breed = new char[50];
+        std::cout << "Dog created\\n";
+    }
+    
+    ~Dog() {
+        delete[] breed;
+        std::cout << "Dog destroyed\\n";
+    }
+};
+
+int main() {
+    Animal* dog = new Dog("Buddy", "Labrador");
+    delete dog;  // Only Animal::~Animal() is called, not Dog::~Dog()
+    return 0;
+}`,
+    expectedOutput: 'Dog destroyed\\nAnimal destroyed',
     timeLimit: 600,
     baseScore: 150,
     createdAt: new Date('2026-01-05'),
+  },
+  {
+    id: 'challenge-6',
+    title: 'Fix Shallow Copy Bug',
+    description: 'This C++ class has a shallow copy problem in the copy constructor. Multiple objects will point to the same dynamically allocated data, causing crashes and double deletion.',
+    difficulty: 'medium',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <cstring>
+
+class String {
+private:
+    char* data;
+    int length;
+    
+public:
+    String(const char* str) {
+        length = strlen(str);
+        data = new char[length + 1];
+        strcpy(data, str);
+    }
+    
+    // Bug: Shallow copy - both objects point to same memory
+    String(const String& other) {
+        data = other.data;  // Should deep copy
+        length = other.length;
+    }
+    
+    ~String() {
+        delete[] data;
+    }
+    
+    void display() const {
+        std::cout << "String: " << data << std::endl;
+    }
+};
+
+int main() {
+    String s1("Hello");
+    String s2 = s1;  // Shallow copy - both reference same memory
+    s1.display();
+    s2.display();
+    return 0;
+}`,
+    expectedOutput: 'String: Hello',
+    timeLimit: 600,
+    baseScore: 150,
+    createdAt: new Date('2026-01-06'),
+  },
+  {
+    id: 'challenge-7',
+    title: 'Fix Race Condition in Singleton Pattern',
+    description: 'This C++ singleton implementation has a race condition in the getInstance() method. Multiple threads could create multiple instances simultaneously. Fix it using thread-safe initialization.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <thread>
+#include <vector>
+
+class Singleton {
+private:
+    static Singleton* instance;
+    int id;
+    
+    Singleton() : id(0) {}
+    
+public:
+    // Bug: Not thread-safe - race condition
+    static Singleton* getInstance() {
+        if(instance == nullptr) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+    
+    int getId() const { return id; }
+};
+
+Singleton* Singleton::instance = nullptr;
+
+int main() {
+    std::vector<std::thread> threads;
+    for(int i = 0; i < 10; i++) {
+        threads.emplace_back([]() {
+            Singleton* s = Singleton::getInstance();
+            std::cout << "Instance id: " << s->getId() << std::endl;
+        });
+    }
+    
+    for(auto& t : threads) {
+        t.join();
+    }
+    return 0;
+}`,
+    expectedOutput: 'Single instance created',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-07'),
+  },
+  {
+    id: 'challenge-8',
+    title: 'Fix Object Slicing Bug',
+    description: 'This C++ code has object slicing where a derived object is assigned to a base class object by value. This loses derived class data and virtual function behavior.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+
+class Vehicle {
+protected:
+    int speed;
+    
+public:
+    Vehicle(int s = 0) : speed(s) {}
+    
+    virtual void display() const {
+        std::cout << "Vehicle speed: " << speed << std::endl;
+    }
+    
+    virtual ~Vehicle() {}
+};
+
+class Car : public Vehicle {
+private:
+    int numDoors;
+    
+public:
+    Car(int s, int doors) : Vehicle(s), numDoors(doors) {}
+    
+    void display() const override {
+        std::cout << "Car speed: " << speed << ", Doors: " << numDoors << std::endl;
+    }
+};
+
+int main() {
+    Car car(100, 4);
+    // Bug: Object slicing - car is converted to Vehicle
+    Vehicle v = car;  // Slicing occurs here
+    v.display();
+    car.display();
+    return 0;
+}`,
+    expectedOutput: 'Car speed: 100, Doors: 4',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-08'),
+  },
+  {
+    id: 'challenge-9',
+    title: 'Fix Double Deletion and Use-After-Free',
+    description: 'This C++ code has memory corruption bugs where memory is deleted multiple times and used after deletion. Implement proper resource management.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+
+class Resource {
+private:
+    int* data;
+    
+public:
+    Resource(int size) {
+        data = new int[size];
+        std::cout << "Resource allocated\\n";
+    }
+    
+    ~Resource() {
+        delete[] data;
+        std::cout << "Resource destroyed\\n";
+    }
+    
+    void use() {
+        std::cout << "Using resource\\n";
+    }
+};
+
+int main() {
+    Resource* res = new Resource(100);
+    
+    res->use();
+    delete res;
+    
+    // Bug: Use-after-free
+    res->use();
+    
+    // Bug: Double deletion
+    delete res;
+    
+    return 0;
+}`,
+    expectedOutput: 'Resource destroyed',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-09'),
+  },
+  {
+    id: 'challenge-10',
+    title: 'Fix Producer-Consumer Synchronization Bug',
+    description: 'This C++ code has synchronization issues in a producer-consumer pattern. Multiple threads access shared resources without proper locking, causing data races.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <thread>
+#include <vector>
+
+class Buffer {
+private:
+    int data[10];
+    int count;
+    
+public:
+    Buffer() : count(0) {}
+    
+    // Bug: No synchronization - data race
+    void produce(int value) {
+        if(count < 10) {
+            data[count++] = value;
+        }
+    }
+    
+    int consume() {
+        if(count > 0) {
+            return data[--count];
+        }
+        return -1;
+    }
+    
+    int getCount() const {
+        return count;
+    }
+};
+
+int main() {
+    Buffer buffer;
+    
+    std::thread producer([]() {
+        for(int i = 0; i < 100; i++) {
+            // buffer.produce(i);  // Race condition
+        }
+    });
+    
+    std::thread consumer([]() {
+        for(int i = 0; i < 100; i++) {
+            // buffer.consume();  // Race condition
+        }
+    });
+    
+    producer.join();
+    consumer.join();
+    
+    std::cout << "Buffer operations completed\\n";
+    return 0;
+}`,
+    expectedOutput: 'Buffer operations completed',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-10'),
+  },
+  {
+    id: 'challenge-11',
+    title: 'Fix RAII Principle Violation',
+    description: 'This C++ code violates the RAII (Resource Acquisition Is Initialization) principle. Resources are not properly managed in the scope lifecycle.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <fstream>
+
+class FileHandler {
+private:
+    FILE* file;
+    
+public:
+    FileHandler(const char* filename) {
+        file = fopen(filename, "r");
+        std::cout << "File opened\\n";
+    }
+    
+    // Bug: Missing proper RAII - file not closed in destructor
+    ~FileHandler() {
+        std::cout << "FileHandler destroyed\\n";
+        // Missing: if(file) fclose(file);
+    }
+    
+    void read() {
+        if(file) {
+            std::cout << "Reading file...\\n";
+        }
+    }
+};
+
+int main() {
+    {
+        FileHandler handler("test.txt");
+        handler.read();
+    }  // File is not properly closed here
+    
+    std::cout << "Scope ended\\n";
+    return 0;
+}`,
+    expectedOutput: 'File properly closed',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-11'),
+  },
+  {
+    id: 'challenge-12',
+    title: 'Fix Inheritance and Method Resolution Bug',
+    description: 'This C++ code has an inheritance bug where method resolution is incorrect due to improper use of scope resolution operator and virtual functions.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+
+class Base {
+public:
+    virtual void process() {
+        std::cout << "Base processing\\n";
+    }
+    
+    virtual ~Base() {}
+};
+
+class Middle : public Base {
+public:
+    void process() override {
+        std::cout << "Middle processing\\n";
+    }
+};
+
+class Derived : public Middle {
+public:
+    // Bug: Calling wrong parent method
+    void process() override {
+        Base::process();  // Should call Middle::process()
+        std::cout << "Derived processing\\n";
+    }
+};
+
+int main() {
+    Derived d;
+    d.process();
+    
+    Base* b = &d;
+    b->process();
+    
+    return 0;
+}`,
+    expectedOutput: 'Middle processing\\nDerived processing',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-12'),
+  },
+  {
+    id: 'challenge-13',
+    title: 'Fix Copy Assignment Operator Bug',
+    description: 'This C++ class is missing the copy assignment operator. Without it, the default assignment performs shallow copy causing memory corruption.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <cstring>
+
+class DynamicArray {
+private:
+    int* data;
+    int size;
+    
+public:
+    DynamicArray(int sz) : size(sz) {
+        data = new int[size];
+        for(int i = 0; i < size; i++) {
+            data[i] = 0;
+        }
+    }
+    
+    DynamicArray(const DynamicArray& other) : size(other.size) {
+        data = new int[size];
+        std::copy(other.data, other.data + size, data);
+    }
+    
+    // Bug: Missing copy assignment operator
+    // Default assignment causes double deletion
+    
+    ~DynamicArray() {
+        delete[] data;
+    }
+    
+    void fill(int value) {
+        for(int i = 0; i < size; i++) {
+            data[i] = value;
+        }
+    }
+};
+
+int main() {
+    DynamicArray arr1(5);
+    arr1.fill(10);
+    
+    DynamicArray arr2(10);
+    arr2 = arr1;  // Shallow copy - memory corruption
+    
+    return 0;
+}`,
+    expectedOutput: 'Assignment completed safely',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-13'),
+  },
+  {
+    id: 'challenge-14',
+    title: 'Fix Vtable Corruption Bug',
+    description: 'This C++ code has a vtable corruption issue where improper casting and multiple inheritance cause incorrect virtual function resolution.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+
+class Interface1 {
+public:
+    virtual void execute() {
+        std::cout << "Interface1 execute\\n";
+    }
+    virtual ~Interface1() {}
+};
+
+class Interface2 {
+public:
+    virtual void process() {
+        std::cout << "Interface2 process\\n";
+    }
+    virtual ~Interface2() {}
+};
+
+class Implementation : public Interface1, public Interface2 {
+public:
+    void execute() override {
+        std::cout << "Implementation execute\\n";
+    }
+    
+    void process() override {
+        std::cout << "Implementation process\\n";
+    }
+};
+
+int main() {
+    Implementation* impl = new Implementation();
+    
+    // Bug: Unsafe casting without considering multiple inheritance
+    Interface1* ptr1 = impl;
+    Interface2* ptr2 = (Interface2*)ptr1;  // Incorrect cast
+    
+    ptr2->process();
+    
+    delete impl;
+    return 0;
+}`,
+    expectedOutput: 'Implementation process',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-14'),
+  },
+  {
+    id: 'challenge-15',
+    title: 'Fix Memory Order Violation in Lock-Free Code',
+    description: 'This C++ code has memory ordering issues in lock-free programming. Atomic operations without proper memory barriers can cause data races.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <atomic>
+#include <thread>
+#include <vector>
+
+class LockFreeQueue {
+private:
+    std::atomic<int> head{0};
+    std::atomic<int> tail{0};
+    int buffer[100];
+    
+public:
+    // Bug: Missing memory barriers
+    void enqueue(int value) {
+        int t = tail.load();  // Should use memory_order_acquire
+        buffer[t] = value;
+        tail.store(t + 1);  // Should use memory_order_release
+    }
+    
+    int dequeue() {
+        int h = head.load();  // Memory ordering issue
+        int value = buffer[h];
+        head.store(h + 1);  // Memory ordering issue
+        return value;
+    }
+};
+
+int main() {
+    LockFreeQueue queue;
+    queue.enqueue(42);
+    std::cout << queue.dequeue() << std::endl;
+    return 0;
+}`,
+    expectedOutput: '42',
+    timeLimit: 900,
+    baseScore: 200,
+    createdAt: new Date('2026-01-15'),
   },
 ];

@@ -122,48 +122,48 @@ const EditorPage: React.FC = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate('/problems')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-2 text-slate-400 hover:text-slate-200 transition-colors"
             >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Problems</span>
+              <ArrowLeft className="h-4 w-4" />
+              <span className="text-xs font-medium">Back</span>
             </button>
-            <div className="h-6 w-px bg-gray-300" />
-            <h1 className="text-2xl font-bold text-gray-900">{challenge.title}</h1>
+            <div className="h-5 w-px bg-slate-700" />
+            <h1 className="text-sm font-semibold text-slate-100">{challenge.title}</h1>
           </div>
 
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Clock className="h-4 w-4" />
-              <span>{timeTaken}s elapsed</span>
+          <div className="flex items-center space-x-3 text-xs text-slate-400">
+            <div className="flex items-center space-x-1">
+              <Clock className="h-3.5 w-3.5" />
+              <span>{timeTaken}s</span>
             </div>
-            <div className="text-gray-600">Attempts: {attempts}</div>
-            <div className="text-gray-600">Lines changed: {linesChanged}</div>
+            <span>Attempts: {attempts}</span>
+            <span>Changed: {linesChanged}</span>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid lg:grid-cols-2 gap-4">
           {/* Problem Description */}
-          <div className="space-y-6 animate-slide-up">
-            <div className="card">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Problem Description</h2>
-              <p className="text-gray-700 whitespace-pre-wrap">{challenge.description}</p>
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="text-sm text-gray-600">
-                  <p><strong>Language:</strong> {challenge.language.toUpperCase()}</p>
-                  <p><strong>Base Score:</strong> {challenge.baseScore} points</p>
-                  <p><strong>Time Limit:</strong> {challenge.timeLimit} seconds</p>
+          <div className="space-y-4 animate-slide-up">
+            <div className="card bg-slate-900 border border-slate-800">
+              <h2 className="text-xs font-semibold text-slate-200 mb-3 uppercase tracking-wide">Problem</h2>
+              <p className="text-slate-300 text-sm whitespace-pre-wrap leading-relaxed">{challenge.description}</p>
+              <div className="mt-3 pt-3 border-t border-slate-800">
+                <div className="text-xs text-slate-400 space-y-1">
+                  <p><span className="font-medium text-slate-300">Language:</span> {challenge.language.toUpperCase()}</p>
+                  <p><span className="font-medium text-slate-300">Points:</span> {challenge.baseScore}</p>
+                  <p><span className="font-medium text-slate-300">Time Limit:</span> {challenge.timeLimit}s</p>
                 </div>
               </div>
             </div>
 
-            <div className="card bg-blue-50 border-blue-200">
-              <div className="flex items-start space-x-3">
-                <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-semibold text-blue-900 mb-2">How it works:</p>
-                  <ul className="space-y-1 text-blue-800">
-                    <li>• <strong>Run:</strong> Test your code and get AI feedback (no penalties)</li>
-                    <li>• <strong>Submit:</strong> Official evaluation - scores only if correct</li>
+            <div className="card bg-slate-900/60 border border-slate-800">
+              <div className="flex items-start space-x-2">
+                <Info className="h-4 w-4 text-slate-400 flex-shrink-0 mt-0.5" />
+                <div className="text-xs text-slate-400 space-y-1">
+                  <p className="font-medium text-slate-300">How it works:</p>
+                  <ul className="space-y-0.5 text-slate-400">
+                    <li>• <span className="font-medium text-slate-300">Run:</span> Test code with AI feedback (no penalties)</li>
+                    <li>• <span className="font-medium text-slate-300">Submit:</span> Evaluation - scores if correct</li>
                   </ul>
                 </div>
               </div>
@@ -171,13 +171,13 @@ const EditorPage: React.FC = () => {
 
             {/* Results */}
             {(runResult || submitResult) && (
-              <div className="card animate-fade-in">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="card bg-slate-900 border border-slate-800 animate-fade-in">
+                <h3 className="text-xs font-semibold text-slate-200 mb-3 uppercase tracking-wide">
                   {runResult ? 'Run Result' : 'Submission Result'}
                 </h3>
 
                 {submitResult && (
-                  <div className={`mb-4 p-4 rounded-lg ${
+                  <div className={`mb-3 p-3 rounded text-xs ${
                     submitResult.submission.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
                   }`}>
                     <div className="flex items-center space-x-2 mb-2">
@@ -231,10 +231,10 @@ const EditorPage: React.FC = () => {
           </div>
 
           {/* Code Editor */}
-          <div className="space-y-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            <div className="card p-0 overflow-hidden">
-              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Code Editor</h2>
+          <div className="space-y-3 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="card p-0 overflow-hidden border border-slate-800">
+              <div className="bg-slate-900 px-4 py-2 border-b border-slate-800">
+                <h2 className="text-xs font-semibold text-slate-200 uppercase tracking-wide">Editor</h2>
               </div>
               <div className="h-[600px]">
                 <Editor
@@ -242,10 +242,10 @@ const EditorPage: React.FC = () => {
                   language={challenge.language === 'cpp' ? 'cpp' : 'java'}
                   value={code}
                   onChange={(value) => setCode(value || '')}
-                  theme="vs-light"
+                  theme="vs-dark"
                   options={{
                     minimap: { enabled: false },
-                    fontSize: 14,
+                    fontSize: 13,
                     lineNumbers: 'on',
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
@@ -255,21 +255,21 @@ const EditorPage: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-4">
+            <div className="flex space-x-2">
               <button
                 onClick={handleRun}
                 disabled={running || submitting}
-                className="btn btn-secondary flex-1 flex items-center justify-center space-x-2"
+                className="px-3 py-1.5 text-xs font-medium rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition disabled:opacity-50 flex-1 flex items-center justify-center space-x-1.5"
               >
                 {running ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-slate-400"></div>
                     <span>Running...</span>
                   </>
                 ) : (
                   <>
-                    <Play className="h-4 w-4" />
-                    <span>Run (Test)</span>
+                    <Play className="h-3.5 w-3.5" />
+                    <span>Run</span>
                   </>
                 )}
               </button>
@@ -277,17 +277,17 @@ const EditorPage: React.FC = () => {
               <button
                 onClick={handleSubmit}
                 disabled={running || submitting}
-                className="btn btn-primary flex-1 flex items-center justify-center space-x-2"
+                className="px-3 py-1.5 text-xs font-medium rounded bg-orange-500 hover:bg-orange-600 text-white transition disabled:opacity-50 flex-1 flex items-center justify-center space-x-1.5"
               >
                 {submitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                     <span>Submitting...</span>
                   </>
                 ) : (
                   <>
-                    <Send className="h-4 w-4" />
-                    <span>Submit (Score)</span>
+                    <Send className="h-3.5 w-3.5" />
+                    <span>Submit</span>
                   </>
                 )}
               </button>

@@ -151,30 +151,70 @@ export class GeminiService extends BaseService {
   }
 
   private buildLocalFeedback(data: any): string {
-    let feedback = `Compiler-Level Analysis (Local)\n`;
-    feedback += `================================\n\n`;
+    let feedback = ``;
 
-    feedback += `Scores:\n`;
-    feedback += `  * Correctness: ${data.correctnessScore}/10\n`;
-    feedback += `  * Efficiency: ${data.efficiencyScore}/10\n`;
-    feedback += `  * Code Quality: ${data.qualityScore}/10\n`;
-    feedback += `  * Overall: ${Math.round((data.correctnessScore + data.efficiencyScore + data.qualityScore) / 3)}/10\n`;
+    // Compiler-style header
+    if (data.isCorrect) {
+      feedback += `✅ COMPILATION SUCCESSFUL\n`;
+      feedback += `========================\n\n`;
+    } else {
+      feedback += `❌ COMPILATION FAILED\n`;
+      feedback += `====================\n\n`;
+    }
 
+    // Compiler-style warnings and errors
     if (data.issues.length > 0) {
-      feedback += `\nAnalysis:\n`;
       data.issues.forEach((issue: string) => {
-        feedback += `  * ${issue}\n`;
+        feedback += `warning: ${issue}\n`;
       });
+      feedback += `\n`;
     }
 
+    // Detailed compiler analysis
+    feedback += `Analysis Report:\n`;
+    feedback += `---------------\n`;
+    feedback += `• Correctness Analysis: ${data.correctnessScore}/10 - `;
+    
+    if (data.correctnessScore >= 9) {
+      feedback += `Bug completely fixed\n`;
+    } else if (data.correctnessScore >= 7) {
+      feedback += `Bug mostly fixed with minor issues\n`;
+    } else {
+      feedback += `Bug partially fixed or not addressed\n`;
+    }
+
+    feedback += `• Code Efficiency: ${data.efficiencyScore}/10 - `;
+    if (data.efficiencyScore >= 8) {
+      feedback += `Optimal performance\n`;
+    } else if (data.efficiencyScore >= 6) {
+      feedback += `Acceptable performance\n`;
+    } else {
+      feedback += `Performance can be improved\n`;
+    }
+
+    feedback += `• Code Quality: ${data.qualityScore}/10 - `;
+    if (data.qualityScore >= 8) {
+      feedback += `Follows best practices\n`;
+    } else if (data.qualityScore >= 6) {
+      feedback += `Acceptable code standards\n`;
+    } else {
+      feedback += `Needs improvement\n`;
+    }
+
+    feedback += `\n`;
+
+    // Recommendations
     if (data.optimizations.length > 0) {
-      feedback += `\nRecommendations:\n`;
+      feedback += `Compiler Notes:\n`;
+      feedback += `---------------\n`;
       data.optimizations.forEach((opt: string) => {
-        feedback += `  * ${opt}\n`;
+        feedback += `note: ${opt}\n`;
       });
+      feedback += `\n`;
     }
 
-    feedback += `\nPerformance: ${data.performanceGain}\n`;
+    // Final verdict
+    feedback += `Result: ${data.performanceGain}\n`;
 
     return feedback;
   }

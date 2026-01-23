@@ -10,78 +10,76 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-14">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/problems" className="flex items-center space-x-2 group">
-              <Bug className="h-8 w-8 text-primary-600 group-hover:scale-110 transition-transform" />
-              <span className="text-xl font-bold text-gray-900">Bugrank</span>
+              <Bug className="h-7 w-7 text-orange-400 group-hover:scale-110 transition-transform" />
+              <span className="text-lg font-semibold text-white tracking-tight">Bugrank</span>
             </Link>
           </div>
 
           {/* Navigation Links */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
             <Link
               to="/problems"
-              className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${
                 isActive('/problems')
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-slate-800 text-orange-400'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
               }`}
             >
-              <Code2 className="h-4 w-4" />
+              <Code2 className="h-3.5 w-3.5" />
               <span>Problems</span>
             </Link>
 
             <Link
               to="/leaderboard"
-              className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${
                 isActive('/leaderboard')
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-slate-800 text-orange-400'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
               }`}
             >
-              <Trophy className="h-4 w-4" />
+              <Trophy className="h-3.5 w-3.5" />
               <span>Leaderboard</span>
             </Link>
 
             <Link
               to="/profile"
-              className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${
                 isActive('/profile')
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-slate-800 text-orange-400'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
               }`}
             >
-              <User className="h-4 w-4" />
+              <User className="h-3.5 w-3.5" />
               <span>Profile</span>
             </Link>
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             {user && (
               <>
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName)}
-                    alt={user.displayName}
-                    className="h-8 w-8 rounded-full"
-                  />
+                <div className="flex items-center space-x-2">
+                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-xs font-semibold text-white">
+                    {user.displayName.charAt(0).toUpperCase()}
+                  </div>
                   <div className="hidden md:block">
-                    <p className="text-sm font-medium text-gray-900">{user.displayName}</p>
-                    <p className="text-xs text-gray-500">{user.totalScore} pts</p>
+                    <p className="text-xs font-medium text-slate-200">{user.displayName}</p>
+                    <p className="text-xs text-orange-400 font-medium">{user.totalScore} pts</p>
                   </div>
                 </div>
 
                 <button
                   onClick={signOut}
-                  className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all"
                   title="Sign Out"
+                  className="p-1.5 rounded text-slate-400 hover:text-orange-400 hover:bg-slate-800 transition"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-3.5 w-3.5" />
                 </button>
               </>
             )}

@@ -42,10 +42,10 @@
   }
 
   .page-container {
-    @apply min-h-screen bg-gray-50;
+    @apply min-h-screen bg-slate-950;
   }
 
   .content-wrapper {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
   }
 }
