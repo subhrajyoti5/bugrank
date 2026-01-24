@@ -9,6 +9,7 @@ import ProblemsPage from '@/pages/ProblemsPage';
 import EditorPage from '@/pages/EditorPage';
 import LeaderboardPage from '@/pages/LeaderboardPage';
 import ProfilePage from '@/pages/ProfilePage';
+import LandingPage from '@/pages/LandingPage';
 import '@/index.css';
 
 const App: React.FC = () => {
@@ -16,8 +17,9 @@ const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
-          
+
           <Route element={<Layout />}>
             <Route
               path="/problems"
@@ -53,11 +55,10 @@ const App: React.FC = () => {
             />
           </Route>
 
-          <Route path="/" element={<Navigate to="/problems" replace />} />
-          <Route path="*" element={<Navigate to="/problems" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-      
+
       <Toaster
         position="top-right"
         toastOptions={{
