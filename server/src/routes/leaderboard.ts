@@ -1,9 +1,7 @@
 import { Router, Response } from 'express';
-import { AuthRequest, authenticateToken } from '@/middleware/auth';
+import { AuthRequest, authMiddleware } from '@/middleware/auth';
 import { LeaderboardEntry, User } from '@bugrank/shared';
-
-// In-memory storage (replaces Firestore)
-const users: Map<string, User> = new Map();
+import { userDb } from '@/data/storage';
 
 const router = Router();
 
@@ -11,11 +9,12 @@ const router = Router();
  * GET /api/leaderboard
  * Get top users by score
  */
-router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
+router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 20;
 
-    const usersList = Array.from(users.values())
+    const usersList = await userDb.getAll();
+    const topUsers = usersList
       .sort((a, b) => b.totalScore - a.totalScore)
       .slice(0, limit);
 
@@ -45,11 +44,11 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
  * GET /api/leaderboard/rank/:userId
  * Get rank for a specific user
  */
-router.get('/rank/:userId', authenticateToken, async (req: AuthRequest, res: Response) => {
+router.get('/rank/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
 
-    const user = users.get(userId);
+    const user = await userDb.findById(userId);
     if (!user) {
       res.status(404).json({
         success: false,
@@ -59,7 +58,8 @@ router.get('/rank/:userId', authenticateToken, async (req: AuthRequest, res: Res
     }
 
     // Count users with higher scores
-    const higherCount = Array.from(users.values())
+    const allUsers = await userDb.getAll();
+    const higherCount = allUsers
       .filter(u => u.totalScore > user.totalScore)
       .length;
 

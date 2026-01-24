@@ -10,20 +10,21 @@ const apiClient = axios.create({
   timeout: 30000, // 30 second timeout
 });
 
-// Add demo auth token to requests (now optional since we removed auth)
+// Add authentication tokens to requests
 apiClient.interceptors.request.use(
   async (config) => {
-    // Optional: Add demo token if user exists in localStorage
-    try {
-      const user = localStorage.getItem('bugrank_user');
-      if (user) {
-        const parsedUser = JSON.parse(user);
-        config.headers.Authorization = `Bearer demo-token-${parsedUser.id}`;
-      }
-    } catch (e) {
-      // Ignore errors - auth is optional now
-      console.log('No auth token added (optional)');
+    // Add JWT token if available
+    const token = localStorage.getItem('bugrank_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Add session token if available
+    const sessionToken = localStorage.getItem('bugrank_session');
+    if (sessionToken) {
+      config.headers['x-session-token'] = sessionToken;
+    }
+
     return config;
   },
   (error) => {
@@ -36,6 +37,19 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     const errorMessage = error.response?.data?.error || error.message || 'Network error';
+    
+    // Handle 401 Unauthorized - redirect to login
+    if (error.response?.status === 401) {
+      localStorage.removeItem('bugrank_token');
+      localStorage.removeItem('bugrank_session');
+      localStorage.removeItem('bugrank_user');
+      
+      // Only redirect if not already on login page
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+    }
+    
     console.error('API Error:', {
       status: error.response?.status,
       url: error.config?.url,

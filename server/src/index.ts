@@ -6,7 +6,11 @@ import dotenv from 'dotenv';
 import challengesRouter from './routes/challenges';
 import submissionsRouter from './routes/submissions';
 import leaderboardRouter from './routes/leaderboard';
+import authRouter from './routes/auth';
 import { errorHandler, notFound } from './middleware/errorHandler';
+import authService from './services/AuthService';
+import { challengeDb } from './data/storage';
+import { seedChallenges } from './data/seedChallenges';
 
 // Load environment variables
 dotenv.config();
@@ -14,6 +18,10 @@ dotenv.config();
 // Validate optional environment variables
 if (!process.env.GEMINI_API_KEY) {
   console.warn('⚠️  GEMINI_API_KEY not set - AI analysis will use default responses');
+}
+
+if (!process.env.JWT_SECRET) {
+  console.warn('⚠️  JWT_SECRET not set - using default (NOT SECURE FOR PRODUCTION)');
 }
 
 // Initialize Express app
@@ -27,7 +35,7 @@ app.use(
     origin: ['http://localhost:3000', 'http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-session-token'],
   })
 );
 app.use(express.json({ limit: '10mb' }));
@@ -49,6 +57,7 @@ app.get('/', (req: Request, res: Response) => {
     version: '1.0.0',
     endpoints: {
       health: '/health',
+      auth: '/api/auth',
       challenges: '/api/challenges',
       submissions: '/api/submissions',
       leaderboard: '/api/leaderboard',
@@ -66,6 +75,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // API Routes
+app.use('/api/auth', authRouter);
 app.use('/api/challenges', challengesRouter);
 app.use('/api/submissions', submissionsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
@@ -75,10 +85,39 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🐛 Bugrank server running on port ${PORT}`);
   console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🤖 Gemini API: ${process.env.GEMINI_API_KEY ? 'Configured' : 'Not configured (using defaults)'}`);
+  console.log(`🔐 Auth: PostgreSQL + JWT enabled`);
+  
+  // Seed challenges if database is empty
+  try {
+    const existingChallenges = await challengeDb.getAll();
+    if (existingChallenges.length === 0) {
+      console.log('📚 Seeding challenges to database...');
+      for (const challenge of seedChallenges) {
+        await challengeDb.create(challenge);
+      }
+      console.log(`✅ Seeded ${seedChallenges.length} challenges`);
+    } else {
+      console.log(`✅ Found ${existingChallenges.length} challenges in database`);
+    }
+  } catch (error) {
+    console.error('Error seeding challenges:', error);
+  }
+  
+  // Start session cleanup job (runs every hour)
+  setInterval(async () => {
+    try {
+      const deleted = await authService.cleanupExpiredSessions();
+      if (deleted > 0) {
+        console.log(`🧹 Cleaned up ${deleted} expired sessions`);
+      }
+    } catch (error) {
+      console.error('Error cleaning up sessions:', error);
+    }
+  }, 60 * 60 * 1000); // 1 hour
 });
 
 export default app;

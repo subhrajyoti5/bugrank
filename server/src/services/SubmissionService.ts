@@ -8,7 +8,7 @@ import {
 } from '@bugrank/shared';
 import { BaseService, GeminiService } from './GeminiService';
 import { CompilerService } from './CompilerService';
-import { challenges, submissions, users } from '@/data/storage';
+import { submissionDb, userDb, challengeDb } from '@/data/storage';
 
 /**
  * Service for handling code submissions (Run & Submit)
@@ -149,8 +149,17 @@ export class SubmissionService extends BaseService {
       challenge.language
     );
 
-    // Check if solution is correct (AI accuracy >= threshold AND compilation successful)
-    const isCorrect = aiAnalysis.accuracyScore >= DEFAULT_SCORING_CONFIG.successThreshold && compilationSuccess;
+    // Check if solution is correct
+    // For C++ with test cases: prioritize test case validation
+    // For others or C++ without test cases: use AI analysis
+    let isCorrect = false;
+    if (challenge.language === 'cpp' && challenge.testCase) {
+      // If test case exists and passes, that's the primary validation
+      isCorrect = compilationSuccess && testCasePassed;
+    } else {
+      // Fall back to AI analysis for non-C++ or when no test case exists
+      isCorrect = aiAnalysis.accuracyScore >= DEFAULT_SCORING_CONFIG.successThreshold && compilationSuccess;
+    }
 
     // Calculate score ONLY if correct
     let finalScore: number | undefined;
@@ -179,8 +188,8 @@ export class SubmissionService extends BaseService {
       createdAt: new Date(),
     };
 
-    // Save submission to memory
-    submissions.set(submission.id, submission);
+    // Save submission to database
+    await submissionDb.create(submission);
 
     // Update user stats if correct
     if (isCorrect && finalScore !== undefined) {
@@ -196,7 +205,9 @@ export class SubmissionService extends BaseService {
       compilerOutput,
       testCaseOutput,
       testCasePassed,
-      message: this.generateFeedback(aiAnalysis, true),
+      message: isCorrect 
+        ? `✅ Bug fixed correctly! Score: ${finalScore}` 
+        : `⚠️ Bug not fully fixed yet. Try again!`,
     };
   }
 
@@ -229,36 +240,26 @@ export class SubmissionService extends BaseService {
   }
 
   /**
-   * Get challenge from memory
+   * Get challenge from database
    */
   private async getChallenge(challengeId: string): Promise<Challenge | null> {
-    return challenges.get(challengeId) || null;
+    return await challengeDb.findById(challengeId);
   }
 
   /**
    * Get user's attempt count for a specific challenge
    */
   private async getUserAttempts(userId: string, challengeId: string): Promise<number> {
-    let count = 0;
-    submissions.forEach(submission => {
-      if (submission.userId === userId && submission.challengeId === challengeId) {
-        count++;
-      }
-    });
-    return count;
+    const userSubmissions = await submissionDb.findByUserAndChallenge(userId, challengeId);
+    return userSubmissions.length;
   }
 
   /**
    * Get all submissions for a user
    */
   async getUserSubmissions(userId: string): Promise<Submission[]> {
-    const userSubmissions: Submission[] = [];
-    submissions.forEach(submission => {
-      if (submission.userId === userId) {
-        userSubmissions.push(submission);
-      }
-    });
-    return userSubmissions.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 50);
+    const userSubmissions = await submissionDb.findByUserId(userId);
+    return userSubmissions.slice(0, 50);
   }
 
   /**
@@ -269,31 +270,26 @@ export class SubmissionService extends BaseService {
     scoreEarned: number,
     isSuccess: boolean
   ): Promise<void> {
-    let userData = users.get(userId);
+    let userData = await userDb.findById(userId);
 
-    // Auto-create user if doesn't exist
+    // User should already exist (authenticated)
     if (!userData) {
-      this.logInfo('Creating new user profile', { userId });
-      userData = {
-        id: userId,
-        email: 'demo@bugrank.com',
-        displayName: 'Demo User',
-        photoURL: undefined,
-        createdAt: new Date(),
-        totalScore: 0,
-        totalSubmissions: 0,
-        successfulSubmissions: 0,
-      };
+      this.logWarning('User not found in database', { userId });
+      return;
     }
 
-    userData.totalScore += scoreEarned;
-    userData.totalSubmissions += 1;
-    if (isSuccess) {
-      userData.successfulSubmissions += 1;
-    }
-
-    users.set(userId, userData);
-    this.logInfo('User stats updated', { userId, totalScore: userData.totalScore, submissions: userData.totalSubmissions });
+    // Update stats
+    await userDb.update(userId, {
+      totalScore: userData.totalScore + scoreEarned,
+      totalSubmissions: userData.totalSubmissions + 1,
+      successfulSubmissions: userData.successfulSubmissions + (isSuccess ? 1 : 0),
+    });
+    
+    this.logInfo('User stats updated', { 
+      userId, 
+      totalScore: userData.totalScore + scoreEarned, 
+      submissions: userData.totalSubmissions + 1 
+    });
   }
 
   /**

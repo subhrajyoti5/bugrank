@@ -1,15 +1,7 @@
 import { Router, Response } from 'express';
-import { AuthRequest, authenticateToken } from '@/middleware/auth';
+import { AuthRequest, authMiddleware } from '@/middleware/auth';
 import { Challenge } from '@bugrank/shared';
-import { seedChallenges } from '../data/seedChallenges';
-import { challenges } from '@/data/storage';
-
-// Load seed data on startup
-seedChallenges.forEach(challenge => {
-  challenges.set(challenge.id, challenge);
-});
-
-console.log(`✅ Loaded ${challenges.size} challenges into memory`);
+import { challengeDb } from '@/data/storage';
 
 const router = Router();
 
@@ -17,10 +9,9 @@ const router = Router();
  * GET /api/challenges
  * Get all challenges
  */
-router.get('/', async (req, res: Response) => {
+router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const challengesList: Challenge[] = Array.from(challenges.values())
-      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const challengesList = await challengeDb.getAll();
 
     res.json({
       success: true,
@@ -38,11 +29,11 @@ router.get('/', async (req, res: Response) => {
  * GET /api/challenges/:id
  * Get a specific challenge by ID
  */
-router.get('/:id', async (req, res: Response) => {
+router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
-    const challenge = challenges.get(id);
+    const challenge = await challengeDb.findById(id);
 
     if (!challenge) {
       res.status(404).json({

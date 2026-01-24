@@ -7,10 +7,12 @@ import { submissionService } from '@/services/submissionService';
 import { Challenge, RunResult, SubmitResult } from '@bugrank/shared';
 import { Play, Send, ArrowLeft, Clock, AlertCircle, CheckCircle, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const EditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [code, setCode] = useState('');
   const [originalCode, setOriginalCode] = useState('');
@@ -87,6 +89,8 @@ const EditorPage: React.FC = () => {
       setAttempts(result.submission.attempts);
 
       if (result.submission.isCorrect && result.score) {
+        // Refresh user data to update score in navbar
+        await refreshUser();
         toast.success(`🎉 Correct! You earned ${result.score} points!`);
       } else {
         toast.error('Not quite right. Keep trying!');

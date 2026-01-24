@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
-import { AuthRequest, authenticateToken } from '@/middleware/auth';
+import { AuthRequest, authMiddleware } from '@/middleware/auth';
 import { SubmissionService } from '@/services/SubmissionService';
-import { users } from '@/data/storage';
+import { userDb } from '@/data/storage';
 
 const router = Router();
 const submissionService = new SubmissionService();
@@ -10,10 +10,10 @@ const submissionService = new SubmissionService();
  * POST /api/submissions/run
  * Test code without scoring or attempt counting
  */
-router.post('/run', async (req, res: Response) => {
+router.post('/run', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { challengeId, code, testInput } = req.body;
-    const userId = 'demo-user'; // No auth required
+    const userId = req.user?.id || 'demo-user';
 
     if (!challengeId || !code) {
       res.status(400).json({
@@ -41,10 +41,10 @@ router.post('/run', async (req, res: Response) => {
  * POST /api/submissions/submit
  * Submit code for full evaluation with scoring
  */
-router.post('/submit', async (req, res: Response) => {
+router.post('/submit', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { challengeId, code, timeTaken, testInput } = req.body;
-    const userId = 'demo-user'; // No auth required
+    const userId = req.user?.id;
 
     if (!challengeId || !code || timeTaken === undefined) {
       res.status(400).json({
@@ -95,26 +95,19 @@ router.get('/user/:userId', async (req, res: Response) => {
  * GET /api/submissions/profile/:userId
  * Get user profile with stats
  */
-router.get('/profile/:userId', async (req, res: Response) => {
+router.get('/profile/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
 
-    // Get or create user profile
-    let userData = users.get(userId);
+    // Get user profile from database
+    let userData = await userDb.findById(userId);
     
     if (!userData) {
-      // Return default profile for new users
-      userData = {
-        id: userId,
-        email: 'demo@bugrank.com',
-        displayName: 'Demo User',
-        photoURL: undefined,
-        createdAt: new Date(),
-        totalScore: 0,
-        totalSubmissions: 0,
-        successfulSubmissions: 0,
-      };
-      users.set(userId, userData);
+      res.status(404).json({
+        success: false,
+        error: 'User not found',
+      });
+      return;
     }
 
     res.json({
