@@ -765,4 +765,259 @@ int main() {
     },
     createdAt: new Date('2026-01-15'),
   },
+  {
+    id: 'challenge-16',
+    title: 'Check if the given set is an equivalence relation',
+    description: 'Given a set of ordered pairs, determine if they form an equivalence relation by checking for reflexivity, symmetry, and transitivity. The buggy code has incomplete checks that fail to properly validate all three properties.',
+    difficulty: 'medium',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <set>
+#include <vector>
+using namespace std;
+
+class EquivalenceChecker {
+private:
+    set<pair<int, int>> relation;
+    set<int> elements;
+    
+public:
+    void addPair(int a, int b) {
+        relation.insert({a, b});
+        elements.insert(a);
+        elements.insert(b);
+    }
+    
+    // Bug: Incomplete reflexivity check
+    bool isReflexive() {
+        for(int elem : elements) {
+            if(relation.find({elem, elem}) == relation.end()) {
+                return false;
+            }
+        }
+        return true;  // Missing check for empty set case
+    }
+    
+    // Bug: Incomplete symmetry check
+    bool isSymmetric() {
+        for(auto& p : relation) {
+            // Missing check for reverse pair
+            if(p.first != p.second) {
+                return true;  // Wrong logic - should check reverse exists
+            }
+        }
+        return false;
+    }
+    
+    // Bug: Incomplete transitivity check
+    bool isTransitive() {
+        for(auto& p1 : relation) {
+            for(auto& p2 : relation) {
+                if(p1.second == p2.first) {
+                    // Missing: check if (p1.first, p2.second) exists
+                    return true;  // Wrong - returns too early
+                }
+            }
+        }
+        return true;
+    }
+    
+    bool isEquivalence() {
+        return isReflexive() && isSymmetric() && isTransitive();
+    }
+};
+
+int main() {
+    EquivalenceChecker checker;
+    
+    // Test case: {(1,1), (2,2), (3,3), (1,2), (2,1), (2,3), (3,2), (1,3), (3,1)}
+    checker.addPair(1, 1);
+    checker.addPair(2, 2);
+    checker.addPair(3, 3);
+    checker.addPair(1, 2);
+    checker.addPair(2, 1);
+    checker.addPair(2, 3);
+    checker.addPair(3, 2);
+    checker.addPair(1, 3);
+    checker.addPair(3, 1);
+    
+    if(checker.isEquivalence()) {
+        cout << "The relation is an equivalence relation" << endl;
+    } else {
+        cout << "The relation is NOT an equivalence relation" << endl;
+    }
+    
+    return 0;
+}`,
+    expectedOutput: 'The relation is an equivalence relation',
+    timeLimit: 900,
+    baseScore: 150,
+    testCase: {
+      input: '',
+      expectedOutput: 'The relation is an equivalence relation\n',
+    },
+    createdAt: new Date('2026-01-16'),
+  },
+  {
+    id: 'challenge-17',
+    title: 'Fix Deadlock in Dining Philosophers Problem',
+    description: 'This C++ implementation of the Dining Philosophers problem has a deadlock issue due to improper resource allocation. Modify the code to prevent deadlock while allowing philosophers to eat concurrently.',
+    difficulty: 'hard',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+#include <thread>
+#include <mutex>
+#include <vector>
+#include <chrono>
+
+using namespace std;
+
+const int NUM_PHILOSOPHERS = 5;
+mutex forks[NUM_PHILOSOPHERS];
+
+class Philosopher {
+private:
+    int id;
+    int leftFork;
+    int rightFork;
+    
+public:
+    Philosopher(int i) : id(i) {
+        leftFork = i;
+        rightFork = (i + 1) % NUM_PHILOSOPHERS;
+    }
+    
+    void dine() {
+        // Bug: All philosophers pick up left fork first, then right
+        // This creates circular wait condition leading to deadlock
+        forks[leftFork].lock();
+        cout << "Philosopher " << id << " picked up left fork\\n";
+        
+        this_thread::sleep_for(chrono::milliseconds(10));
+        
+        forks[rightFork].lock();
+        cout << "Philosopher " << id << " picked up right fork\\n";
+        
+        // Eating
+        cout << "Philosopher " << id << " is eating\\n";
+        this_thread::sleep_for(chrono::milliseconds(50));
+        
+        forks[rightFork].unlock();
+        forks[leftFork].unlock();
+        
+        cout << "Philosopher " << id << " finished eating\\n";
+    }
+};
+
+int main() {
+    vector<thread> threads;
+    vector<Philosopher> philosophers;
+    
+    for(int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        philosophers.emplace_back(i);
+    }
+    
+    for(int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        threads.emplace_back([&philosophers, i]() {
+            philosophers[i].dine();
+        });
+    }
+    
+    for(auto& t : threads) {
+        t.join();
+    }
+    
+    cout << "All philosophers finished dining" << endl;
+    return 0;
+}`,
+    expectedOutput: 'All philosophers finished dining',
+    timeLimit: 1200,
+    baseScore: 250,
+    testCase: {
+      input: '',
+      expectedOutput: 'All philosophers finished dining\n',
+    },
+    createdAt: new Date('2026-01-17'),
+  },
+  {
+    id: 'challenge-18',
+    title: 'Fix Stack Overflow in Recursive Function',
+    description: 'This C++ code has a stack overflow issue due to uncontrolled recursion depth. Modify the recursive function to include a base case and prevent infinite recursion.',
+    difficulty: 'easy',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+using namespace std;
+
+class RecursiveFunctions {
+public:
+    // Bug: Missing base case
+    int factorial(int n) {
+        return n * factorial(n - 1);
+    }
+};
+
+int main() {
+    RecursiveFunctions rf;
+    cout << "Factorial of 5: " << rf.factorial(5) << endl;
+    return 0;
+}`,
+    expectedOutput: 'Factorial of 5: 120',
+    timeLimit: 600,
+    baseScore: 100,
+    testCase: {
+      input: '',
+      expectedOutput: 'Factorial of 5: 120\n',
+    },
+    createdAt: new Date('2026-01-18'),
+  },
+  
+  {
+    id: 'challenge-19',
+    title: 'Optimize O(N^2) Sorting Algorithm',
+    description: 'This C++ code implements a simple O(N^2) sorting algorithm (Bubble Sort). Optimize it to use a more efficient sorting algorithm with O(N log N) time complexity, such as Merge Sort or Quick Sort.',
+    difficulty: 'medium',
+    language: 'cpp',
+    buggyCode: `#include <iostream>
+using namespace std;
+
+class Sorter {
+public:
+    // Bug: O(N^2) time complexity
+    void bubbleSort(int arr[], int n) {
+        for(int i = 0; i < n-1; i++) {
+            for(int j = 0; j < n-i-1; j++) {
+                if(arr[j] > arr[j+1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                }
+            }
+        }
+    }
+};
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    
+    Sorter sorter;
+    sorter.bubbleSort(arr, n);
+    
+    cout << "Sorted array: ";
+    for(int i = 0; i < n; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}`,
+    expectedOutput: 'Sorted array: 11 12 22 25 34 64 90',
+    timeLimit: 600,
+    baseScore: 150,
+    testCase: {
+      input: '',
+      expectedOutput: 'Sorted array: 11 12 22 25 34 64 90\n',
+    },
+    createdAt: new Date('2026-01-19'),
+  },
 ];
