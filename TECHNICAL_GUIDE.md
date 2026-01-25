@@ -17,8 +17,11 @@
 - **PostgreSQL 15** (database)
 - **JWT** (authentication tokens)
 - **bcryptjs** (password hashing)
-- **Google Gemini AI** (code analysis)
-- **g++ compiler** (C++ code execution)
+- **Google Gemini AI** (code analysis for "Run")
+- **Judge0 API via RapidAPI** (code compilation for "Submit")
+- **express-rate-limit** (API rate limiting)
+- **axios** (HTTP client for Judge0)
+- **g++ compiler** (fallback execution)
 
 ### Database
 - **PostgreSQL 15.x**
@@ -45,7 +48,7 @@ bugrank/
 │   │   ├── data/         # storage.ts (database operations), seedChallenges.ts
 │   │   ├── middleware/   # auth.ts (JWT validation), errorHandler.ts
 │   │   ├── routes/       # auth.ts, challenges.ts, submissions.ts, leaderboard.ts
-│   │   ├── services/     # AuthService, SubmissionService, GeminiService, CompilerService
+│   │   ├── services/     # AuthService, SubmissionService, GeminiService, CompilerService, Judge0Service, UsageTracker
 │   │   └── index.ts      # Server entry point
 │   ├── migrations/        # 001_create_tables.sql
 │   └── package.json       # Backend dependencies
@@ -130,8 +133,15 @@ JWT_EXPIRES_IN=24h
 PORT=5000
 NODE_ENV=development
 
-# Google Gemini AI (Optional - fallback analysis works without it)
+# Google Gemini AI (For "Run" button - AI analysis)
 GEMINI_API_KEY=your_gemini_api_key
+
+# Judge0 API via RapidAPI (For "Submit" button - actual compilation)
+JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
+JUDGE0_RAPIDAPI_KEY=your_rapidapi_key_here
+JUDGE0_RAPIDAPI_HOST=judge0-ce.p.rapidapi.com
+JUDGE0_ENABLE_CACHE=true
+JUDGE0_CACHE_TTL=3600
 ```
 
 #### Start Backend Server
@@ -146,10 +156,13 @@ Expected output:
 🐛 Bugrank server running on port 5000
 📝 Environment: development
 🤖 Gemini API: Configured
+⚖️ Judge0 API: Configured (RapidAPI)
 🔐 Auth: PostgreSQL + JWT enabled
 Connected to PostgreSQL database
 📚 Seeding challenges to database...
-✅ Seeded 15 challenges
+✅ Seeded 17 challenges
+💾 Cache: Enabled (TTL: 3600s)
+🛡️ Rate limiting: Active
 ```
 
 ### 4. Frontend Setup
@@ -220,8 +233,8 @@ export default pool;
 - `GET /:id` - Get specific challenge
 
 #### Submission Routes (`/api/submissions`)
-- `POST /run` - Test code without scoring
-- `POST /submit` - Submit code for scoring
+- `POST /run` - Test code with AI analysis (FREE) - Rate limit: 30/5min
+- `POST /submit` - Submit code for Judge0 compilation (PAID) - Rate limit: 15/15min
 - `GET /history` - Get user's submission history
 
 #### Leaderboard Routes (`/api/leaderboard`)
@@ -332,6 +345,9 @@ npx serve -s client/dist -l 3000
 - Set NODE_ENV=production
 - Configure CORS for production domains
 - Use HTTPS for all connections
+- Set Judge0 RapidAPI credentials
+- Enable caching for cost optimization
+- Configure rate limiting per production needs
 
 ## 🐛 Troubleshooting
 

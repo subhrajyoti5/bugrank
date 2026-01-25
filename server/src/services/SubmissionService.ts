@@ -25,7 +25,8 @@ export class SubmissionService extends BaseService {
   }
 
   /**
-   * Handle "Run" button - Test code without scoring or attempt counting
+   * Handle "Run" button - Test code using AI analysis only (FREE)
+   * Changed to use only AI analysis - no actual compilation to save costs
    */
   async runCode(
     userId: string,
@@ -37,43 +38,38 @@ export class SubmissionService extends BaseService {
     aiAnalysis?: AIAnalysis; 
     feedback?: string;
   }> {
-    this.logInfo('Running code (no scoring)', { userId, challengeId });
+    this.logInfo('Running code with AI analysis (no scoring)', { userId, challengeId });
 
     const challenge = await this.getChallenge(challengeId);
     if (!challenge) {
       throw new Error('Challenge not found');
     }
 
-    // Compile and run if C++
-    if (challenge.language === 'cpp') {
-      const input = testInput || '';
-      const numChallengeId = typeof challengeId === 'string' ? parseInt(challengeId, 10) : challengeId;
-      const result = await this.compilerService.compileAndRun(code, input, numChallengeId);
-      const compilerOutput = this.compilerService.formatCompilerOutput(result.compilation, result.execution);
-      
-      this.compilerService.cleanup(numChallengeId);
-
-      return {
-        compilerOutput,
-      };
-    }
-
-    // For non-C++ languages, use AI analysis
+    // Use AI analysis only - FREE (no Judge0 API calls)
     const aiAnalysis = await this.geminiService.analyzeCode(
       challenge.buggyCode,
       code,
       challenge.language
     );
 
+    // Format AI feedback as if it were compiler output
+    const feedback = this.generateFeedback(aiAnalysis, false);
+    const compilerOutput = `🤖 AI Code Analysis (Test Mode)\n\n${feedback}\n\n${
+      aiAnalysis.isCorrect 
+        ? '✅ AI suggests your code looks correct! Click Submit to verify with actual compilation.' 
+        : '❌ AI detected potential issues. Review the feedback above.'
+    }`;
+
     return {
-      compilerOutput: '',
+      compilerOutput,
       aiAnalysis,
-      feedback: this.generateFeedback(aiAnalysis, false),
+      feedback,
     };
   }
 
   /**
-   * Handle "Submit" button - Full evaluation with scoring (only if correct)
+   * Handle "Submit" button - Full evaluation with scoring using Judge0 API (PAID)
+   * Uses Judge0 for actual compilation with fallback to local
    */
   async submitCode(
     userId: string,
@@ -88,7 +84,7 @@ export class SubmissionService extends BaseService {
     compilerOutput?: string;
     message: string;
   }> {
-    this.logInfo('Submitting code for evaluation', { userId, challengeId });
+    this.logInfo('Submitting code for evaluation (Judge0 API)', { userId, challengeId });
 
     const challenge = await this.getChallenge(challengeId);
     if (!challenge) {
@@ -99,7 +95,7 @@ export class SubmissionService extends BaseService {
     const attempts = await this.getUserAttempts(userId, challengeId);
     const linesChanged = this.calculateLinesChanged(challenge.buggyCode, code);
 
-    // Compile and run if C++
+    // Compile and run if C++ using Judge0 (with local fallback)
     let compilerOutput = '';
     let compilationSuccess = true;
     let testCaseOutput = '';
@@ -108,7 +104,7 @@ export class SubmissionService extends BaseService {
     if (challenge.language === 'cpp') {
       const numChallengeId = typeof challengeId === 'string' ? parseInt(challengeId, 10) : challengeId;
       
-      // First run with test case input
+      // Run with test case input (uses Judge0 - $0.0017)
       if (challenge.testCase) {
         const result = await this.compilerService.compileAndRun(code, challenge.testCase.input, numChallengeId);
         compilationSuccess = result.compilation.success && result.execution?.success;
@@ -142,7 +138,7 @@ export class SubmissionService extends BaseService {
       this.compilerService.cleanup(numChallengeId);
     }
 
-    // Perform AI analysis
+    // Perform AI analysis for additional insights
     const aiAnalysis = await this.geminiService.analyzeCode(
       challenge.buggyCode,
       code,

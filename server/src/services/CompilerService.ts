@@ -2,6 +2,8 @@ import { spawn, spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { Judge0Service } from './Judge0Service';
+import { usageTracker } from './UsageTracker';
 
 interface CompilationResult {
   success: boolean;
@@ -24,18 +26,99 @@ export class CompilerService {
   private tempDir: string;
   private readonly TIMEOUT_MS = 5000;
   private readonly MAX_MEMORY_MB = 256;
+  private judge0Service: Judge0Service;
 
   constructor() {
     this.tempDir = path.join(os.tmpdir(), 'bugrank-compile');
     if (!fs.existsSync(this.tempDir)) {
       fs.mkdirSync(this.tempDir, { recursive: true });
     }
+    this.judge0Service = new Judge0Service();
   }
 
   /**
-   * Compile C++ code
+   * Compile and execute in one go
+   * Uses Judge0 API with fallback to local compilation
    */
-  async compileCpp(sourceCode: string, challengeId: number): Promise<CompilationResult> {
+  async compileAndRun(
+    sourceCode: string,
+    input: string,
+    challengeId: number
+  ): Promise<{
+    compilation: CompilationResult;
+    execution?: ExecutionResult;
+  }> {
+    // Try Judge0 first (paid API - $0.0017 per submission)
+    try {
+      console.log(`🔄 Attempting Judge0 compilation for challenge ${challengeId}`);
+      const judge0Result = await this.judge0Service.compileAndRun(sourceCode, 'cpp', input);
+      
+      // Track usage (only if not from cache)
+      if (!judge0Result.status) {
+        usageTracker.trackSubmission();
+      }
+
+      // Convert Judge0 result to our format
+      const isCompileSuccess = judge0Result.status.id !== 6; // Status 6 = Compilation Error
+      const isExecutionSuccess = judge0Result.status.id === 3; // Status 3 = Accepted
+
+      const compilation: CompilationResult = {
+        success: isCompileSuccess,
+        compilationTime: judge0Result.time ? parseFloat(judge0Result.time) * 1000 : 0,
+        output: isCompileSuccess ? 'Compilation successful' : 'Compilation failed',
+        errors: judge0Result.compile_output || judge0Result.stderr || '',
+        warnings: '',
+      };
+
+      if (!isCompileSuccess) {
+        return { compilation };
+      }
+
+      const execution: ExecutionResult = {
+        success: isExecutionSuccess,
+        output: judge0Result.stdout || '',
+        executionTime: judge0Result.time ? parseFloat(judge0Result.time) * 1000 : 0,
+        exitCode: judge0Result.status.id === 3 ? 0 : judge0Result.status.id,
+        timedOut: judge0Result.status.id === 5, // Status 5 = TLE
+        memoryUsed: judge0Result.memory || 0,
+      };
+
+      console.log(`✅ Judge0 compilation successful`);
+      return { compilation, execution };
+
+    } catch (error: any) {
+      console.warn(`⚠️ Judge0 failed, falling back to local compilation:`, error.message);
+      
+      // Fallback to local compilation
+      return await this.compileAndRunLocal(sourceCode, input, challengeId);
+    }
+  }
+
+  /**
+   * Local compilation (fallback method)
+   */
+  private async compileAndRunLocal(
+    sourceCode: string,
+    input: string,
+    challengeId: number
+  ): Promise<{
+    compilation: CompilationResult;
+    execution?: ExecutionResult;
+  }> {
+    const compilation = await this.compileCpp(sourceCode, challengeId);
+
+    if (!compilation.success) {
+      return { compilation };
+    }
+
+    const execution = await this.executeProgram(challengeId, input);
+    return { compilation, execution };
+  }
+
+  /**
+   * Compile C++ code (local fallback)
+   */
+  private async compileCpp(sourceCode: string, challengeId: number): Promise<CompilationResult> {
     const startTime = Date.now();
     const sourceFile = path.join(this.tempDir, `challenge-${challengeId}.cpp`);
     const executablePath = path.join(this.tempDir, `challenge-${challengeId}.exe`);

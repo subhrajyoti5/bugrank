@@ -44,19 +44,24 @@ Traditional coding platforms focus on algorithmic problem-solving. Bugrank focus
 - Line-by-line comparison with original code
 
 ### 4. Code Execution & Validation
-- **Real-time C++ compilation** using g++ compiler
+- **Hybrid execution strategy**:
+  - "Run" button: AI-powered code analysis (Gemini AI) - FREE and instant
+  - "Submit" button: Real compilation via Judge0 API (RapidAPI) - accurate validation
 - Automatic test case validation
-- Compilation error detection
+- Compilation error detection with detailed feedback
 - Memory leak detection
 - Output comparison with expected results
+- Fallback to local g++ compiler if Judge0 unavailable
 
 ### 5. AI-Powered Analysis
-- **Gemini AI integration** for code quality analysis
+- **Gemini AI integration** for instant code feedback on "Run"
+- Smart caching with 1-hour TTL to optimize performance
 - Fallback local analysis when AI is unavailable
 - Evaluates:
   - Correctness of the fix
   - Code efficiency
   - Code quality and best practices
+- Rate limiting: 30 runs per 5 minutes, 15 submissions per 15 minutes
 
 ### 6. Scoring Algorithm
 ```

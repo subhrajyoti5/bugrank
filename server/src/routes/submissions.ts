@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { AuthRequest, authMiddleware } from '@/middleware/auth';
 import { SubmissionService } from '@/services/SubmissionService';
 import { userDb } from '@/data/storage';
+import { submissionLimiter, runLimiter } from '@/middleware/rateLimiter';
 
 const router = Router();
 const submissionService = new SubmissionService();
@@ -9,8 +10,9 @@ const submissionService = new SubmissionService();
 /**
  * POST /api/submissions/run
  * Test code without scoring or attempt counting
+ * Uses AI analysis only (FREE) - 30 runs per 5 minutes
  */
-router.post('/run', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.post('/run', authMiddleware, runLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { challengeId, code, testInput } = req.body;
     const userId = req.user?.id || 'demo-user';
@@ -40,8 +42,9 @@ router.post('/run', authMiddleware, async (req: AuthRequest, res: Response) => {
 /**
  * POST /api/submissions/submit
  * Submit code for full evaluation with scoring
+ * Uses Judge0 API (PAID - $0.0017 per submission) - 15 submissions per 15 minutes
  */
-router.post('/submit', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.post('/submit', authMiddleware, submissionLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { challengeId, code, timeTaken, testInput } = req.body;
     const userId = req.user?.id;
