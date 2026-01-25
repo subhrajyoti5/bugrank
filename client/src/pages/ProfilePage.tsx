@@ -1,155 +1,204 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { submissionService } from '@/services/submissionService';
-import apiClient from '@/services/api';
-import { User, Code2, Trophy, Target, TrendingUp } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { Target, Trophy, Code2 } from 'lucide-react';
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
-  const [submissions, setSubmissions] = useState<any[]>([]);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, refreshUser } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      loadProfileData();
-    }
-  }, [user]);
+    refreshUser().catch(error => {
+      console.error('Failed to refresh user data:', error);
+    });
+  }, [refreshUser]);
 
-  const loadProfileData = async () => {
-    if (!user) return;
+  // Generate stable heatmap heights using useMemo
+  const heatmapHeights = useMemo(() => {
+    return Array.from({ length: 40 }, () => Math.random() * 100);
+  }, []);
 
-    try {
-      // Fetch fresh profile data from backend
-      const profileResponse = await apiClient.get(`/api/submissions/profile/${user.id}`);
-      setProfile(profileResponse.data.data);
-
-      // Fetch submissions
-      const submissionsResponse = await submissionService.getUserSubmissions(user.id);
-      setSubmissions(submissionsResponse);
-    } catch (error) {
-      toast.error('Failed to load profile data');
-      console.error(error);
-      // Use user data from context as fallback
-      setProfile(user);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (!user) {
     return (
-      <div className="page-container flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-400"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[#0a0a0a]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-violet-500"></div>
       </div>
     );
   }
 
-  if (!user) return null;
-
-  // Use fetched profile data, fallback to user from context
-  const displayUser = profile || user;
-  const successRate = displayUser.totalSubmissions > 0
-    ? Math.round((displayUser.successfulSubmissions / displayUser.totalSubmissions) * 100)
+  const successRate = user.totalSubmissions > 0
+    ? ((user.successfulSubmissions || 0) / (user.totalSubmissions || 1) * 100).toFixed(0)
     : 0;
 
   return (
-    <div className="page-container">
-      <div className="content-wrapper max-w-5xl mx-auto">
-        {/* Profile Header */}
-        <div className="bg-slate-900 border border-slate-800 rounded-md p-3 mb-5 animate-fade-in">
-          <div className="flex items-center space-x-3">
+    <div className="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans selection:bg-violet-500/30 pb-20">
+
+      {/* Hero Banner with organic mesh gradient */}
+      <div className="relative h-64 w-full overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-violet-900 via-indigo-900 to-slate-900"></div>
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-orange-500/20 via-transparent to-transparent opacity-70"></div>
+        <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-500/20 via-transparent to-transparent opacity-70"></div>
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 relative z-10 -mt-32">
+
+        {/* Player Card Header */}
+        <div className="flex flex-col items-center text-center">
+          <div className="relative group cursor-pointer">
+            <div className="absolute -inset-1 bg-gradient-to-br from-violet-600 to-orange-500 rounded-full blur opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"></div>
             <img
-              src={displayUser.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(displayUser.displayName)}
-              alt={displayUser.displayName}
-              className="h-16 w-16 rounded-full flex-shrink-0"
+              src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=random&size=150`}
+              alt={user.displayName}
+              className="w-40 h-40 rounded-full object-cover border-4 border-[#0a0a0a] relative z-10 shadow-2xl transition-transform duration-500 group-hover:rotate-3 group-hover:scale-105"
             />
-            <div className="flex-1 min-w-0">
-              <h1 className="text-sm font-semibold text-slate-100">{displayUser.displayName}</h1>
-              <p className="text-xs text-slate-500 mt-0.5 truncate">{displayUser.email}</p>
-              <div className="flex items-center space-x-3 text-xs mt-2">
-                <div className="flex items-center space-x-1">
-                  <Trophy className="h-3.5 w-3.5 text-yellow-500 flex-shrink-0" />
-                  <span className="font-medium text-slate-200">{displayUser.totalScore}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Target className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" />
-                  <span className="text-slate-400">{displayUser.successfulSubmissions}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <TrendingUp className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
-                  <span className="text-slate-400">{successRate}%</span>
-                </div>
+            <div className="absolute bottom-2 right-2 z-20 bg-[#0a0a0a] text-amber-400 p-1.5 rounded-full border border-amber-500/30 shadow-lg">
+              <Trophy className="w-5 h-5" fill="currentColor" />
+            </div>
+          </div>
+
+          <div className="mt-6 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-100">
+            <h1 className="text-5xl font-black text-white tracking-tight mb-2 drop-shadow-xl">{user.displayName}</h1>
+            <div className="flex items-center justify-center gap-3 text-sm font-medium">
+              <span className="px-3 py-1 bg-violet-500/10 text-violet-400 rounded-full border border-violet-500/20 shadow-[0_0_15px_rgba(139,92,246,0.2)]">Level {Math.floor(user.totalScore / 100) + 1} Hacker</span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-400">@{user.username || 'code_wizard'}</span>
+            </div>
+          </div>
+
+          {/* Main Stats - Floating Pills */}
+          <div className="flex flex-wrap justify-center gap-4 mt-8 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-200">
+            <div className="bg-[#111] hover:bg-[#161616] border border-white/5 px-6 py-3 rounded-2xl flex items-center gap-3 transition-all hover:scale-105 hover:border-violet-500/30 group">
+              <div className="bg-violet-500/20 p-2 rounded-lg text-violet-400 group-hover:text-violet-300">
+                <Target className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-3xl font-bold text-white leading-none">{user.totalScore}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Reputation</div>
+              </div>
+            </div>
+
+            <div className="bg-[#111] hover:bg-[#161616] border border-white/5 px-6 py-3 rounded-2xl flex items-center gap-3 transition-all hover:scale-105 hover:border-emerald-500/30 group">
+              <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400 group-hover:text-emerald-300">
+                <Code2 className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-3xl font-bold text-white leading-none">{user.successfulSubmissions || 0}</div>
+                <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Solutions</div>
+              </div>
+            </div>
+
+            <div className="bg-[#111] hover:bg-[#161616] border border-white/5 px-6 py-3 rounded-2xl flex items-center gap-3 transition-all hover:scale-105 hover:border-orange-500/30 group">
+              <div className="bg-orange-500/20 p-2 rounded-lg text-orange-400 group-hover:text-orange-300">
+                <Target className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <div className="text-3xl font-bold text-white leading-none">{successRate}%</div>
+                <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Precision</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid md:grid-cols-4 gap-2 mb-5">
-          <div className="bg-slate-900 border border-slate-800 rounded-md p-2.5 text-center animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            <div className="text-xl font-bold text-orange-400 mb-0.5">{displayUser.totalScore}</div>
-            <div className="text-xs text-slate-400">Points</div>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-md p-2.5 text-center animate-slide-up" style={{ animationDelay: '0.15s' }}>
-            <div className="text-xl font-bold text-emerald-400 mb-0.5">{displayUser.successfulSubmissions}</div>
-            <div className="text-xs text-slate-400">Solved</div>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-md p-2.5 text-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="text-xl font-bold text-blue-400 mb-0.5">{displayUser.totalSubmissions}</div>
-            <div className="text-xs text-slate-400">Attempts</div>
-          </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-md p-2.5 text-center animate-slide-up" style={{ animationDelay: '0.25s' }}>
-            <div className="text-xl font-bold text-purple-400 mb-0.5">{successRate}%</div>
-            <div className="text-xs text-slate-400">Success</div>
-          </div>
-        </div>
+        {/* Content Bento Grid */}
+        <div className="grid md:grid-cols-12 gap-6 mt-16 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
 
-        {/* Recent Submissions */}
-        <div className="bg-slate-900 border border-slate-800 rounded-md p-3 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-          <h2 className="text-xs font-semibold text-slate-200 mb-3 flex items-center space-x-1.5 uppercase tracking-wide">
-            <Code2 className="h-3.5 w-3.5 text-orange-400" />
-            <span>Submissions</span>
-          </h2>
+          {/* Left Col - Attributes & Skills (4 cols) */}
+          <div className="md:col-span-4 space-y-6">
+            <div className="bg-[#111] border border-white/5 rounded-3xl p-6 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/20 transition-all"></div>
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <span>⚡</span> Attributes
+              </h3>
 
-          {submissions.length === 0 ? (
-            <div className="text-center py-6">
-              <Code2 className="h-10 w-10 text-slate-700 mx-auto mb-2" />
-              <p className="text-slate-400 text-xs">No submissions yet</p>
+              <div className="space-y-5">
+                <div>
+                  <div className="flex justify-between text-xs font-bold text-slate-400 mb-1 uppercase tracking-wide">
+                    <span>Problem Solving</span>
+                    <span className="text-violet-400">85/100</span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-violet-600 to-purple-400 w-[85%] rounded-full shadow-[0_0_10px_rgba(139,92,246,0.3)]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-bold text-slate-400 mb-1 uppercase tracking-wide">
+                    <span>Debugging</span>
+                    <span className="text-emerald-400">92/100</span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-emerald-600 to-teal-400 w-[92%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-bold text-slate-400 mb-1 uppercase tracking-wide">
+                    <span>Consistency</span>
+                    <span className="text-orange-400">74/100</span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-orange-600 to-amber-400 w-[74%] rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-white/5">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Tech Arsenal</h4>
+                <div className="flex flex-wrap gap-2">
+                  {['React', 'Node.js', 'Python', 'Rust'].map(tag => (
+                    <span key={tag} className="px-3 py-1 bg-slate-800/50 text-slate-300 text-xs rounded-lg border border-white/5 hover:border-violet-500/50 hover:bg-violet-900/20 transition-all cursor-default">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-1.5">
-              {submissions.slice(0, 10).map((submission: any) => (
-                <div
-                  key={submission.id}
-                  className="flex items-center justify-between p-2.5 rounded text-xs border border-slate-800 hover:bg-slate-800/50 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-slate-200 truncate">{submission.challengeTitle || 'Challenge'}</p>
-                    <p className="text-slate-500 mt-0.5 text-xs">
-                      {new Date(submission.createdAt).toLocaleDateString()} {new Date(submission.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-                    </p>
-                  </div>
-                  <div className="text-right ml-2 flex-shrink-0">
-                    {submission.isCorrect ? (
-                      <span className="inline-block px-1.5 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-400">
-                        ✓
-                      </span>
-                    ) : (
-                      <span className="inline-block px-1.5 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-400">
-                        ✗
-                      </span>
-                    )}
-                    {submission.score && (
-                      <p className="text-xs font-semibold text-orange-400 mt-1">{submission.score}pts</p>
-                    )}
-                  </div>
+          </div>
+
+          {/* Right Col - Activity & Badges (8 cols) */}
+          <div className="md:col-span-8 space-y-6">
+
+            {/* Activity Heatmap Area - Styled as QUEST LOG */}
+            <div className="bg-[#111] border border-white/5 rounded-3xl p-8 relative overflow-hidden">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Quest Log</h3>
+                  <p className="text-sm text-slate-500">Contribution history over the last year</p>
+                </div>
+                <div className="text-right hidden sm:block">
+                  <span className="text-2xl font-bold text-emerald-400">{user.totalSubmissions}</span>
+                  <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Actions</p>
+                </div>
+              </div>
+
+              {/* Faux Heatmap Visual for now - Replace with actual logic if needed */}
+              <div className="flex gap-1 h-32 items-end justify-between opacity-50 mask-image-gradient">
+                {heatmapHeights.map((height, i) => (
+                  <div
+                    key={i}
+                    className="w-full bg-violet-500/20 rounded-t-sm hover:bg-violet-500/60 transition-colors"
+                    style={{ height: `${height}%` }}
+                  ></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Badges Cabinet */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: 'Bug Slayer', icon: '⚔️', desc: 'Solved 10+ bugs', bg: 'bg-red-500/10 border-red-500/20' },
+                { name: 'Early Bird', icon: '🌅', desc: 'Active at 5AM', bg: 'bg-amber-500/10 border-amber-500/20' },
+                { name: 'Sniper', icon: '🎯', desc: '100% Accuracy', bg: 'bg-cyan-500/10 border-cyan-500/20' },
+                { name: 'Veteran', icon: '🎖️', desc: 'Year Member', bg: 'bg-purple-500/10 border-purple-500/20' },
+              ].map((badge, i) => (
+                <div key={i} className={`rounded-2xl p-4 border ${badge.bg} flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg cursor-pointer group`}>
+                  <div className="text-3xl mb-2 group-hover:animate-bounce">{badge.icon}</div>
+                  <div className="font-bold text-white text-sm">{badge.name}</div>
+                  <div className="text-[10px] text-slate-400 mt-1">{badge.desc}</div>
                 </div>
               ))}
             </div>
-          )}
+
+          </div>
         </div>
+
       </div>
     </div>
   );
