@@ -106,10 +106,10 @@ const LeaderboardPage: React.FC = () => {
       <div className="content-wrapper max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-20 text-center animate-fade-in relative z-20">
-          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 mb-2">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-200 dark:to-slate-400 mb-2">
             Leaderboard
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-600 dark:text-slate-400 text-sm">
             Top debuggers climbing the ranks of excellence
           </p>
         </div>
@@ -148,9 +148,9 @@ const LeaderboardPage: React.FC = () => {
         <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.1s' }}>
           {entries.length === 0 ? (
             <div className="text-center py-12 px-4 glass rounded-xl">
-              <Trophy className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-              <h3 className="text-sm font-semibold text-slate-200 mb-1">No Rankings Yet</h3>
-              <p className="text-xs text-slate-400">Be the first to complete a challenge!</p>
+              <Trophy className="h-12 w-12 text-slate-400 dark:text-slate-700 mx-auto mb-3" />
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">No Rankings Yet</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Be the first to complete a challenge!</p>
             </div>
           ) : (
             <>
@@ -171,28 +171,28 @@ const LeaderboardPage: React.FC = () => {
                     key={entry.userId}
                     className={`grid grid-cols-12 gap-4 px-6 py-3 items-center rounded-xl border transition-all duration-200 ${isMe
                       ? 'bg-primary-500/10 border-primary-500/30 scale-[1.01]'
-                      : 'glass hover:bg-slate-800/60 border-white/5 hover:border-white/10'
+                      : 'glass hover:bg-slate-200/50 dark:hover:bg-slate-800/60 border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10'
                       }`}
                   >
-                    <div className="col-span-1 font-mono text-slate-400 font-bold">#{rank}</div>
+                    <div className="col-span-1 font-mono text-slate-600 dark:text-slate-400 font-bold">#{rank}</div>
                     <div className="col-span-1">
                       <img
                         src={entry.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.displayName)}
                         alt={entry.displayName}
-                        className="h-8 w-8 rounded-full ring-1 ring-slate-700"
+                        className="h-8 w-8 rounded-full ring-1 ring-slate-300 dark:ring-slate-700"
                       />
                     </div>
                     <div className="col-span-6 flex items-center gap-2">
-                      <span className={`font-medium ${isMe ? 'text-primary-400' : 'text-slate-200'}`}>
+                      <span className={`font-medium ${isMe ? 'text-primary-400' : 'text-slate-900 dark:text-slate-200'}`}>
                         {entry.displayName}
                       </span>
                       {isMe && <span className="text-[10px] bg-primary-500/20 text-primary-300 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">You</span>}
                     </div>
                     <div className="col-span-2 text-right">
-                      <span className="font-bold text-slate-200">{entry.totalScore}</span>
+                      <span className="font-bold text-slate-900 dark:text-slate-200">{entry.totalScore}</span>
                     </div>
                     <div className="col-span-2 text-right">
-                      <span className="text-slate-400 text-sm">{entry.successfulSubmissions}</span>
+                      <span className="text-slate-600 dark:text-slate-400 text-sm">{entry.successfulSubmissions}</span>
                     </div>
                   </div>
                 );

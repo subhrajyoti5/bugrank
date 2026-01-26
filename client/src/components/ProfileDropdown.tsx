@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { ChevronDown, User, Settings, LogOut, Moon, Sun } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const { user } = useAuth();
@@ -29,9 +30,20 @@ const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   if (!user) return null;
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
-    // In a real app, this would toggle a class on the html element
-    document.documentElement.classList.toggle('dark');
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    
+    // Save to localStorage
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    
+    // Toggle dark class on html element
+    if (newTheme) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    toast.success(`Switched to ${newTheme ? 'Dark' : 'Light'} mode`);
   };
 
   return (
@@ -63,7 +75,7 @@ const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-72 bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50 backdrop-blur-sm bg-black/40">
+        <div className="absolute right-0 mt-3 w-72 bg-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
           {/* Header Stats */}
           <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-r from-violet-900/20 to-orange-900/20">
             <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-3">Quick Stats</p>

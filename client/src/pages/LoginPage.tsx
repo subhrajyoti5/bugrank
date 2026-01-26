@@ -41,24 +41,24 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-purple-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 flex items-center justify-center px-4 transition-colors">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="flex justify-center mb-4">
             <Bug className="h-20 w-20 text-primary-600 animate-pulse-slow" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome to Bugrank</h1>
-          <p className="text-lg text-gray-600">Debug. Compete. Win.</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Welcome to Bugrank</h1>
+          <p className="text-lg text-gray-600 dark:text-slate-400">Debug. Compete. Win.</p>
         </div>
 
         {/* Login/Register Card */}
         <div className="card animate-slide-up">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
               {isRegister ? 'Create Account' : 'Sign In'}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-slate-400">
               {isRegister 
                 ? 'Start your debugging journey' 
                 : 'Continue your debugging challenges'}
@@ -68,19 +68,19 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
               <div>
-                <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                   Display Name
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                   </div>
                   <input
                     id="displayName"
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Your name"
                     required={isRegister}
                   />
@@ -89,19 +89,19 @@ const LoginPage: React.FC = () => {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                 Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="you@example.com"
                   required
                 />
@@ -109,26 +109,26 @@ const LoginPage: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-gray-400 dark:text-slate-500" />
                 </div>
                 <input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="••••••••"
                   minLength={6}
                   required
                 />
               </div>
               {isRegister && (
-                <p className="mt-1 text-xs text-gray-500">Minimum 6 characters</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-slate-500">Minimum 6 characters</p>
               )}
             </div>
 
@@ -148,7 +148,7 @@ const LoginPage: React.FC = () => {
           <div className="mt-6 text-center">
             <button
               onClick={() => setIsRegister(!isRegister)}
-              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
             >
               {isRegister 
                 ? 'Already have an account? Sign in' 
@@ -156,8 +156,8 @@ const LoginPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
+            <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-slate-400">
               <Sparkles className="h-4 w-4 text-yellow-500" />
               <span>AI-powered feedback on your code fixes</span>
             </div>
@@ -168,15 +168,15 @@ const LoginPage: React.FC = () => {
         <div className="mt-8 grid grid-cols-3 gap-4 text-center animate-fade-in">
           <div className="p-3">
             <div className="text-2xl font-bold text-primary-600">16+</div>
-            <div className="text-xs text-gray-600">Challenges</div>
+            <div className="text-xs text-gray-600 dark:text-slate-400">Challenges</div>
           </div>
           <div className="p-3">
             <div className="text-2xl font-bold text-primary-600">AI</div>
-            <div className="text-xs text-gray-600">Powered</div>
+            <div className="text-xs text-gray-600 dark:text-slate-400">Powered</div>
           </div>
           <div className="p-3">
             <div className="text-2xl font-bold text-primary-600">Free</div>
-            <div className="text-xs text-gray-600">Testing</div>
+            <div className="text-xs text-gray-600 dark:text-slate-400">Testing</div>
           </div>
         </div>
       </div>
