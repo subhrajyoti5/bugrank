@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Terminal, Code2, Cpu, Zap, ChevronRight, Hash, Bug, CheckCircle2, Star, Users, TrendingUp, Shield, Award, Clock, Coffee } from 'lucide-react';
+import { Terminal, Code2, Cpu, Zap, ChevronRight, Hash, Bug, CheckCircle2, Star, Users, TrendingUp, Shield, Award, Clock, Coffee, ChevronLeft, Search, Edit3, Play } from 'lucide-react';
 
 const FloatingCodePreview = () => {
     return (
@@ -51,14 +51,260 @@ const FloatingCodePreview = () => {
 };
 
 
-const FeatureCard = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => {
+const TimelineSection = () => {
+    const [visibleItems, setVisibleItems] = useState<boolean[]>([false, false, false]);
+    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        const observers = itemRefs.current.map((ref, index) => {
+            if (!ref) return null;
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            setVisibleItems((prev) => {
+                                const newVisible = [...prev];
+                                newVisible[index] = true;
+                                return newVisible;
+                            });
+                        }
+                    });
+                },
+                { threshold: 0.2 }
+            );
+
+            observer.observe(ref);
+            return observer;
+        });
+
+        return () => {
+            observers.forEach((observer) => observer?.disconnect());
+        };
+    }, []);
+
     return (
-        <div className="p-6 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-orange-500/30 transition-all duration-300 group">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500/10 to-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Icon className="w-6 h-6 text-orange-400" />
+        <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gradient-to-b from-orange-500/50 via-orange-500/30 to-orange-500/50"></div>
+
+            {/* Timeline Item 1 */}
+            <div
+                ref={(el) => (itemRefs.current[0] = el)}
+                className={`relative flex items-center mb-24 transition-all duration-700 ${
+                    visibleItems[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+            >
+                <div className="w-1/2 pr-12 text-right">
+                    <div className="inline-block p-6 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-orange-500/50 transition-all duration-300">
+                        <h3 className="text-2xl font-semibold text-white mb-3">Pick a Challenge</h3>
+                        <p className="text-slate-400">
+                            Start with something easy or jump into the deep end. Each bug has a short description of what's broken and what it should do instead.
+                        </p>
+                    </div>
+                </div>
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 group hover:scale-110 transition-transform duration-300">
+                    <Search className="w-7 h-7 text-white" />
+                </div>
+                <div className="w-1/2 pl-12"></div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
+
+            {/* Timeline Item 2 */}
+            <div
+                ref={(el) => (itemRefs.current[1] = el)}
+                className={`relative flex items-center mb-24 transition-all duration-700 delay-200 ${
+                    visibleItems[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+            >
+                <div className="w-1/2 pr-12"></div>
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 border-4 border-slate-950 flex items-center justify-center z-10 group hover:scale-110 transition-transform duration-300">
+                    <Edit3 className="w-7 h-7 text-white" />
+                </div>
+                <div className="w-1/2 pl-12">
+                    <div className="inline-block p-6 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-blue-500/50 transition-all duration-300">
+                        <h3 className="text-2xl font-semibold text-white mb-3">Read and Fix</h3>
+                        <p className="text-slate-400">
+                            The code is right there in your browser. Read it, understand what's wrong, and edit it directly. No fancy IDE required.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Timeline Item 3 */}
+            <div
+                ref={(el) => (itemRefs.current[2] = el)}
+                className={`relative flex items-center transition-all duration-700 delay-500 ${
+                    visibleItems[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+            >
+                <div className="w-1/2 pr-12 text-right">
+                    <div className="inline-block p-6 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300">
+                        <h3 className="text-2xl font-semibold text-white mb-3">See If It Works</h3>
+                        <p className="text-slate-400">
+                            Hit submit and we'll run the tests. If something's still broken, you'll see exactly which test failed and why.
+                        </p>
+                    </div>
+                </div>
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 border-4 border-slate-950 flex items-center justify-center z-10 group hover:scale-110 transition-transform duration-300">
+                    <Play className="w-7 h-7 text-white" />
+                </div>
+                <div className="w-1/2 pl-12"></div>
+            </div>
+        </div>
+    );
+};
+
+
+const FeatureCard = ({ icon: Icon, title, description, gradient = false, isCenter = false }: { icon: any, title: string, description: string, gradient?: boolean, isCenter?: boolean }) => {
+    return (
+        <div className={`group relative p-8 rounded-2xl border transition-all duration-500 min-w-[320px] h-[480px] flex flex-col ${
+            gradient 
+                ? 'bg-gradient-to-br from-orange-500/5 via-slate-900/50 to-blue-500/5 border-orange-500/20 hover:border-orange-500/40' 
+                : 'bg-slate-900/50 border-slate-800 hover:border-orange-500/30'
+        } ${!isCenter ? 'blur-sm scale-95 opacity-60' : 'blur-0 scale-100 opacity-100'}`}>
+            {/* Decorative corner element */}
+            <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            <div className="relative flex-1 flex flex-col">
+                <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-orange-500/10 to-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <Icon className="w-10 h-10 text-orange-400" />
+                </div>
+                <h3 className="text-2xl font-semibold text-white mb-4 group-hover:text-orange-100 transition-colors">{title}</h3>
+                <p className="text-slate-400 text-base leading-relaxed group-hover:text-slate-300 transition-colors flex-1">{description}</p>
+            </div>
+            
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-orange-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-b-2xl" />
+        </div>
+    );
+};
+
+const HorizontalScroll = ({ children }: { children: React.ReactNode }) => {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const [centerCardIndex, setCenterCardIndex] = useState(0);
+
+    const checkScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setCanScrollLeft(scrollLeft > 0);
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+            
+            // Calculate which card is in center
+            const cardWidth = 320; // card width
+            const gap = 80; // gap between cards
+            const centerViewport = scrollLeft + clientWidth / 2;
+            const cardCenter = cardWidth / 2;
+            
+            // Find which card's center is closest to viewport center
+            const index = Math.round((centerViewport - cardCenter) / (cardWidth + gap));
+            setCenterCardIndex(Math.max(0, index));
+        }
+    };
+
+    useEffect(() => {
+        checkScroll();
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.addEventListener('scroll', checkScroll);
+            window.addEventListener('resize', checkScroll);
+            return () => {
+                container.removeEventListener('scroll', checkScroll);
+                window.removeEventListener('resize', checkScroll);
+            };
+        }
+    }, []);
+
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const scrollAmount = 400; // card width + gap
+            scrollContainerRef.current.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (scrollContainerRef.current) {
+            setIsDragging(true);
+            setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+            setScrollLeft(scrollContainerRef.current.scrollLeft);
+        }
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging || !scrollContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainerRef.current.offsetLeft;
+        const walk = (x - startX) * 2;
+        scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    return (
+        <div className="relative group/scroll">
+            {/* Left scroll button */}
+            {canScrollLeft && (
+                <button
+                    onClick={() => scroll('left')}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-900/90 border border-slate-800 flex items-center justify-center text-white hover:bg-orange-500 hover:border-orange-500 transition-all duration-200 shadow-xl opacity-0 group-hover/scroll:opacity-100"
+                    aria-label="Scroll left"
+                >
+                    <ChevronLeft className="w-6 h-6" />
+                </button>
+            )}
+
+            {/* Scrollable container */}
+            <div
+                ref={scrollContainerRef}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+                className={`flex gap-20 overflow-x-auto scrollbar-hide pb-4 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+                {React.Children.map(children, (child, index) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, { 
+                            ...child.props, 
+                            isCenter: index === centerCardIndex 
+                        } as any);
+                    }
+                    return child;
+                })}
+            </div>
+
+            {/* Right scroll button */}
+            {canScrollRight && (
+                <button
+                    onClick={() => scroll('right')}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-slate-900/90 border border-slate-800 flex items-center justify-center text-white hover:bg-orange-500 hover:border-orange-500 transition-all duration-200 shadow-xl opacity-0 group-hover/scroll:opacity-100"
+                    aria-label="Scroll right"
+                >
+                    <ChevronRight className="w-6 h-6" />
+                </button>
+            )}
+
+            {/* Gradient overlays */}
+            {canScrollLeft && (
+                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-950 via-slate-950/50 to-transparent pointer-events-none z-10" />
+            )}
+            {canScrollRight && (
+                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-950 via-slate-950/50 to-transparent pointer-events-none z-10" />
+            )}
         </div>
     );
 };
@@ -218,89 +464,78 @@ const LandingPage: React.FC = () => {
                 </section>
 
                 {/* Features Section */}
-                <section id="features" className="py-32 max-w-7xl mx-auto px-6">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                            Stop staring at broken code for hours
-                        </h2>
-                        <p className="text-xl text-slate-400">
-                            We've all been there. A bug that seems impossible to fix. Learn to debug systematically, not desperately.
-                        </p>
-                    </div>
+                <section id="features" className="py-32 max-w-7xl mx-auto px-6 relative">
+                    {/* Background decoration */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-500/5 blur-[100px] rounded-full pointer-events-none" />
+                    
+                    <div className="relative z-10">
+                        <div className="text-center max-w-3xl mx-auto mb-12">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-sm text-orange-400 mb-6">
+                                <Zap className="w-4 h-4" />
+                                <span>Why developers choose us</span>
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                                The debugging practice you actually need
+                            </h2>
+                            <p className="text-xl text-slate-400 mb-4">
+                                Not leetcode-style puzzles. Real bugs from codebases like yours.
+                            </p>
+                            <p className="text-sm text-slate-500">← Drag to explore or use the arrows →</p>
+                        </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <FeatureCard
-                            icon={Bug}
-                            title="Real Bugs, Real Context"
-                            description="Each challenge comes from actual production issues. You'll see the stack trace, error logs, and user reports—just like the real thing."
-                        />
-                        <FeatureCard
-                            icon={Clock}
-                            title="Learn at Your Pace"
-                            description="No time pressure. Take 5 minutes or 5 hours. Read the code, understand the logic, then fix it when you're ready."
-                        />
-                        <FeatureCard
-                            icon={Code2}
-                            title="Common Languages Only"
-                            description="Python, JavaScript, Java, and C++. We focus on what you'll actually use at work, not obscure syntax tricks."
-                        />
-                        <FeatureCard
-                            icon={Coffee}
-                            title="Practical Scenarios"
-                            description="Infinite loops, null pointers, race conditions, memory leaks. The bugs that actually break production systems."
-                        />
-                        <FeatureCard
-                            icon={TrendingUp}
-                            title="See Your Progress"
-                            description="Track which types of bugs you're getting better at. See patterns in your debugging approach over time."
-                        />
-                        <FeatureCard
-                            icon={Terminal}
-                            title="Instant Test Results"
-                            description="Submit your fix and see if it works in seconds. No waiting, no setup, no complicated build processes."
-                        />
+                        {/* Horizontal scrolling features */}
+                        <HorizontalScroll>
+                            <FeatureCard
+                                icon={Bug}
+                                title="It's Not Just Broken Code"
+                                description="Every bug comes with the full story—error messages, stack traces, what the user was trying to do. You know, like real debugging."
+                                gradient={true}
+                            />
+                            
+                            <FeatureCard
+                                icon={Clock}
+                                title="Your Time, Your Rules"
+                                description="Pause mid-debug to grab coffee. Come back three days later. We won't judge. Some bugs need time to marinate in your brain anyway."
+                            />
+                            
+                            <FeatureCard
+                                icon={Code2}
+                                title="Languages That Pay Bills"
+                                description="Python, JavaScript, Java, C++. The ones showing up in job descriptions, not the ones trying to be clever on Twitter."
+                            />
+                            
+                            <FeatureCard
+                                icon={Coffee}
+                                title="Bugs That Matter"
+                                description="The infinite loop that crashed checkout. The null pointer that broke auth. Real problems, not 'reverse a binary tree' nonsense."
+                            />
+                            
+                            <FeatureCard
+                                icon={TrendingUp}
+                                title="Actually Track What You Learn"
+                                description="See which bugs you crush now versus which ones still trip you up. Finally, progress you can measure without lying to yourself."
+                            />
+
+                            <FeatureCard
+                                icon={Terminal}
+                                title="Test Your Fix Instantly"
+                                description="Hit submit. Get results in 2 seconds. No 'npm install' hell. No Docker containers that refuse to start. Just results."
+                                gradient={true}
+                            />
+                        </HorizontalScroll>
                     </div>
                 </section>
 
-                {/* How It Works */}
+                {/* How It Works - Timeline */}
                 <section className="py-32 bg-slate-900/30 border-y border-slate-900">
-                    <div className="max-w-7xl mx-auto px-6">
-                        <div className="text-center mb-16">
+                    <div className="max-w-5xl mx-auto px-6">
+                        <div className="text-center mb-20">
                             <h2 className="text-4xl font-bold text-white mb-4">Here's how it works</h2>
                             <p className="text-slate-400 text-lg">No installation, no setup. Just start debugging.</p>
                         </div>
 
-                        <div className="grid md:grid-cols-3 gap-8">
-                            <div className="relative p-8 rounded-xl bg-slate-950/50 border border-slate-800">
-                                <div className="w-12 h-12 rounded-full bg-orange-500/10 border-2 border-orange-500/50 flex items-center justify-center text-orange-400 font-bold text-xl mb-6">
-                                    1
-                                </div>
-                                <h3 className="text-xl font-semibold text-white mb-3">Pick a Challenge</h3>
-                                <p className="text-slate-400">
-                                    Start with something easy or jump into the deep end. Each bug has a short description of what's broken and what it should do instead.
-                                </p>
-                            </div>
-
-                            <div className="relative p-8 rounded-xl bg-slate-950/50 border border-slate-800">
-                                <div className="w-12 h-12 rounded-full bg-orange-500/10 border-2 border-orange-500/50 flex items-center justify-center text-orange-400 font-bold text-xl mb-6">
-                                    2
-                                </div>
-                                <h3 className="text-xl font-semibold text-white mb-3">Read and Fix</h3>
-                                <p className="text-slate-400">
-                                    The code is right there in your browser. Read it, understand what's wrong, and edit it directly. No fancy IDE required.
-                                </p>
-                            </div>
-
-                            <div className="relative p-8 rounded-xl bg-slate-950/50 border border-slate-800">
-                                <div className="w-12 h-12 rounded-full bg-orange-500/10 border-2 border-orange-500/50 flex items-center justify-center text-orange-400 font-bold text-xl mb-6">
-                                    3
-                                </div>
-                                <h3 className="text-xl font-semibold text-white mb-3">See If It Works</h3>
-                                <p className="text-slate-400">
-                                    Hit submit and we'll run the tests. If something's still broken, you'll see exactly which test failed and why.
-                                </p>
-                            </div>
-                        </div>
+                        {/* Timeline */}
+                        <TimelineSection />
                     </div>
                 </section>
 
