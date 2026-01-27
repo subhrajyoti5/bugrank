@@ -1,4 +1,4 @@
-# Bugrank - System Design Document
+# BugPulse - System Design Document
 
 ## 🏛️ Architecture Overview
 

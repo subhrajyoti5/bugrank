@@ -1,6 +1,6 @@
 # Run this in PowerShell to set up the database
 
-Write-Host "🔧 Setting up Bugrank PostgreSQL Database..." -ForegroundColor Cyan
+Write-Host "🔧 Setting up BugPulse PostgreSQL Database..." -ForegroundColor Cyan
 
 # Check if PostgreSQL is installed
 Write-Host "`n1. Checking PostgreSQL installation..." -ForegroundColor Yellow
@@ -13,9 +13,9 @@ if (-not $psqlPath) {
 Write-Host "✅ PostgreSQL found" -ForegroundColor Green
 
 # Create database
-Write-Host "`n2. Creating database 'bugrank_auth'..." -ForegroundColor Yellow
+Write-Host "`n2. Creating database 'bugpulse_auth'..." -ForegroundColor Yellow
 $createDb = @"
-CREATE DATABASE bugrank_auth;
+CREATE DATABASE bugpulse_auth;
 "@
 
 $createDb | psql -U postgres -c
@@ -29,7 +29,7 @@ if ($LASTEXITCODE -eq 0) {
 # Run migration
 Write-Host "`n3. Running database migration..." -ForegroundColor Yellow
 $migrationPath = Join-Path $PSScriptRoot "server\migrations\001_create_tables.sql"
-psql -U postgres -d bugrank_auth -f $migrationPath
+psql -U postgres -d bugpulse_auth -f $migrationPath
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Migration completed" -ForegroundColor Green

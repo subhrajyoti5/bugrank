@@ -1,4 +1,4 @@
-# Bugrank - Implemented Features
+# BugPulse - Implemented Features
 
 > Current production-ready features (as of January 27, 2026)
 

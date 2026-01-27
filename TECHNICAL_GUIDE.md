@@ -1,4 +1,4 @@
-# Bugrank - Technical Guide
+# BugPulse - Technical Guide
 
 ## 🏗️ Technology Stack
 
@@ -32,7 +32,7 @@
 ## 📁 Project Structure
 
 ```
-bugrank/
+bugpulse/
 ├── client/                 # Frontend React app
 │   ├── src/
 │   │   ├── components/    # Navbar, Layout, ProtectedRoute
@@ -70,7 +70,7 @@ bugrank/
 ### 1. Clone Repository
 ```bash
 git clone <repository-url>
-cd bugrank
+cd bugpulse
 ```
 
 ### 2. Database Setup
@@ -85,7 +85,7 @@ cd bugrank
 psql -U postgres
 
 # Create database
-CREATE DATABASE bugrank_auth;
+CREATE DATABASE bugpulse_auth;
 
 # Exit
 \q
@@ -98,7 +98,7 @@ $env:PGPASSWORD="your_postgres_password"  # Windows PowerShell
 # OR
 export PGPASSWORD="your_postgres_password"  # Linux/Mac
 
-psql -U postgres -d bugrank_auth -f migrations/001_create_tables.sql
+psql -U postgres -d bugpulse_auth -f migrations/001_create_tables.sql
 ```
 
 This creates 4 tables:
@@ -121,7 +121,7 @@ Create `server/.env`:
 # Database Configuration
 DB_USER=postgres
 DB_HOST=localhost
-DB_NAME=bugrank_auth
+DB_NAME=bugpulse_auth
 DB_PASSWORD=your_postgres_password
 DB_PORT=5432
 
@@ -153,7 +153,7 @@ Server will start on **http://localhost:5000**
 
 Expected output:
 ```
-🐛 Bugrank server running on port 5000
+🐛 BugPulse server running on port 5000
 📝 Environment: development
 🤖 Gemini API: Configured
 ⚖️ Judge0 API: Configured (RapidAPI)
@@ -216,7 +216,7 @@ const pool = new Pool({
 export default pool;
 ```
 
-**Connection String**: `postgresql://postgres:password@localhost:5432/bugrank_auth`
+**Connection String**: `postgresql://postgres:password@localhost:5432/bugpulse_auth`
 
 ### API Endpoints
 
@@ -254,8 +254,8 @@ const api = axios.create({
 
 // Request interceptor - attach auth tokens
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('bugrank_token');
-  const sessionToken = localStorage.getItem('bugrank_session');
+  const token = localStorage.getItem('bugpulse_token');
+  const sessionToken = localStorage.getItem('bugpulse_session');
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -357,7 +357,7 @@ npx serve -s client/dist -l 3000
 pg_isready
 
 # Verify credentials
-psql -U postgres -d bugrank_auth
+psql -U postgres -d bugpulse_auth
 
 # Check .env file has correct password
 ```
@@ -374,7 +374,7 @@ Stop-Process -Id <PID> -Force
 ### Challenges Not Loading
 ```bash
 # Check database has challenges
-psql -U postgres -d bugrank_auth -c "SELECT COUNT(*) FROM challenges;"
+psql -U postgres -d bugpulse_auth -c "SELECT COUNT(*) FROM challenges;"
 
 # If 0, restart server to seed challenges
 ```

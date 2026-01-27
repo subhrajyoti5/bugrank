@@ -1,4 +1,4 @@
-# Bugrank Challenge Data Seed Script
+# BugPulse Challenge Data Seed Script
 
 This directory contains sample buggy code challenges for Bugrank.
 

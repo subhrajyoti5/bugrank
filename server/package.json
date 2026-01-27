@@ -1,7 +1,7 @@
 {
-  "name": "@bugrank/server",
+  "name": "@bugpulse/server",
   "version": "1.0.0",
-  "description": "Bugrank backend API server",
+  "description": "BugPulse backend API server",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

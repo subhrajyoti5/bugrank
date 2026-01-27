@@ -5,7 +5,7 @@ import {
   User, 
   AIAnalysis, 
   DEFAULT_SCORING_CONFIG 
-} from '@bugrank/shared';
+} from '@bugpulse/shared';
 import { BaseService, GeminiService } from './GeminiService';
 import { CompilerService } from './CompilerService';
 import { submissionDb, userDb, challengeDb } from '@/data/storage';

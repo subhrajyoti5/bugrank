@@ -1,8 +1,8 @@
-# Bugrank - Project Overview
+# BugPulse - Project Overview
 
 ## 🎯 Core Idea
 
-**Bugrank** is a competitive programming platform where developers compete to find and fix bugs in code as quickly and efficiently as possible. It's like LeetCode, but instead of solving algorithmic challenges, you're debugging real-world code issues.
+**BugPulse** is a competitive programming platform where developers compete to find and fix bugs in code as quickly and efficiently as possible. It's like LeetCode, but instead of solving algorithmic challenges, you're debugging real-world code issues.
 
 ### The Challenge
 - Users are presented with buggy code (C++ and Java)
@@ -18,7 +18,7 @@
   - Code quality (analyzed by AI)
 
 ### Why It's Different
-Traditional coding platforms focus on algorithmic problem-solving. Bugrank focuses on a critical real-world skill: **debugging**. This mirrors actual software development where debugging consumes 50% of development time.
+Traditional coding platforms focus on algorithmic problem-solving. BugPulse focuses on a critical real-world skill: **debugging**. This mirrors actual software development where debugging consumes 50% of development time.
 
 ## 🚀 Key Features
 
@@ -107,7 +107,7 @@ Penalties for:
 - Prepare for live coding rounds
 
 ### 2. Team Training
-- Companies can use Bugrank for:
+- Companies can use BugPulse for:
   - Onboarding new developers
   - Team building competitions
   - Skill assessment
@@ -129,7 +129,7 @@ Penalties for:
 
 **"Great developers don't just write code—they fix it faster than they break it."**
 
-Bugrank believes that debugging is an art. The best developers aren't those who never make mistakes, but those who can identify and fix bugs systematically and efficiently. This platform gamifies that essential skill, making debugging practice engaging and competitive.
+BugPulse believes that debugging is an art. The best developers aren't those who never make mistakes, but those who can identify and fix bugs systematically and efficiently. This platform gamifies that essential skill, making debugging practice engaging and competitive.
 
 ## 🎮 User Journey
 
