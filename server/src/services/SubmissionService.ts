@@ -101,12 +101,18 @@ export class SubmissionService extends BaseService {
     let testCaseOutput = '';
     let testCasePassed = true;
     
+    console.log(`🔍 Challenge language: ${challenge.language}`);
+    console.log(`🔍 Has test case: ${!!challenge.testCase}`);
+    console.log(`🔍 Test case:`, challenge.testCase);
+    
     if (challenge.language === 'cpp') {
       const numChallengeId = typeof challengeId === 'string' ? parseInt(challengeId, 10) : challengeId;
       
       // Run with test case input (uses Judge0 - $0.0017)
       if (challenge.testCase) {
+        console.log(`🚀 Calling compilerService.compileAndRun with input: "${challenge.testCase.input}"`);
         const result = await this.compilerService.compileAndRun(code, challenge.testCase.input, numChallengeId);
+        console.log(`🎯 Compiler result:`, result);
         compilationSuccess = result.compilation.success && result.execution?.success;
         
         if (compilationSuccess) {

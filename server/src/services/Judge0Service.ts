@@ -101,6 +101,12 @@ export class Judge0Service {
     };
 
     try {
+      console.log('🔍 Judge0 API Request Details:');
+      console.log('   URL:', this.client.defaults.baseURL + '/submissions');
+      console.log('   Language ID:', languageId);
+      console.log('   Has stdin:', !!stdin);
+      console.log('   API Key set:', !!this.client.defaults.headers['x-rapidapi-key']);
+      
       // Create submission
       const createResponse = await this.client.post('/submissions', submission, {
         params: {

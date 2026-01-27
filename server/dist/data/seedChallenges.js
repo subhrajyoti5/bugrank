@@ -1,18 +1,19 @@
-import { Challenge } from '@bugrank/shared';
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.seedChallenges = void 0;
 /**
  * Initial seed challenges for the platform
  * These will be loaded into memory when the server starts
  * Focus on critical OOP concepts and OS-level bugs in C++
  */
-export const seedChallenges: Challenge[] = [
-  {
-    id: 'challenge-1',
-    title: 'Fix Memory Leak with Missing Destructor',
-    description: 'This C++ class has a memory leak because the destructor is not properly implemented. The dynamically allocated data is never freed. Implement a proper destructor following RAII principle.',
-    difficulty: 'easy',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+exports.seedChallenges = [
+    {
+        id: 'challenge-1',
+        title: 'Fix Memory Leak with Missing Destructor',
+        description: 'This C++ class has a memory leak because the destructor is not properly implemented. The dynamically allocated data is never freed. Implement a proper destructor following RAII principle.',
+        difficulty: 'easy',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class DataBuffer {
 private:
@@ -39,22 +40,22 @@ int main() {
     buf.display();
     return 0;
 }`,
-    expectedOutput: 'Buffer initialized with size: 100',
-    timeLimit: 600,
-    baseScore: 100,
-    testCase: {
-      input: '',
-      expectedOutput: 'Buffer initialized with size: 100\n',
+        expectedOutput: 'Buffer initialized with size: 100',
+        timeLimit: 600,
+        baseScore: 100,
+        testCase: {
+            input: '',
+            expectedOutput: 'Buffer initialized with size: 100\n',
+        },
+        createdAt: new Date('2026-01-01'),
     },
-    createdAt: new Date('2026-01-01'),
-  },
-  {
-    id: 'challenge-2',
-    title: 'Fix Integer Overflow Bug',
-    description: 'This C++ code has an integer overflow when summing large numbers. Use appropriate data types to handle large values.',
-    difficulty: 'easy',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-2',
+        title: 'Fix Integer Overflow Bug',
+        description: 'This C++ code has an integer overflow when summing large numbers. Use appropriate data types to handle large values.',
+        difficulty: 'easy',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Calculator {
 private:
@@ -79,22 +80,22 @@ int main() {
     calc.displaySum();
     return 0;
 }`,
-    expectedOutput: 'Sum: 4000000000',
-    timeLimit: 600,
-    baseScore: 100,
-    testCase: {
-      input: '',
-      expectedOutput: 'Sum: 4000000000\n',
+        expectedOutput: 'Sum: 4000000000',
+        timeLimit: 600,
+        baseScore: 100,
+        testCase: {
+            input: '',
+            expectedOutput: 'Sum: 4000000000\n',
+        },
+        createdAt: new Date('2026-01-02'),
     },
-    createdAt: new Date('2026-01-02'),
-  },
-  {
-    id: 'challenge-3',
-    title: 'Fix Const Correctness Violation',
-    description: 'This C++ class violates const correctness by allowing modifications in const methods. Fix the const correctness issues to prevent unintended state changes.',
-    difficulty: 'easy',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-3',
+        title: 'Fix Const Correctness Violation',
+        description: 'This C++ class violates const correctness by allowing modifications in const methods. Fix the const correctness issues to prevent unintended state changes.',
+        difficulty: 'easy',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Counter {
 private:
@@ -119,22 +120,22 @@ int main() {
     counter.getCount();
     return 0;
 }`,
-    expectedOutput: 'Count: 1',
-    timeLimit: 600,
-    baseScore: 100,
-    testCase: {
-      input: '',
-      expectedOutput: 'Count: 1\n',
+        expectedOutput: 'Count: 1',
+        timeLimit: 600,
+        baseScore: 100,
+        testCase: {
+            input: '',
+            expectedOutput: 'Count: 1\n',
+        },
+        createdAt: new Date('2026-01-03'),
     },
-    createdAt: new Date('2026-01-03'),
-  },
-  {
-    id: 'challenge-4',
-    title: 'Fix Virtual Function Override Bug',
-    description: 'This C++ code has a polymorphism bug where the derived class does not properly override the virtual function due to signature mismatch or missing override keyword.',
-    difficulty: 'medium',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-4',
+        title: 'Fix Virtual Function Override Bug',
+        description: 'This C++ code has a polymorphism bug where the derived class does not properly override the virtual function due to signature mismatch or missing override keyword.',
+        difficulty: 'medium',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Shape {
 public:
@@ -162,22 +163,22 @@ int main() {
     circle.calculateArea();
     return 0;
 }`,
-    expectedOutput: 'Circle area: 78.5',
-    timeLimit: 600,
-    baseScore: 150,
-    testCase: {
-      input: '',
-      expectedOutput: 'Circle area: 78.5\n',
+        expectedOutput: 'Circle area: 78.5',
+        timeLimit: 600,
+        baseScore: 150,
+        testCase: {
+            input: '',
+            expectedOutput: 'Dog sound: Woof!\n',
+        },
+        createdAt: new Date('2026-01-04'),
     },
-    createdAt: new Date('2026-01-04'),
-  },
-  {
-    id: 'challenge-5',
-    title: 'Fix Missing Virtual Destructor',
-    description: 'This C++ code has a critical bug where the base class destructor is not virtual. This causes incomplete cleanup when deleting derived class objects through base class pointers.',
-    difficulty: 'medium',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-5',
+        title: 'Fix Missing Virtual Destructor',
+        description: 'This C++ code has a critical bug where the base class destructor is not virtual. This causes incomplete cleanup when deleting derived class objects through base class pointers.',
+        difficulty: 'medium',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Animal {
 protected:
@@ -217,22 +218,22 @@ int main() {
     delete dog;  // Only Animal::~Animal() is called, not Dog::~Dog()
     return 0;
 }`,
-    expectedOutput: 'Dog destroyed\\nAnimal destroyed',
-    timeLimit: 600,
-    baseScore: 150,
-    testCase: {
-      input: '',
-      expectedOutput: 'Transfer completed efficiently\n',
+        expectedOutput: 'Dog destroyed\\nAnimal destroyed',
+        timeLimit: 600,
+        baseScore: 150,
+        testCase: {
+            input: '',
+            expectedOutput: 'Transfer completed efficiently\n',
+        },
+        createdAt: new Date('2026-01-05'),
     },
-    createdAt: new Date('2026-01-05'),
-  },
-  {
-    id: 'challenge-6',
-    title: 'Fix Shallow Copy Bug',
-    description: 'This C++ class has a shallow copy problem in the copy constructor. Multiple objects will point to the same dynamically allocated data, causing crashes and double deletion.',
-    difficulty: 'medium',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-6',
+        title: 'Fix Shallow Copy Bug',
+        description: 'This C++ class has a shallow copy problem in the copy constructor. Multiple objects will point to the same dynamically allocated data, causing crashes and double deletion.',
+        difficulty: 'medium',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <cstring>
 
 class String {
@@ -269,22 +270,22 @@ int main() {
     s2.display();
     return 0;
 }`,
-    expectedOutput: 'String: Hello',
-    timeLimit: 600,
-    baseScore: 150,
-    testCase: {
-      input: '',
-      expectedOutput: 'Original: Hello\nCopy: Hello\n',
+        expectedOutput: 'String: Hello',
+        timeLimit: 600,
+        baseScore: 150,
+        testCase: {
+            input: '',
+            expectedOutput: 'Original: Hello\nCopy: Hello\n',
+        },
+        createdAt: new Date('2026-01-06'),
     },
-    createdAt: new Date('2026-01-06'),
-  },
-  {
-    id: 'challenge-7',
-    title: 'Fix Race Condition in Singleton Pattern',
-    description: 'This C++ singleton implementation has a race condition in the getInstance() method. Multiple threads could create multiple instances simultaneously. Fix it using thread-safe initialization.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-7',
+        title: 'Fix Race Condition in Singleton Pattern',
+        description: 'This C++ singleton implementation has a race condition in the getInstance() method. Multiple threads could create multiple instances simultaneously. Fix it using thread-safe initialization.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <thread>
 #include <vector>
 
@@ -323,22 +324,22 @@ int main() {
     }
     return 0;
 }`,
-    expectedOutput: 'Single instance created',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Instance id: 0\nInstance id: 0\nInstance id: 0\n',
+        expectedOutput: 'Single instance created',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Instance id: 0\nInstance id: 0\nInstance id: 0\n',
+        },
+        createdAt: new Date('2026-01-07'),
     },
-    createdAt: new Date('2026-01-07'),
-  },
-  {
-    id: 'challenge-8',
-    title: 'Fix Object Slicing Bug',
-    description: 'This C++ code has object slicing where a derived object is assigned to a base class object by value. This loses derived class data and virtual function behavior.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-8',
+        title: 'Fix Object Slicing Bug',
+        description: 'This C++ code has object slicing where a derived object is assigned to a base class object by value. This loses derived class data and virtual function behavior.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Vehicle {
 protected:
@@ -374,22 +375,22 @@ int main() {
     car.display();
     return 0;
 }`,
-    expectedOutput: 'Car speed: 100, Doors: 4',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Type: Car\nSpeed: 100\n',
+        expectedOutput: 'Car speed: 100, Doors: 4',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Type: Car\nSpeed: 100\n',
+        },
+        createdAt: new Date('2026-01-08'),
     },
-    createdAt: new Date('2026-01-08'),
-  },
-  {
-    id: 'challenge-9',
-    title: 'Fix Double Deletion and Use-After-Free',
-    description: 'This C++ code has memory corruption bugs where memory is deleted multiple times and used after deletion. Implement proper resource management.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-9',
+        title: 'Fix Double Deletion and Use-After-Free',
+        description: 'This C++ code has memory corruption bugs where memory is deleted multiple times and used after deletion. Implement proper resource management.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Resource {
 private:
@@ -425,22 +426,22 @@ int main() {
     
     return 0;
 }`,
-    expectedOutput: 'Resource destroyed',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Using resource\nResource destroyed\n',
+        expectedOutput: 'Resource destroyed',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Using resource\nResource destroyed\n',
+        },
+        createdAt: new Date('2026-01-09'),
     },
-    createdAt: new Date('2026-01-09'),
-  },
-  {
-    id: 'challenge-10',
-    title: 'Fix Producer-Consumer Synchronization Bug',
-    description: 'This C++ code has synchronization issues in a producer-consumer pattern. Multiple threads access shared resources without proper locking, causing data races.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-10',
+        title: 'Fix Producer-Consumer Synchronization Bug',
+        description: 'This C++ code has synchronization issues in a producer-consumer pattern. Multiple threads access shared resources without proper locking, causing data races.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <thread>
 #include <vector>
 
@@ -492,22 +493,22 @@ int main() {
     std::cout << "Buffer operations completed\\n";
     return 0;
 }`,
-    expectedOutput: 'Buffer operations completed',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Produced: 100\nConsumed: 100\n',
+        expectedOutput: 'Buffer operations completed',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Produced: 100\nConsumed: 100\n',
+        },
+        createdAt: new Date('2026-01-10'),
     },
-    createdAt: new Date('2026-01-10'),
-  },
-  {
-    id: 'challenge-11',
-    title: 'Fix RAII Principle Violation',
-    description: 'This C++ code violates the RAII (Resource Acquisition Is Initialization) principle. Resources are not properly managed in the scope lifecycle.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-11',
+        title: 'Fix RAII Principle Violation',
+        description: 'This C++ code violates the RAII (Resource Acquisition Is Initialization) principle. Resources are not properly managed in the scope lifecycle.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <fstream>
 
 class FileHandler {
@@ -542,22 +543,22 @@ int main() {
     std::cout << "Scope ended\\n";
     return 0;
 }`,
-    expectedOutput: 'File properly closed',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Error: Insufficient funds\nBalance: 1000\n',
+        expectedOutput: 'File properly closed',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Error: Insufficient funds\nBalance: 1000\n',
+        },
+        createdAt: new Date('2026-01-11'),
     },
-    createdAt: new Date('2026-01-11'),
-  },
-  {
-    id: 'challenge-12',
-    title: 'Fix Inheritance and Method Resolution Bug',
-    description: 'This C++ code has an inheritance bug where method resolution is incorrect due to improper use of scope resolution operator and virtual functions.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-12',
+        title: 'Fix Inheritance and Method Resolution Bug',
+        description: 'This C++ code has an inheritance bug where method resolution is incorrect due to improper use of scope resolution operator and virtual functions.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Base {
 public:
@@ -593,22 +594,22 @@ int main() {
     
     return 0;
 }`,
-    expectedOutput: 'Middle processing\\nDerived processing',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Area: 314.159\n',
+        expectedOutput: 'Middle processing\\nDerived processing',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Area: 314.159\n',
+        },
+        createdAt: new Date('2026-01-12'),
     },
-    createdAt: new Date('2026-01-12'),
-  },
-  {
-    id: 'challenge-13',
-    title: 'Fix Copy Assignment Operator Bug',
-    description: 'This C++ class is missing the copy assignment operator. Without it, the default assignment performs shallow copy causing memory corruption.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-13',
+        title: 'Fix Copy Assignment Operator Bug',
+        description: 'This C++ class is missing the copy assignment operator. Without it, the default assignment performs shallow copy causing memory corruption.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <cstring>
 
 class DynamicArray {
@@ -652,22 +653,22 @@ int main() {
     
     return 0;
 }`,
-    expectedOutput: 'Assignment completed safely',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Value: 42\nSelf-assignment handled correctly\n',
+        expectedOutput: 'Assignment completed safely',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Value: 42\nSelf-assignment handled correctly\n',
+        },
+        createdAt: new Date('2026-01-13'),
     },
-    createdAt: new Date('2026-01-13'),
-  },
-  {
-    id: 'challenge-14',
-    title: 'Fix Vtable Corruption Bug',
-    description: 'This C++ code has a vtable corruption issue where improper casting and multiple inheritance cause incorrect virtual function resolution.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-14',
+        title: 'Fix Vtable Corruption Bug',
+        description: 'This C++ code has a vtable corruption issue where improper casting and multiple inheritance cause incorrect virtual function resolution.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 
 class Interface1 {
 public:
@@ -708,22 +709,22 @@ int main() {
     delete impl;
     return 0;
 }`,
-    expectedOutput: 'Implementation process',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: 'Base method called\n',
+        expectedOutput: 'Implementation process',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: 'Base method called\n',
+        },
+        createdAt: new Date('2026-01-14'),
     },
-    createdAt: new Date('2026-01-14'),
-  },
-  {
-    id: 'challenge-15',
-    title: 'Fix Memory Order Violation in Lock-Free Code',
-    description: 'This C++ code has memory ordering issues in lock-free programming. Atomic operations without proper memory barriers can cause data races.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-15',
+        title: 'Fix Memory Order Violation in Lock-Free Code',
+        description: 'This C++ code has memory ordering issues in lock-free programming. Atomic operations without proper memory barriers can cause data races.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <atomic>
 #include <thread>
 #include <vector>
@@ -756,22 +757,22 @@ int main() {
     std::cout << queue.dequeue() << std::endl;
     return 0;
 }`,
-    expectedOutput: '42',
-    timeLimit: 900,
-    baseScore: 200,
-    testCase: {
-      input: '',
-      expectedOutput: '42\n',
+        expectedOutput: '42',
+        timeLimit: 900,
+        baseScore: 200,
+        testCase: {
+            input: '',
+            expectedOutput: '42\n',
+        },
+        createdAt: new Date('2026-01-15'),
     },
-    createdAt: new Date('2026-01-15'),
-  },
-  {
-    id: 'challenge-16',
-    title: 'Check if the given set is an equivalence relation',
-    description: 'Given a set of ordered pairs, determine if they form an equivalence relation by checking for reflexivity, symmetry, and transitivity. The buggy code has incomplete checks that fail to properly validate all three properties.',
-    difficulty: 'medium',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-16',
+        title: 'Check if the given set is an equivalence relation',
+        description: 'Given a set of ordered pairs, determine if they form an equivalence relation by checking for reflexivity, symmetry, and transitivity. The buggy code has incomplete checks that fail to properly validate all three properties.',
+        difficulty: 'medium',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <set>
 #include <vector>
 using namespace std;
@@ -849,22 +850,22 @@ int main() {
     
     return 0;
 }`,
-    expectedOutput: 'The relation is an equivalence relation',
-    timeLimit: 900,
-    baseScore: 150,
-    testCase: {
-      input: '',
-      expectedOutput: 'The relation is an equivalence relation\n',
+        expectedOutput: 'The relation is an equivalence relation',
+        timeLimit: 900,
+        baseScore: 150,
+        testCase: {
+            input: '',
+            expectedOutput: 'The relation is an equivalence relation\n',
+        },
+        createdAt: new Date('2026-01-16'),
     },
-    createdAt: new Date('2026-01-16'),
-  },
-  {
-    id: 'challenge-17',
-    title: 'Fix Deadlock in Dining Philosophers Problem',
-    description: 'This C++ implementation of the Dining Philosophers problem has a deadlock issue due to improper resource allocation. Modify the code to prevent deadlock while allowing philosophers to eat concurrently.',
-    difficulty: 'hard',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-17',
+        title: 'Fix Deadlock in Dining Philosophers Problem',
+        description: 'This C++ implementation of the Dining Philosophers problem has a deadlock issue due to improper resource allocation. Modify the code to prevent deadlock while allowing philosophers to eat concurrently.',
+        difficulty: 'hard',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 #include <thread>
 #include <mutex>
 #include <vector>
@@ -930,22 +931,22 @@ int main() {
     cout << "All philosophers finished dining" << endl;
     return 0;
 }`,
-    expectedOutput: 'All philosophers finished dining',
-    timeLimit: 1200,
-    baseScore: 250,
-    testCase: {
-      input: '',
-      expectedOutput: 'All philosophers finished dining\n',
+        expectedOutput: 'All philosophers finished dining',
+        timeLimit: 1200,
+        baseScore: 250,
+        testCase: {
+            input: '',
+            expectedOutput: 'All philosophers finished dining\n',
+        },
+        createdAt: new Date('2026-01-17'),
     },
-    createdAt: new Date('2026-01-17'),
-  },
-  {
-    id: 'challenge-18',
-    title: 'Fix Stack Overflow in Recursive Function',
-    description: 'This C++ code has a stack overflow issue due to uncontrolled recursion depth. Modify the recursive function to include a base case and prevent infinite recursion.',
-    difficulty: 'easy',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-18',
+        title: 'Fix Stack Overflow in Recursive Function',
+        description: 'This C++ code has a stack overflow issue due to uncontrolled recursion depth. Modify the recursive function to include a base case and prevent infinite recursion.',
+        difficulty: 'easy',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 using namespace std;
 
 class RecursiveFunctions {
@@ -961,23 +962,22 @@ int main() {
     cout << "Factorial of 5: " << rf.factorial(5) << endl;
     return 0;
 }`,
-    expectedOutput: 'Factorial of 5: 120',
-    timeLimit: 600,
-    baseScore: 100,
-    testCase: {
-      input: '',
-      expectedOutput: 'Factorial of 5: 120\n',
+        expectedOutput: 'Factorial of 5: 120',
+        timeLimit: 600,
+        baseScore: 100,
+        testCase: {
+            input: '',
+            expectedOutput: 'Factorial of 5: 120\n',
+        },
+        createdAt: new Date('2026-01-18'),
     },
-    createdAt: new Date('2026-01-18'),
-  },
-  
-  {
-    id: 'challenge-19',
-    title: 'Optimize O(N^2) Sorting Algorithm',
-    description: 'This C++ code implements a simple O(N^2) sorting algorithm (Bubble Sort). Optimize it to use a more efficient sorting algorithm with O(N log N) time complexity, such as Merge Sort or Quick Sort.',
-    difficulty: 'medium',
-    language: 'cpp',
-    buggyCode: `#include <iostream>
+    {
+        id: 'challenge-19',
+        title: 'Optimize O(N^2) Sorting Algorithm',
+        description: 'This C++ code implements a simple O(N^2) sorting algorithm (Bubble Sort). Optimize it to use a more efficient sorting algorithm with O(N log N) time complexity, such as Merge Sort or Quick Sort.',
+        difficulty: 'medium',
+        language: 'cpp',
+        buggyCode: `#include <iostream>
 using namespace std;
 
 class Sorter {
@@ -1011,13 +1011,13 @@ int main() {
     
     return 0;
 }`,
-    expectedOutput: 'Sorted array: 11 12 22 25 34 64 90',
-    timeLimit: 600,
-    baseScore: 150,
-    testCase: {
-      input: '',
-      expectedOutput: 'Sorted array: 11 12 22 25 34 64 90\n',
+        expectedOutput: 'Sorted array: 11 12 22 25 34 64 90',
+        timeLimit: 600,
+        baseScore: 150,
+        testCase: {
+            input: '',
+            expectedOutput: 'Sorted array: 11 12 22 25 34 64 90\n',
+        },
+        createdAt: new Date('2026-01-19'),
     },
-    createdAt: new Date('2026-01-19'),
-  },
 ];
