@@ -231,11 +231,14 @@ export class SubmissionService extends BaseService {
     linesChanged: number,
     timeTaken: number
   ): number {
+    // Convert time from seconds to minutes for penalty calculation
+    const timeInMinutes = timeTaken / 60;
+    
     const score =
       baseScore -
       attempts * DEFAULT_SCORING_CONFIG.attemptPenalty -
       linesChanged * DEFAULT_SCORING_CONFIG.linePenalty -
-      timeTaken * DEFAULT_SCORING_CONFIG.timePenalty;
+      timeInMinutes * DEFAULT_SCORING_CONFIG.timePenalty;
 
     // Ensure score is not negative
     return Math.max(0, Math.round(score));

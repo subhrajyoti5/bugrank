@@ -104,7 +104,7 @@ export interface ScoringConfig {
   baseScore: number;
   attemptPenalty: number;
   linePenalty: number;
-  timePenalty: number; // per second
+  timePenalty: number; // per minute
   successThreshold: number; // AI accuracy minimum (e.g., 8)
 }
 
