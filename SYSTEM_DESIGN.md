@@ -231,12 +231,15 @@ User submits code
       ↓
 ┌─────────────────────────────────────┐
 │  2. CompilerService.compileAndRun() │
-│     ├─► Try Judge0 API (RapidAPI)   │
-│     ├─► Check 1-hour cache first    │
-│     ├─► POST to Judge0 endpoint     │
+│     ├─► Generate SHA-256 cache key  │
+│     ├─► Check 1-hour in-memory cache│
+│     ├─► POST to Judge0 CE endpoint  │
+│     │   (Base64 encoded code/stdin) │
 │     ├─► Poll for result (async)     │
-│     └─► Fallback to local g++ if    │
-│         Judge0 fails                │
+│     │   Exponential backoff 500ms-3s│
+│     ├─► Decode Base64 response      │
+│     ├─► Cache result (1hr TTL)      │
+│     └─► Throw error if API fails    │
 └─────────────────────────────────────┘
       ↓
 ┌─────────────────────────────────────┐
@@ -280,34 +283,45 @@ Return result to user
 
 ┌────────────────────────────────────┐
 │  Submit Button (PAID):             │
-│  - Judge0 API via RapidAPI         │
+│  - Judge0 CE API via RapidAPI      │
 │  - Cost: $0.0017 per submission    │
 │  - Rate limit: 15/15min            │
-│  - 1-hour result caching           │
-│  - Fallback to local g++           │
+│  - 1-hour SHA-256 result caching   │
+│  - Cache deduplication saves costs │
+│  - Throws errors on API failure    │
 └────────────────────────────────────┘
 
-// Isolation Strategy
+// Judge0 Configuration & Caching
 ┌────────────────────────────────────┐
-│  Each submission gets:             │
-│  - Sandboxed Judge0 container      │
-│  - Resource limits (256MB, 5s)     │
-│  - Automatic cleanup               │
-│  - Cache deduplication             │
-└────────────────────────────────────┘
-
-// Error Handling
-┌────────────────────────────────────┐
-│  Compilation Errors:               │
-│  - Syntax errors                   │
-│  - Type errors                     │
-│  - Linker errors                   │
+│  Judge0 CE API Settings:           │
+│  - Language: C++ (GCC 9.2.0) = 54  │
+│  - CPU Time Limit: 5 seconds       │
+│  - Memory Limit: 256 MB (262144KB) │
+│  - Base64 encoding for I/O         │
+│  - Async submission (wait=false)   │
 │                                    │
-│  Runtime Errors:                   │
-│  - Segmentation faults             │
-│  - Memory leaks                    │
-│  - Timeout                         │
-│  - Infinite loops                  │
+│  Caching Strategy:                 │
+│  - In-memory Map cache             │
+│  - TTL: 1 hour (3600s)             │
+│  - Key: SHA-256(code|lang|stdin)   │
+│  - Auto cleanup every 10 minutes   │
+│  - Cache hit saves $0.0017         │
+└────────────────────────────────────┘
+
+// Error Handling & Status Codes
+┌────────────────────────────────────┐
+│  Judge0 Status Codes:              │
+│  - 1,2: In Queue/Processing        │
+│  - 3: Accepted (Success)           │
+│  - 5: Time Limit Exceeded          │
+│  - 6: Compilation Error            │
+│  - Other: Runtime/System Error     │
+│                                    │
+│  Error Strategy:                   │
+│  - Throw errors on API failure     │
+│  - Detailed logging (request/resp) │
+│  - User-friendly error messages    │
+│  - No silent failures              │
 └────────────────────────────────────┘
 ```
 
@@ -372,13 +386,18 @@ interface Challenge {
   title: string;
   description: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  language: 'cpp' | 'java';
+  language: 'cpp' | 'java' | 'python' | 'javascript';
   buggyCode: string;
   expectedOutput: string;
   timeLimit: number;
   baseScore: number;
-  testCase?: TestCase;
+  testCase?: TestCase;  // { input: string, expectedOutput: string }
   createdAt: Date;
+}
+
+interface TestCase {
+  input: string;           // stdin input for program
+  expectedOutput: string;  // expected stdout (with \n)
 }
 
 interface Submission {
@@ -575,6 +594,10 @@ Response: { rank, totalUsers }
 - Average score per challenge
 - Active user count
 - Error rates
+- Judge0 API usage & costs
+- Judge0 cache hit rate
+- Gemini AI request count
+- Submission success/failure rates
 
 ### Logging Strategy
 - Request/response logs
