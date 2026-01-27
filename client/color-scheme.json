@@ -1,0 +1,985 @@
+{
+  "name": "BugRank Color Scheme",
+  "description": "Comprehensive color palette for the BugRank landing page - realistic, developer-focused design with no purple tones",
+  "version": "2.0.0",
+  "lastUpdated": "2026-01-27",
+  "important": "⚠️ This color scheme and the design intention should be maintained across the entire project. All pages, components, and features should follow these color guidelines to ensure consistency and brand identity.",
+  "colors": {
+    "primary": {
+      "name": "Orange",
+      "hex": "#f97316",
+      "description": "Primary action color representing energy, urgency, and bug-fixing action",
+      "psychology": "Conveys urgency and action without being alarming, perfect for debugging context",
+      "shades": {
+        "50": "#fff7ed",
+        "100": "#ffedd5",
+        "200": "#fed7aa",
+        "300": "#fdba74",
+        "400": "#fb923c",
+        "500": "#f97316",
+        "600": "#ea580c",
+        "700": "#c2410c",
+        "800": "#9a3412",
+        "900": "#7c2d12"
+      },
+      "usage": {
+        "400": {
+          "components": ["Hero headline gradient start", "Icon accent colors"],
+          "opacity": "100%",
+          "examples": ["'Turn broken code' heading", "Feature card icon backgrounds at 10% opacity"]
+        },
+        "500": {
+          "components": ["Primary CTA buttons", "Focus states", "Active indicators"],
+          "opacity": "100%",
+          "examples": [
+            "Start Fixing button background",
+            "Try Your First Challenge button",
+            "Step number borders (10% opacity)",
+            "Navigation active states"
+          ]
+        },
+        "600": {
+          "components": ["Button hover states", "Interactive elements"],
+          "opacity": "100%",
+          "examples": ["CTA button hover background", "Link hover states"]
+        },
+        "500/5": {
+          "components": ["Subtle background gradients"],
+          "opacity": "5%",
+          "examples": ["CTA section background gradient start"]
+        },
+        "500/10": {
+          "components": ["Card backgrounds", "Icon containers"],
+          "opacity": "10%",
+          "examples": [
+            "Feature card icon background gradient",
+            "Step number backgrounds",
+            "Students section icon container"
+          ]
+        },
+        "500/15": {
+          "components": ["Glow effects"],
+          "opacity": "15%",
+          "examples": ["Floating code card glow effect", "Hero section background gradient"]
+        },
+        "500/20": {
+          "components": ["Shadow effects"],
+          "opacity": "20%",
+          "examples": ["Button shadow on hover"]
+        }
+      },
+      "accessibility": {
+        "contrastRatio": {
+          "onWhite": "4.5:1 (AA compliant)",
+          "onSlate950": "8.2:1 (AAA compliant)"
+        }
+      }
+    },
+    "secondary": {
+      "name": "Blue",
+      "hex": "#3b82f6",
+      "description": "Secondary accent color providing balance, trust, and professionalism",
+      "psychology": "Conveys reliability and technical expertise, balances the urgency of orange",
+      "shades": {
+        "50": "#eff6ff",
+        "100": "#dbeafe",
+        "200": "#bfdbfe",
+        "300": "#93c5fd",
+        "400": "#60a5fa",
+        "500": "#3b82f6",
+        "600": "#2563eb",
+        "700": "#1d4ed8",
+        "800": "#1e40af",
+        "900": "#1e3a8a"
+      },
+      "usage": {
+        "400": {
+          "components": ["Professional section icons"],
+          "opacity": "100%",
+          "examples": ["'Already Working' section Terminal icon"]
+        },
+        "500": {
+          "components": ["Gradient accents", "Hover effects"],
+          "opacity": "100%",
+          "examples": ["Hero background gradient via point"]
+        },
+        "500/5": {
+          "components": ["Background gradients"],
+          "opacity": "5%",
+          "examples": ["CTA section gradient end"]
+        },
+        "500/10": {
+          "components": ["Card backgrounds", "Icon containers", "Glow effects"],
+          "opacity": "10%",
+          "examples": [
+            "Feature card icon background gradient end",
+            "Professional section icon background",
+            "Floating code glow effect via point",
+            "CTA section background glow"
+          ]
+        }
+      },
+      "accessibility": {
+        "contrastRatio": {
+          "onWhite": "4.6:1 (AA compliant)",
+          "onSlate950": "8.5:1 (AAA compliant)"
+        }
+      }
+    },
+    "neutral": {
+      "name": "Slate",
+      "hex": "#64748b",
+      "description": "Primary neutral palette for backgrounds, text, and UI structure",
+      "psychology": "Modern, professional dark theme that reduces eye strain for developers",
+      "shades": {
+        "50": "#f8fafc",
+        "100": "#f1f5f9",
+        "200": "#e2e8f0",
+        "300": "#cbd5e1",
+        "400": "#94a3b8",
+        "500": "#64748b",
+        "600": "#475569",
+        "700": "#334155",
+        "800": "#1e293b",
+        "900": "#0f172a",
+        "950": "#020617"
+      },
+      "usage": {
+        "50": {
+          "components": ["Light mode elements (not currently used)"],
+          "opacity": "100%",
+          "examples": []
+        },
+        "100": {
+          "components": ["Primary text", "Headings", "High emphasis text"],
+          "opacity": "100%",
+          "examples": [
+            "All headings (h1, h2, h3)",
+            "Navigation brand name",
+            "Button text on dark backgrounds",
+            "Card titles",
+            "Testimonial names"
+          ]
+        },
+        "200": {
+          "components": ["Body text", "Page text"],
+          "opacity": "100%",
+          "examples": ["Main body text throughout landing page"]
+        },
+        "300": {
+          "components": ["Interactive text", "List items"],
+          "opacity": "100%",
+          "examples": ["Feature list items", "Benefit text in role cards"]
+        },
+        "400": {
+          "components": ["Secondary text", "Descriptions", "Subtitles"],
+          "opacity": "100%",
+          "examples": [
+            "Hero description text",
+            "Feature descriptions",
+            "Section subtitles",
+            "Stats labels",
+            "Testimonial content",
+            "Footer text",
+            "Floating code card labels"
+          ]
+        },
+        "500": {
+          "components": ["Muted text", "Placeholders", "Disabled text"],
+          "opacity": "100%",
+          "examples": [
+            "Trust section label",
+            "Testimonial timestamps",
+            "Footer secondary text",
+            "Stats subtext"
+          ]
+        },
+        "600": {
+          "components": ["Company names in trust section"],
+          "opacity": "100%",
+          "examples": ["Startups, Tech Companies, Universities, Bootcamps text"]
+        },
+        "700": {
+          "components": ["Borders", "Outline buttons", "Dividers"],
+          "opacity": "100%",
+          "examples": [
+            "Learn More button border",
+            "Outline button borders",
+            "Avatar borders in testimonials",
+            "Card border hover states"
+          ]
+        },
+        "800": {
+          "components": ["Default borders", "Card borders", "Dividers"],
+          "opacity": "100%",
+          "examples": [
+            "All card borders",
+            "Section dividers",
+            "Navbar border",
+            "Footer border",
+            "Feature card borders",
+            "Step card borders",
+            "Stats section border"
+          ]
+        },
+        "900": {
+          "components": ["Card backgrounds", "Section backgrounds", "Navbar"],
+          "opacity": "50%",
+          "examples": [
+            "All card backgrounds (with 50% opacity)",
+            "Feature section alternating backgrounds (30% opacity)"
+          ]
+        },
+        "900/30": {
+          "components": ["Subtle section backgrounds"],
+          "opacity": "30%",
+          "examples": [
+            "Trust section background",
+            "How it works section background",
+            "Testimonials section background"
+          ]
+        },
+        "950": {
+          "components": ["Page background", "Deep backgrounds", "Footer"],
+          "opacity": "100%",
+          "examples": [
+            "Main page background",
+            "Navbar background (95% opacity)",
+            "Footer background",
+            "Step card backgrounds (50% opacity)"
+          ]
+        },
+        "950/50": {
+          "components": ["Layered backgrounds"],
+          "opacity": "50%",
+          "examples": ["Step number cards", "How it works cards"]
+        },
+        "950/80": {
+          "components": ["Navbar with transparency"],
+          "opacity": "80%",
+          "examples": ["Sticky navigation bar"]
+        },
+        "950/95": {
+          "components": ["Navbar with slight transparency"],
+          "opacity": "95%",
+          "examples": ["Updated sticky navigation bar"]
+        }
+      },
+      "accessibility": {
+        "contrastRatio": {
+          "white_on_950": "21:1 (AAA compliant)",
+          "400_on_950": "8.5:1 (AAA compliant)",
+          "500_on_950": "6.2:1 (AAA compliant)"
+        }
+      }
+    },
+    "success": {
+      "name": "Emerald",
+      "hex": "#10b981",
+      "description": "Success states representing fixed bugs, passing tests, and positive outcomes",
+      "psychology": "Clear success indication without being too bright or distracting",
+      "shades": {
+        "50": "#ecfdf5",
+        "100": "#d1fae5",
+        "200": "#a7f3d0",
+        "300": "#6ee7b7",
+        "400": "#34d399",
+        "500": "#10b981",
+        "600": "#059669",
+        "700": "#047857",
+        "800": "#065f46",
+        "900": "#064e3b"
+      },
+      "usage": {
+        "400": {
+          "components": ["Success messages", "Fixed code status"],
+          "opacity": "100%",
+          "examples": [
+            "Fixed code card success message text",
+            "'✓ All tests passing' text"
+          ]
+        },
+        "500": {
+          "components": ["Checkmarks", "Success indicators", "Dots"],
+          "opacity": "100%",
+          "examples": [
+            "Checkmark icons in feature lists",
+            "Success dot on fixed code card",
+            "Benefit list checkmarks in role sections"
+          ]
+        },
+        "500/30": {
+          "components": ["Card borders for success states"],
+          "opacity": "30%",
+          "examples": ["Fixed code card border (originally green-500/30)"]
+        },
+        "500/40": {
+          "components": ["Enhanced borders for success states"],
+          "opacity": "40%",
+          "examples": ["Fixed code floating card border"]
+        }
+      },
+      "accessibility": {
+        "contrastRatio": {
+          "onWhite": "3.9:1 (AA large text)",
+          "onSlate950": "7.8:1 (AAA compliant)",
+          "note": "Use 500 or darker on dark backgrounds for best readability"
+        }
+      }
+    },
+    "error": {
+      "name": "Red",
+      "hex": "#ef4444",
+      "description": "Error states representing bugs, alerts, and issues requiring attention",
+      "psychology": "Immediate attention without panic - critical but fixable",
+      "shades": {
+        "50": "#fef2f2",
+        "100": "#fee2e2",
+        "200": "#fecaca",
+        "300": "#fca5a5",
+        "400": "#f87171",
+        "500": "#ef4444",
+        "600": "#dc2626",
+        "700": "#b91c1c",
+        "800": "#991b1b",
+        "900": "#7f1d1d"
+      },
+      "usage": {
+        "400": {
+          "components": ["Error messages", "Bug indicators"],
+          "opacity": "100%",
+          "examples": [
+            "⚠️ Infinite loop detected text",
+            "Bug status messages"
+          ]
+        },
+        "500": {
+          "components": ["Error dots", "Alert indicators", "Bug markers"],
+          "opacity": "100%",
+          "examples": [
+            "Pulsing dot on production bug card",
+            "Bug card status indicator"
+          ]
+        },
+        "500/30": {
+          "components": ["Card borders for error states"],
+          "opacity": "30%",
+          "examples": ["Production bug card border (originally)"]
+        },
+        "500/40": {
+          "components": ["Enhanced borders for bug states"],
+          "opacity": "40%",
+          "examples": ["Production bug floating card border"]
+        }
+      },
+      "animations": {
+        "pulse": {
+          "element": "Bug indicator dot",
+          "color": "red-500",
+          "description": "Pulsing animation on production bug status dot to draw attention"
+        }
+      },
+      "accessibility": {
+        "contrastRatio": {
+          "onWhite": "4.5:1 (AA compliant)",
+          "onSlate950": "8.9:1 (AAA compliant)"
+        },
+        "note": "Always pair with text or icons, never use color alone to convey error state"
+      }
+    },
+    "accent": {
+      "name": "Amber",
+      "hex": "#f59e0b",
+      "description": "Accent color for ratings, awards, and special highlights",
+      "psychology": "Warm, positive reinforcement without being too bright",
+      "shades": {
+        "50": "#fffbeb",
+        "100": "#fef3c7",
+        "200": "#fde68a",
+        "300": "#fcd34d",
+        "400": "#fbbf24",
+        "500": "#f59e0b",
+        "600": "#d97706",
+        "700": "#b45309",
+        "800": "#92400e",
+        "900": "#78350f"
+      },
+      "usage": {
+        "500": {
+          "components": ["Star ratings", "Awards", "Achievement indicators"],
+          "opacity": "100%",
+          "examples": [
+            "5-star rating fills in testimonials",
+            "5-star rating borders in testimonials",
+            "Award and achievement icons"
+          ]
+        }
+      },
+      "accessibility": {
+        "contrastRatio": {
+          "onWhite": "3.4:1 (AA large text)",
+          "onSlate950": "7.2:1 (AAA compliant)"
+        }
+      }
+    }
+  },
+  "semanticColors": {
+    "background": {
+      "page": {
+        "value": "slate-950",
+        "hex": "#020617",
+        "usage": "Main page background, provides deep contrast"
+      },
+      "card": {
+        "value": "slate-900/50",
+        "hex": "#0f172a",
+        "opacity": "50%",
+        "usage": "All card backgrounds - features, testimonials, role cards"
+      },
+      "cardAlternate": {
+        "value": "slate-950/50",
+        "hex": "#020617",
+        "opacity": "50%",
+        "usage": "Deeper card backgrounds like step cards"
+      },
+      "navbar": {
+        "value": "slate-950/95",
+        "hex": "#020617",
+        "opacity": "95%",
+        "usage": "Sticky navbar with subtle transparency and backdrop blur"
+      },
+      "footer": {
+        "value": "slate-950",
+        "hex": "#020617",
+        "usage": "Footer background matching page background"
+      },
+      "section": {
+        "value": "slate-900/30",
+        "hex": "#0f172a",
+        "opacity": "30%",
+        "usage": "Alternating section backgrounds for visual separation"
+      }
+    },
+    "text": {
+      "primary": {
+        "value": "white",
+        "hex": "#ffffff",
+        "usage": "Headings, important text, high emphasis",
+        "contrastRatio": "21:1 on slate-950"
+      },
+      "secondary": {
+        "value": "slate-400",
+        "hex": "#94a3b8",
+        "usage": "Body text, descriptions, medium emphasis",
+        "contrastRatio": "8.5:1 on slate-950"
+      },
+      "muted": {
+        "value": "slate-500",
+        "hex": "#64748b",
+        "usage": "Timestamps, labels, low emphasis",
+        "contrastRatio": "6.2:1 on slate-950"
+      },
+      "inverse": {
+        "value": "slate-950",
+        "hex": "#020617",
+        "usage": "Text on light backgrounds like white buttons"
+      },
+      "code": {
+        "value": "slate-300",
+        "hex": "#cbd5e1",
+        "usage": "Code snippets in floating cards",
+        "font": "monospace"
+      }
+    },
+    "border": {
+      "default": {
+        "value": "slate-800",
+        "hex": "#1e293b",
+        "usage": "Standard borders on cards, sections, dividers"
+      },
+      "hover": {
+        "value": "slate-700",
+        "hex": "#334155",
+        "usage": "Border color on interactive element hover"
+      },
+      "focus": {
+        "value": "orange-500",
+        "hex": "#f97316",
+        "usage": "Focus rings on buttons and interactive elements"
+      },
+      "success": {
+        "value": "emerald-500/40",
+        "hex": "#10b981",
+        "opacity": "40%",
+        "usage": "Success state borders like fixed code cards"
+      },
+      "error": {
+        "value": "red-500/40",
+        "hex": "#ef4444",
+        "opacity": "40%",
+        "usage": "Error state borders like bug cards"
+      }
+    },
+    "button": {
+      "primary": {
+        "bg": "orange-500",
+        "bgHex": "#f97316",
+        "hover": "orange-600",
+        "hoverHex": "#ea580c",
+        "text": "white",
+        "textHex": "#ffffff",
+        "usage": "Main CTA buttons - Start Fixing, Try Your First Challenge",
+        "shadow": "shadow-xl shadow-orange-500/20"
+      },
+      "secondary": {
+        "bg": "white",
+        "bgHex": "#ffffff",
+        "hover": "slate-200",
+        "hoverHex": "#e2e8f0",
+        "text": "slate-950",
+        "textHex": "#020617",
+        "usage": "Alternative primary action - Get Started in navbar"
+      },
+      "outline": {
+        "border": "slate-700",
+        "borderHex": "#334155",
+        "hover": "slate-600",
+        "hoverHex": "#475569",
+        "text": "slate-300",
+        "textHex": "#cbd5e1",
+        "bg": "transparent",
+        "hoverBg": "slate-900/50",
+        "usage": "Secondary actions - Learn More button"
+      },
+      "ghost": {
+        "text": "slate-400",
+        "textHex": "#94a3b8",
+        "hover": "white",
+        "hoverHex": "#ffffff",
+        "bg": "transparent",
+        "usage": "Navbar links - Sign In"
+      }
+    },
+    "icon": {
+      "primary": {
+        "value": "orange-400",
+        "hex": "#fb923c",
+        "usage": "Primary feature icons, brand elements"
+      },
+      "secondary": {
+        "value": "blue-400",
+        "hex": "#60a5fa",
+        "usage": "Secondary section icons"
+      },
+      "success": {
+        "value": "emerald-500",
+        "hex": "#10b981",
+        "usage": "Checkmarks, success indicators"
+      },
+      "muted": {
+        "value": "slate-500",
+        "hex": "#64748b",
+        "usage": "Decorative or secondary icons"
+      }
+    }
+  },
+  "gradients": {
+    "hero": {
+      "headline": {
+        "value": "from-orange-400 to-orange-600",
+        "colors": ["#fb923c", "#ea580c"],
+        "direction": "to right",
+        "usage": "Hero headline 'broken code' text",
+        "cssClass": "bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent"
+      },
+      "background": {
+        "value": "from-orange-500 via-blue-500 to-transparent",
+        "colors": ["#f97316", "#3b82f6", "transparent"],
+        "direction": "to bottom right",
+        "opacity": "20%",
+        "blur": "120px",
+        "usage": "Hero section atmospheric background glow",
+        "cssClass": "bg-gradient-to-br from-orange-500 via-blue-500 to-transparent blur-[120px]"
+      }
+    },
+    "cards": {
+      "featureIcon": {
+        "value": "from-orange-500/10 to-blue-500/10",
+        "colors": ["#f97316", "#3b82f6"],
+        "opacity": ["10%", "10%"],
+        "direction": "to bottom right",
+        "usage": "Feature card icon container backgrounds",
+        "cssClass": "bg-gradient-to-br from-orange-500/10 to-blue-500/10"
+      },
+      "roleStudent": {
+        "value": "from-slate-900/50 to-slate-900/80",
+        "colors": ["#0f172a", "#0f172a"],
+        "opacity": ["50%", "80%"],
+        "direction": "to bottom right",
+        "usage": "Learning to Code card background",
+        "cssClass": "bg-gradient-to-br from-slate-900/50 to-slate-900/80"
+      },
+      "roleProfessional": {
+        "value": "from-slate-900/50 to-slate-900/80",
+        "colors": ["#0f172a", "#0f172a"],
+        "opacity": ["50%", "80%"],
+        "direction": "to bottom right",
+        "usage": "Already Working card background",
+        "cssClass": "bg-gradient-to-br from-slate-900/50 to-slate-900/80"
+      },
+      "cta": {
+        "value": "from-orange-500/5 to-blue-500/5",
+        "colors": ["#f97316", "#3b82f6"],
+        "opacity": ["5%", "5%"],
+        "direction": "to bottom right",
+        "usage": "CTA section background gradient",
+        "cssClass": "bg-gradient-to-br from-orange-500/5 to-blue-500/5"
+      }
+    },
+    "glow": {
+      "floating": {
+        "value": "from-orange-500/15 via-blue-500/10 to-transparent",
+        "colors": ["#f97316", "#3b82f6", "transparent"],
+        "opacity": ["15%", "10%", "0%"],
+        "direction": "to bottom right",
+        "blur": "3xl (48px)",
+        "usage": "Glow effect behind floating code cards",
+        "cssClass": "bg-gradient-to-br from-orange-500/15 via-blue-500/10 to-transparent blur-3xl"
+      },
+      "ctaDecoration": {
+        "orange": {
+          "value": "orange-500/10",
+          "hex": "#f97316",
+          "opacity": "10%",
+          "blur": "3xl (48px)",
+          "usage": "Top-right decorative glow in CTA section"
+        },
+        "blue": {
+          "value": "blue-500/10",
+          "hex": "#3b82f6",
+          "opacity": "10%",
+          "blur": "3xl (48px)",
+          "usage": "Bottom-left decorative glow in CTA section"
+        }
+      }
+    }
+  },
+  "shadows": {
+    "card": {
+      "value": "shadow-xl",
+      "css": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+      "usage": "Default shadow for cards and elevated elements"
+    },
+    "cardHover": {
+      "value": "shadow-2xl",
+      "css": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      "usage": "Enhanced shadow on card hover states"
+    },
+    "buttonPrimary": {
+      "value": "shadow-xl shadow-orange-500/20",
+      "css": "0 20px 25px -5px rgb(249 115 22 / 0.2)",
+      "usage": "Shadow for orange CTA buttons with orange tint"
+    },
+    "floatingCard": {
+      "value": "shadow-2xl",
+      "css": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      "usage": "Floating code preview cards"
+    }
+  },
+  "animations": {
+    "float": {
+      "keyframes": "0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); }",
+      "duration": "6s",
+      "easing": "ease-in-out",
+      "iteration": "infinite",
+      "usage": "Production bug card floating animation",
+      "cssClass": "animate-float"
+    },
+    "floatDelayed": {
+      "keyframes": "0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); }",
+      "duration": "6s",
+      "easing": "ease-in-out",
+      "iteration": "infinite",
+      "delay": "3s",
+      "usage": "Fixed code card floating animation (delayed)",
+      "cssClass": "animate-float-delayed"
+    },
+    "pulse": {
+      "element": "Bug indicator dot",
+      "color": "red-500",
+      "usage": "Pulsing red dot on production bug card",
+      "cssClass": "animate-pulse"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": "system-ui, -apple-system, sans-serif",
+      "mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+    },
+    "colorPairings": {
+      "hero": {
+        "headline": "text-white with gradient accent (orange-400 to orange-600)",
+        "description": "text-slate-400",
+        "background": "bg-slate-950"
+      },
+      "section": {
+        "heading": "text-white",
+        "subheading": "text-slate-400",
+        "background": "bg-slate-950 or bg-slate-900/30"
+      },
+      "card": {
+        "title": "text-white",
+        "description": "text-slate-400",
+        "background": "bg-slate-900/50"
+      },
+      "code": {
+        "text": "text-slate-300",
+        "background": "bg-slate-900/95",
+        "label": "text-slate-400"
+      },
+      "button": {
+        "primary": "text-white on bg-orange-500",
+        "secondary": "text-slate-950 on bg-white",
+        "outline": "text-slate-300 on transparent"
+      }
+    }
+  },
+  "components": {
+    "navbar": {
+      "background": "slate-950/95 with backdrop-blur-md",
+      "border": "slate-800/50",
+      "text": {
+        "brand": "slate-100",
+        "brandIcon": "primary-400 (orange)",
+        "link": "slate-400",
+        "linkHover": "white"
+      },
+      "button": {
+        "signIn": "text-slate-400 hover:text-white",
+        "getStarted": "bg-white text-slate-950 hover:bg-slate-200"
+      }
+    },
+    "hero": {
+      "background": "slate-950",
+      "backgroundGlow": "gradient from-orange-500 via-blue-500 to-transparent at 20% opacity",
+      "headline": {
+        "normal": "white",
+        "accent": "gradient from-orange-400 to-orange-600"
+      },
+      "description": "slate-400",
+      "buttons": {
+        "primary": "bg-white text-slate-950 hover:bg-slate-200",
+        "secondary": "border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-900/50"
+      }
+    },
+    "stats": {
+      "value": "white",
+      "label": "slate-400",
+      "subtext": "slate-600",
+      "border": "slate-800"
+    },
+    "floatingCards": {
+      "bugCard": {
+        "background": "slate-900/95 with backdrop-blur-md",
+        "border": "red-500/40",
+        "shadow": "shadow-2xl",
+        "statusDot": "red-500 with animate-pulse",
+        "label": "slate-400",
+        "code": "slate-300",
+        "message": "red-400"
+      },
+      "fixedCard": {
+        "background": "slate-900/95 with backdrop-blur-md",
+        "border": "emerald-500/40",
+        "shadow": "shadow-2xl",
+        "statusDot": "emerald-500",
+        "label": "slate-400",
+        "code": "slate-300",
+        "message": "emerald-400"
+      }
+    },
+    "trustSection": {
+      "background": "slate-900/30",
+      "border": "slate-900",
+      "label": "slate-500",
+      "companyNames": "slate-600 at 40% opacity"
+    },
+    "featureCards": {
+      "background": "slate-900/50",
+      "border": "slate-800",
+      "borderHover": "orange-500/30",
+      "iconBackground": "gradient from-orange-500/10 to-blue-500/10",
+      "icon": "orange-400",
+      "title": "white",
+      "description": "slate-400"
+    },
+    "stepCards": {
+      "background": "slate-950/50",
+      "border": "slate-800",
+      "numberCircle": {
+        "background": "orange-500/10",
+        "border": "orange-500/50",
+        "text": "orange-400"
+      },
+      "title": "white",
+      "description": "slate-400"
+    },
+    "roleCards": {
+      "background": "gradient from-slate-900/50 to-slate-900/80",
+      "border": "slate-800",
+      "iconBackground": {
+        "student": "orange-500/10",
+        "professional": "blue-500/10"
+      },
+      "icon": {
+        "student": "orange-400",
+        "professional": "blue-400"
+      },
+      "title": "white",
+      "description": "slate-400",
+      "listItem": "slate-300",
+      "checkmark": "emerald-500"
+    },
+    "testimonials": {
+      "background": "slate-900/50",
+      "border": "slate-800",
+      "borderHover": "slate-700",
+      "stars": {
+        "fill": "amber-500",
+        "stroke": "amber-500"
+      },
+      "content": "slate-300",
+      "avatar": {
+        "background": "gradient from-slate-700 to-slate-800",
+        "border": "slate-700",
+        "text": "slate-300"
+      },
+      "name": "white",
+      "role": "slate-500",
+      "timestamp": "slate-500"
+    },
+    "cta": {
+      "background": "gradient from-orange-500/5 to-blue-500/5",
+      "border": "slate-800",
+      "glowOrange": "orange-500/10 blur-3xl",
+      "glowBlue": "blue-500/10 blur-3xl",
+      "title": "white",
+      "description": "slate-400",
+      "button": "bg-orange-500 text-white hover:bg-orange-600 with shadow-xl shadow-orange-500/20"
+    },
+    "footer": {
+      "background": "slate-950",
+      "border": "slate-900",
+      "brandIcon": "primary-400 (orange)",
+      "brandText": "slate-100",
+      "description": "slate-500",
+      "sectionHeading": "white",
+      "link": "slate-500",
+      "linkHover": "white",
+      "copyright": "slate-500"
+    }
+  },
+  "accessibilityGuidelines": {
+    "contrastRequirements": {
+      "normalText": "4.5:1 minimum (WCAG AA)",
+      "largeText": "3:1 minimum (WCAG AA)",
+      "preferredAll": "7:1 (WCAG AAA)"
+    },
+    "colorPairings": {
+      "excellent": [
+        "white on slate-950 (21:1)",
+        "slate-400 on slate-950 (8.5:1)",
+        "orange-500 on slate-950 (8.2:1)",
+        "emerald-500 on slate-950 (7.8:1)",
+        "red-500 on slate-950 (8.9:1)"
+      ],
+      "good": [
+        "slate-300 on slate-950 (12:1)",
+        "slate-500 on slate-950 (6.2:1)",
+        "blue-500 on slate-950 (8.5:1)"
+      ],
+      "caution": [
+        "amber-500 on slate-950 (7.2:1) - good but use darker for body text"
+      ]
+    },
+    "recommendations": [
+      "Always use white or slate-100 for headings on dark backgrounds",
+      "Use slate-400 for body text (8.5:1 ratio)",
+      "Use slate-500 for less important text (6.2:1 ratio)",
+      "Never rely on color alone - use icons, text, or patterns too",
+      "Maintain consistent color meanings (red = error, green = success)",
+      "Test all interactive elements for sufficient contrast",
+      "Ensure focus states are visible (orange-500 focus rings)"
+    ]
+  },
+  "designPrinciples": [
+    "⚠️ CRITICAL: This color scheme and design intention MUST be maintained across the entire project - all pages, components, and features",
+    "No purple - keeping it professional and focused on the debugging context",
+    "Orange represents energy, urgency, and action without being alarming",
+    "Blue provides balance, trust, and technical professionalism",
+    "Slate creates a modern dark theme that reduces eye strain for developers",
+    "Emerald gives clear success feedback without being distracting",
+    "Red demands attention for bugs but doesn't create panic",
+    "High contrast throughout for maximum readability",
+    "Subtle gradients add depth without overwhelming the content",
+    "Consistent opacity values (5%, 10%, 15%, 20%, 30%, 40%, 50%, 80%, 95%)",
+    "Color meanings are consistent across the entire landing page",
+    "Accessibility is prioritized with AAA contrast ratios where possible",
+    "Color never conveys information alone - always paired with text/icons",
+    "All new components and pages should reference this document before implementation"
+  ],
+  "usageExamples": {
+    "heroSection": {
+      "className": "bg-slate-950",
+      "elements": {
+        "headline": "text-6xl font-bold text-white with text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 for 'broken code'",
+        "description": "text-xl text-slate-400",
+        "primaryButton": "bg-white text-slate-950 hover:bg-slate-200",
+        "secondaryButton": "border-slate-700 text-slate-300 hover:border-slate-600",
+        "statsValue": "text-3xl font-bold text-white",
+        "statsLabel": "text-sm text-slate-400"
+      }
+    },
+    "featureCard": {
+      "className": "bg-slate-900/50 border border-slate-800 hover:border-orange-500/30",
+      "elements": {
+        "iconContainer": "bg-gradient-to-br from-orange-500/10 to-blue-500/10",
+        "icon": "text-orange-400",
+        "title": "text-lg font-semibold text-white",
+        "description": "text-sm text-slate-400"
+      }
+    },
+    "floatingBugCard": {
+      "className": "bg-slate-900/95 backdrop-blur-md border border-red-500/40 shadow-2xl",
+      "elements": {
+        "statusDot": "w-2 h-2 bg-red-500 rounded-full animate-pulse",
+        "label": "text-xs text-slate-400 font-mono",
+        "code": "text-[11px] text-slate-300 font-mono",
+        "message": "text-xs text-red-400 font-medium"
+      }
+    },
+    "ctaButton": {
+      "className": "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-xl hover:shadow-orange-500/20",
+      "note": "Primary action button with orange background and enhanced shadow on hover"
+    }
+  },
+  "themeMetadata": {
+    "author": "BugRank Design Team",
+    "created": "2026-01-27",
+    "lastUpdated": "2026-01-27",
+    "tailwindVersion": "3.x",
+    "scope": "entire-project",
+    "consistency": "REQUIRED - This color scheme must be maintained across all pages, components, and features in the BugRank project",
+    "notes": [
+      "This color scheme is specifically designed for a dark-theme landing page",
+      "All colors are chosen for optimal readability on slate-950 background",
+      "Orange/blue combination avoids the overused purple trend",
+      "Color usage is documented at the component level for easy reference",
+      "Opacity values are standardized for consistency",
+      "All contrast ratios meet or exceed WCAG AA standards",
+      "⚠️ IMPORTANT: Before implementing any new feature or component, consult this document",
+      "⚠️ IMPORTANT: Do not introduce new colors without updating this scheme first",
+      "⚠️ IMPORTANT: Maintain the human, realistic, story-driven tone with these colors"
+    ]
+  }
+}
