@@ -4,62 +4,60 @@
 
 ### High-Level Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         CLIENT TIER                         │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  React SPA (Vite + TypeScript)                       │  │
-│  │  - Monaco Editor (Code Editing)                      │  │
-│  │  - React Router (Navigation)                         │  │
-│  │  - Axios (HTTP Client)                               │  │
-│  │  - TailwindCSS (Styling)                             │  │
-│  └──────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  React SPA (Vite + TypeScript)                       │   │
+│  │  - Monaco Editor (Code Editing)                      │   │
+│  │  - React Router (Navigation)                         │   │
+│  │  - Axios (HTTP Client)                               │   │
+│  │  - TailwindCSS (Styling)                             │   │
+│  └──────────────────────────────────────────────────────┘   │
 │                           ↓ HTTP/REST                       │
 └─────────────────────────────────────────────────────────────┘
                               ↓
-┌─────────────────────────────────────────────────────────────┐
-│                      APPLICATION TIER                       │
+┌────────────────────────────────────────────────────────────┐
+│                      APPLICATION TIER                      │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  Express.js API Server (Node.js + TypeScript)        │  │
-│  │  ┌────────────────────────────────────────────────┐ │  │
-│  │  │  Routes Layer                                   │ │  │
-│  │  │  - /api/auth    - /api/challenges               │ │  │
-│  │  │  - /api/submissions  - /api/leaderboard         │ │  │
-│  │  └────────────────────────────────────────────────┘ │  │
-│  │  ┌────────────────────────────────────────────────┐ │  │
-│  │  │  Middleware Layer                               │ │  │
-│  │  │  - JWT Validator  - Session Validator           │ │  │
-│  │  │  - Error Handler  - CORS                        │ │  │
-│  │  │  - Rate Limiter (15/15min, 30/5min)             │ │  │
-│  │  └────────────────────────────────────────────────┘ │  │
-│  │  ┌────────────────────────────────────────────────┐ │  │
-│  │  │  Services Layer                                 │ │  │
-│  │  │  - AuthService (User management)                │ │  │
-│  │  │  - SubmissionService (Hybrid execution)         │ │  │
-│  │  │  - CompilerService (Judge0 + fallback)          │ │  │
-│  │  │  - Judge0Service (RapidAPI integration)         │ │  │
-│  │  │  - GeminiService (AI analysis)                  │ │  │
-│  │  │  - UsageTracker (Cost monitoring)               │ │  │
-│  │  └────────────────────────────────────────────────┘ │  │
+│  │  ┌────────────────────────────────────────────────┐  │  │
+│  │  │  Routes Layer                                  │  │  │
+│  │  │  - /api/auth    - /api/challenges              │  │  │
+│  │  │  - /api/submissions  - /api/leaderboard        │  │  │
+│  │  └────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────┐  │  │
+│  │  │  Middleware Layer                              │  │  │
+│  │  │  - JWT Validator  - Session Validator          │  │  │
+│  │  │  - Error Handler  - CORS                       │  │  │
+│  │  │  - Rate Limiter (15/15min, 30/5min)            │  │  │
+│  │  └────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────┐  │  │
+│  │  │  Services Layer                                │  │  │
+│  │  │  - AuthService (User management)               │  │  │
+│  │  │  - SubmissionService (Hybrid execution)        │  │  │
+│  │  │  - CompilerService (Judge0 primary)            │  │  │
+│  │  │  - Judge0Service (RapidAPI integration)        │  │  │
+│  │  │  - GeminiService (AI analysis)                 │  │  │
+│  │  │  - UsageTracker (Cost monitoring)              │  │  │
+│  │  └────────────────────────────────────────────────┘  │  │
 │  └──────────────────────────────────────────────────────┘  │
-│             ↓ pg (node-postgres)    ↓ child_process        │
-└─────────────────────────────────────────────────────────────┘
+│             ↓ pg (node-postgres)    ↓ Judge0 API           │
+└────────────────────────────────────────────────────────────┘
                  ↓                           ↓
 ┌──────────────────────────┐   ┌─────────────────────────────┐
 │      DATA TIER           │   │   EXTERNAL SERVICES         │
-│  ┌────────────────────┐  │   │  ┌───────────────────────┐ │
-│  │  PostgreSQL 15     │  │   │  │ Google Gemini AI      │ │
-│  │  - users           │  │   │  │ (Run - Free)          │ │
-│  │  - sessions        │  │   │  └───────────────────────┘ │
-│  │  - challenges      │  │   │  ┌───────────────────────┐ │
-│  │  - submissions     │  │   │  │ Judge0 API (RapidAPI) │ │
-│  │  - indexes         │  │   │  │ (Submit - $0.0017)    │ │
-│  └────────────────────┘  │   │  └───────────────────────┘ │
-│                          │   │  ┌───────────────────────┐ │
-│                          │   │  │ g++ Compiler          │ │
-│                          │   │  │ (Fallback)            │ │
-└──────────────────────────┘   │  └───────────────────────┘ │
-                               └─────────────────────────────┘
+│  ┌────────────────────┐  │   │  ┌───────────────────────┐  │
+│  │  PostgreSQL 15     │  │   │  │ Google Gemini AI      │  │
+│  │  - users           │  │   │  │ (Run - Free)          │  │
+│  │  - sessions        │  │   │  └───────────────────────┘  │
+│  │  - challenges      │  │   │  ┌───────────────────────┐  │
+│  │  - submissions     │  │   │  │ Judge0 CE (RapidAPI)  │  │
+│  │  - indexes         │  │   │  │ (Submit - $0.0017)    │  │
+│  └────────────────────┘  │   │  │ - SHA-256 caching     │  │
+│                          │   │  │ - 1hr TTL             │  │
+│                          │   │  └───────────────────────┘  │
+└──────────────────────────┘   └─────────────────────────────┘
 ```
 
 ## 🔧 Component Design
@@ -250,7 +248,7 @@ User submits code
 ┌─────────────────────────────────────┐
 │  4. GeminiService.analyzeCode()     │
 │     ├─► Send to Gemini AI           │
-│     ├─► Get quality scores           │
+│     ├─► Get quality scores          │
 │     └─► Fallback if AI unavailable  │
 └─────────────────────────────────────┘
       ↓
