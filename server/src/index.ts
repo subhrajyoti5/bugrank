@@ -24,6 +24,19 @@ if (!process.env.JWT_SECRET) {
   console.warn('⚠️  JWT_SECRET not set - using default (NOT SECURE FOR PRODUCTION)');
 }
 
+// Check execution environment
+if (process.env.NODE_ENV !== 'production') {
+  console.log('\n' + '='.repeat(70));
+  console.log('🔧 DEVELOPMENT MODE - Code Execution');
+  console.log('='.repeat(70));
+  console.log('⚠️  Self-hosted execution requires VPS setup (Phases 0-3)');
+  console.log('📝 Running locally will show "System Error" for code execution');
+  console.log('✅ AI analysis will still work for development');
+  console.log('📖 See: SYSTEM_ERROR_TROUBLESHOOTING.md for details');
+  console.log('🚀 Deploy to VPS for full execution functionality');
+  console.log('='.repeat(70) + '\n');
+}
+
 // Initialize Express app
 const app: Express = express();
 const PORT = process.env.PORT || 5000;

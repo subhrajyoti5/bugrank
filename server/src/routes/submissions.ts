@@ -42,7 +42,7 @@ router.post('/run', authMiddleware, runLimiter, async (req: AuthRequest, res: Re
 /**
  * POST /api/submissions/submit
  * Submit code for full evaluation with scoring
- * Uses Judge0 API (PAID - $0.0017 per submission) - 15 submissions per 15 minutes
+ * Uses self-hosted execution (FREE - $0 per submission) - 15 submissions per 15 minutes
  */
 router.post('/submit', authMiddleware, submissionLimiter, async (req: AuthRequest, res: Response) => {
   try {

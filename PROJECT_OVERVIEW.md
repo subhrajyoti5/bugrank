@@ -2,7 +2,7 @@
 
 ## 🎯 Core Idea
 
-**BugPulse** is a competitive programming platform where developers compete to find and fix bugs in code as quickly and efficiently as possible. It's like LeetCode, but instead of solving algorithmic challenges, you're debugging real-world code issues.
+**BugPulse** is a competitive programming platform where developers compete to find and fix bugs in code as quickly and efficiently as possible. Instead of solving algorithmic puzzles, you're debugging real-world code issues from actual codebases.
 
 ### The Challenge
 - Users are presented with buggy code (C++ and Java)
@@ -186,13 +186,11 @@ BugPulse believes that debugging is an art. The best developers aren't those who
 
 ## 🏆 Competitive Advantage
 
-### vs LeetCode/HackerRank
+### Why BugPulse Stands Out
 - Focus on debugging, not algorithms
 - Real-world code scenarios
 - AI-powered feedback
 - Faster challenges (5-15 minutes each)
-
-### vs CodeWars
 - Professional debugging scenarios
 - Actual compiler integration
 - Detailed performance metrics

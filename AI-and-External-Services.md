@@ -1,7 +1,7 @@
 # BugPulse - AI and External Services Technology Stack
 
 ## Overview
-BugPulse integrates multiple external services and AI technologies to provide code analysis, execution, and validation capabilities. The hybrid approach balances cost, speed, and accuracy.
+BugPulse integrates AI technology and self-hosted code execution to provide code analysis, execution, and validation capabilities. The system now uses a fully self-hosted execution pipeline, eliminating external API dependencies and costs.
 
 ## Primary AI Service
 
@@ -9,7 +9,7 @@ BugPulse integrates multiple external services and AI technologies to provide co
 - **Purpose**: AI-powered code analysis for instant feedback
 - **Provider**: Google DeepMind's Gemini models
 - **Integration**: REST API via Google AI SDK
-- **Usage Context**: "Run" functionality - free, instant analysis
+- **Usage Context**: "Run" and "Submit" functionality - AI-assisted analysis
 
 #### Key Features
 - **Code Review**: Automated code quality assessment
@@ -30,61 +30,79 @@ BugPulse integrates multiple external services and AI technologies to provide co
 
 ## Code Execution Service
 
-### Judge0 API (via RapidAPI)
-- **Purpose**: Remote code compilation and execution
-- **Provider**: Judge0 online judge system
-- **Integration**: REST API through RapidAPI marketplace
-- **Usage Context**: "Submit" functionality - accurate validation
+### Self-Hosted Execution System (NEW)
+- **Purpose**: Local code compilation and execution
+- **Provider**: Self-managed VPS infrastructure
+- **Integration**: Direct OS-level execution via ExecutionService
+- **Usage Context**: Both "Run" and "Submit" functionality - $0 cost per execution
 
 #### Supported Languages
-- **Primary**: C++ (g++ compiler), Java (OpenJDK)
-- **Configuration**: Language-specific compilation flags
-- **Execution Environment**: Isolated containers for security
+- **Primary**: C++ (GCC 9.2.0+, C++17 standard)
+- **Future**: Java, Python, C (planned)
+- **Configuration**: Compiler flags optimized for education/debugging
+- **Execution Environment**: Isolated user context with resource limits
 
 #### Technical Implementation
-- **API Endpoints**:
-  - Submission creation
-  - Status polling
-  - Result retrieval
-- **Authentication**: RapidAPI key authentication
-- **Request Format**: Base64-encoded source code and test inputs
-- **Response Handling**: Compilation errors, runtime errors, test results
+- **Architecture**:
+  - ExecutionService (TypeScript/Node.js)
+  - Bash runner scripts (`/srv/bugpulse/runner/run_cpp.sh`)
+  - Isolated executor user with network blocking
+  - OS-level resource limits (CPU, memory, time)
+  
+- **Security Features**:
+  - Dedicated execution user (non-root)
+  - Network access disabled via iptables
+  - Resource limits: 5s CPU, 256MB memory
+  - Separate job directories per submission
+  - Automatic cleanup of old executions
+
+- **Cache System**:
+  - SHA-256-based result caching
+  - 1-hour TTL (Time To Live)
+  - In-memory cache with automatic expiry
+  - Cache cleanup every 10 minutes
 
 #### Cost Structure
-- **Subscription Tiers**: Freemium model with usage limits
-- **Rate Limiting**: Requests per minute/hour limits
-- **Premium Features**: Higher execution limits, priority processing
+- **Infrastructure**: Fixed VPS cost (already paid)
+- **Per-Execution**: $0 (no external API fees)
+- **Annual Savings**: ~$170 for 100k submissions vs Judge0
+- **Maintenance**: Minimal (automated cleanup)
 
 ## Hybrid Execution Strategy
 
 ### Architecture Overview
 ```
 User Code Input
-├── "Run" (AI Analysis)
-│   ├── Gemini AI Service
+├── "Run" (Execution + AI Analysis)
+│   ├── ExecutionService (self-hosted)
+│   ├── Gemini AI Service (analysis)
 │   ├── Instant feedback
-│   └── Cost-effective
-└── "Submit" (Full Validation)
-    ├── Judge0 API
-    ├── Complete test execution
-    └── Authoritative results
+│   └── Cost: $0 for execution
+└── "Submit" (Full Validation + Scoring)
+    ├── ExecutionService (self-hosted)
+    ├── Test case validation
+    ├── Gemini AI (quality analysis)
+    └── Score calculation
+
+Both operations now use self-hosted execution!
 ```
 
 ### Decision Logic
-- **Run**: Quick feedback, AI suggestions, unlimited usage
-- **Submit**: Official scoring, comprehensive testing, rate-limited
+- **Run**: Quick feedback, execution + AI suggestions, unlimited usage
+- **Submit**: Official scoring, test case validation, unlimited usage
+- **Cost**: $0 per execution for both operations
 
 ### Fallback Mechanisms
-- **Judge0 Unavailable**: Local compilation fallback (g++)
-- **AI Service Down**: Graceful degradation to basic syntax checking
-- **Rate Limits**: User-friendly error messages with retry suggestions
+- **Execution Errors**: Detailed error reporting (CE, TLE, RE, SE)
+- **AI Service Down**: Graceful degradation to execution-only results
+- **Resource Limits**: User-friendly error messages with retry suggestions
 
 ## External Service Integration
 
 ### Axios HTTP Client (1.13.3)
-- **Purpose**: Unified HTTP client for all external API calls
+- **Purpose**: HTTP client for AI service calls
 - **Configuration**:
-  - Base URLs for different services
+  - Base URLs for Gemini API
   - Authentication headers
   - Timeout configurations
   - Retry logic for transient failures
@@ -92,75 +110,82 @@ User Code Input
 ### Service Configuration
 #### Environment Variables
 - `GEMINI_API_KEY`: Google AI service authentication
-- `RAPIDAPI_KEY`: Judge0 API access
-- `RAPIDAPI_HOST`: Judge0 service endpoint
+- ~~`RAPIDAPI_KEY`: Removed (no longer needed)~~
+- ~~`RAPIDAPI_HOST`: Removed (no longer needed)~~
 
 #### Service Classes
 - **GeminiService**: AI analysis integration
-- **Judge0Service**: Code execution integration
-- **CompilerService**: Local fallback compilation
+- **ExecutionService**: Self-hosted code execution (NEW)
+- ~~**Judge0Service**: Removed~~
+- ~~**CompilerService**: Removed~~
 
 ## Usage Tracking and Cost Management
 
 ### UsageTracker Service
-- **Purpose**: Monitor API usage and manage costs
+- **Purpose**: Monitor system usage and performance
 - **Features**:
-  - Request counting per user/service
-  - Cost calculation and alerting
-  - Rate limit enforcement
-  - Usage analytics and reporting
+  - Execution count tracking
+  - Cache hit rate monitoring
+  - Error rate analysis
+  - Performance metrics
+  - Disk usage monitoring
 
 #### Metrics Tracked
 - **AI Requests**: Gemini API call volume
-- **Execution Requests**: Judge0 submission count
-- **Error Rates**: Failed API call percentages
-- **Response Times**: Service performance monitoring
+- **Execution Requests**: Self-hosted submission count
+- **Cache Performance**: Hit/miss ratios
+- **Error Rates**: Failed execution percentages
+- **Response Times**: Execution performance monitoring
+- **Resource Usage**: Disk space, CPU usage
 
 ## Security and Compliance
 
 ### Data Privacy
-- **Code Transmission**: Secure HTTPS encryption
-- **Data Retention**: Minimal data storage on external services
-- **User Privacy**: No personal code storage without consent
+- **Code Transmission**: Local execution (no external transmission)
+- **Data Retention**: Configurable job directory cleanup
+- **User Privacy**: Code never leaves VPS infrastructure
 
-### API Security
-- **Authentication**: Secure API key management
-- **Rate Limiting**: Abuse prevention
-- **Input Validation**: Sanitize code inputs
+### Execution Security
+- **Isolation**: Dedicated executor user
+- **Network Blocking**: No outbound connections allowed
+- **Resource Limits**: CPU time, memory, process limits
+- **Input Validation**: Code sanitization before execution
 - **Output Filtering**: Clean execution results
 
 ## Performance Optimization
 
 ### Caching Strategies
-- **Response Caching**: Cache frequent analysis results
-- **Rate Limit Caching**: Distributed rate limit tracking
-- **Result Memoization**: Avoid duplicate executions
+- **Result Caching**: SHA-256 hash-based deduplication
+- **Cache Duration**: 1-hour TTL
+- **Cache Cleanup**: Automatic expiry management
+- **Result Memoization**: Avoid duplicate compilations
 
 ### Asynchronous Processing
-- **Non-blocking Calls**: Async/await for API requests
-- **Timeout Handling**: Configurable timeouts for different services
-- **Retry Logic**: Exponential backoff for transient failures
+- **Non-blocking Calls**: Async/await for execution
+- **Timeout Handling**: 12-second total timeout (compile + run)
+- **Queue System**: Sequential job processing (future: parallel)
 
 ## Error Handling and Resilience
 
 ### Service Degradation
-- **Graceful Fallbacks**: Continue operation with reduced functionality
-- **User Communication**: Clear error messages and alternative suggestions
-- **Monitoring Alerts**: Service health monitoring
+- **Graceful Fallbacks**: Clear error messages on failures
+- **User Communication**: Status-specific feedback (CE, TLE, RE, SE)
+- **Monitoring Alerts**: Disk space, process monitoring
 
 ### Error Types Handled
-- **Network Errors**: Connection timeouts, DNS failures
-- **API Errors**: Rate limits, authentication failures, service errors
-- **Compilation Errors**: Syntax errors, runtime exceptions
-- **Analysis Errors**: AI service parsing failures
+- **Compilation Errors (CE)**: Syntax errors, linker failures
+- **Time Limit Exceeded (TLE)**: Execution timeout (5s)
+- **Runtime Errors (RE)**: Crashes, segfaults, exceptions
+- **System Errors (SE)**: Infrastructure issues
 
-## Future AI Enhancements
+## Future Enhancements
 
-### Advanced AI Features
-- **Code Completion**: AI-powered code suggestions
-- **Bug Fix Suggestions**: Automated fix generation
-- **Learning Analytics**: Personalized learning recommendations
-- **Peer Comparison**: AI-assisted code review
+### Advanced Execution Features
+- **Multi-language Support**: Java, Python, C
+- **Parallel Execution**: Queue-based worker system
+- **Docker/Podman**: Enhanced isolation
+- **Real-time Progress**: Live execution status
+- **Performance Profiling**: Detailed execution metrics
 
 ### Alternative AI Services
 - **OpenAI GPT**: Code analysis and explanation
@@ -168,51 +193,53 @@ User Code Input
 - **Anthropic Claude**: Advanced reasoning capabilities
 - **Local AI Models**: Self-hosted for privacy/cost
 
-### Enhanced Execution Services
-- **Custom Judge**: Self-hosted execution environment
-- **Multi-language Support**: Expand beyond C++/Java
-- **Performance Profiling**: Detailed execution metrics
-- **Security Sandboxing**: Advanced isolation techniques
+### Enhanced Security
+- **Container Isolation**: Docker/Podman sandboxing
+- **SELinux/AppArmor**: Additional security layers
+- **Resource Quotas**: Per-user execution limits
+- **Audit Logging**: Comprehensive execution logs
 
-## Cost Optimization Strategies
+## Cost Optimization Achieved
+
+### Current Savings
+- **Execution Cost**: $0.0017 → $0.00 per submission
+- **Monthly Savings**: ~$14 for 8,500 submissions
+- **Annual Savings**: ~$170 for 100,000 submissions
+- **Infrastructure**: Fixed VPS cost (already paid)
 
 ### Usage Optimization
-- **Smart Caching**: Reduce duplicate API calls
-- **Batch Processing**: Group similar requests
-- **User Quotas**: Fair usage distribution
-- **Premium Tiers**: Different service levels
-
-### Alternative Providers
-- **Cost Comparison**: Regular evaluation of service providers
-- **Multi-provider**: Fallback to alternative services
-- **Open Source**: Self-hosted alternatives when cost-effective
+- **Smart Caching**: SHA-256-based deduplication
+- **Automatic Cleanup**: Prevent disk space exhaustion
+- **Resource Efficiency**: Optimized compiler flags
+- **No API Limits**: Unlimited executions
 
 ## Monitoring and Analytics
 
 ### Service Health Monitoring
-- **Uptime Tracking**: External service availability
-- **Performance Metrics**: Response time and success rates
-- **Error Analysis**: Common failure patterns
-- **Cost Tracking**: Usage and expenditure monitoring
+- **Execution Success Rate**: Track CE/TLE/RE/SE rates
+- **Performance Metrics**: Compilation/execution times
+- **Cache Efficiency**: Hit rate analysis
+- **Disk Usage**: Job directory monitoring
+- **Resource Utilization**: CPU/memory tracking
 
 ### User Experience Analytics
-- **Feature Usage**: Run vs Submit usage patterns
-- **Success Rates**: Code correction success metrics
-- **Time Savings**: AI-assisted debugging efficiency
-- **User Satisfaction**: Feedback and rating systems
+- **Feature Usage**: Run vs Submit patterns
+- **Success Rates**: Code correction metrics
+- **Time Savings**: Self-hosted vs API latency
+- **User Satisfaction**: Feedback integration
 
 ## Compliance and Ethics
 
 ### Responsible AI Usage
-- **Bias Mitigation**: Fair and unbiased code analysis
-- **Transparency**: Clear indication of AI-generated content
-- **User Consent**: Opt-in for AI features
-- **Data Privacy**: Minimal personal data collection
+- **Bias Mitigation**: Fair code analysis
+- **Transparency**: Clear AI indication
+- **User Consent**: Opt-in features
+- **Data Privacy**: Minimal data collection
 
 ### Academic Integrity
-- **Educational Focus**: Learning tool, not cheating prevention
+- **Educational Focus**: Learning tool emphasis
 - **Code Attribution**: Clear source indication
-- **Plagiarism Detection**: Future consideration for academic use
+- **Secure Execution**: Prevent malicious code
 
-This AI and external services stack provides powerful capabilities while maintaining cost-effectiveness, reliability, and user experience. The hybrid approach ensures both instant feedback and accurate validation, critical for an educational debugging platform.</content>
+This modernized stack eliminates external execution dependencies while maintaining powerful AI-assisted analysis. The self-hosted approach provides unlimited executions at zero marginal cost, making BugPulse truly cost-effective and scalable.</content>
 <parameter name="filePath">c:\Users\subhr\OneDrive\Desktop\Bigpulse\AI-and-External-Services.md

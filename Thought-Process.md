@@ -11,10 +11,10 @@ This document captures the reasoning, decisions, and thought processes behind th
 Traditional coding platforms focus on algorithmic problem-solving, but real-world software development spends ~50% of time on debugging. We needed a platform that teaches and tests debugging skills specifically, making it competitive and engaging.
 
 ## Initial Thoughts
-The core idea emerged from recognizing that debugging is a critical but under-taught skill. LeetCode-style platforms exist for algorithms, but nothing focused on debugging challenges.
+The core idea emerged from recognizing that debugging is a critical but under-taught skill. Most coding platforms focus on algorithms, but nothing focused specifically on debugging challenges.
 
 ### Pros and Cons Analysis
-**Approach 1: Algorithm-focused platform (like LeetCode)**
+**Approach 1: Algorithm-focused platform**
 - **Pros**: Familiar model, established patterns, easier to implement
 - **Cons**: Doesn't address the debugging skill gap, less unique value proposition
 - **Feasibility**: High - many examples to follow
@@ -177,8 +177,7 @@ Building a competitive platform requires balancing education, engagement, and te
 **Impact**: Secure, scalable user management
 
 ## References
-- LeetCode platform analysis
-- Competitive programming research
+- Competitive programming platform research
 - Debugging education studies
 - AI code analysis capabilities
 - Code execution service comparisons

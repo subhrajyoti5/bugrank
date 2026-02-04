@@ -168,7 +168,7 @@ int main() {
         baseScore: 150,
         testCase: {
             input: '',
-            expectedOutput: 'Dog sound: Woof!\n',
+            expectedOutput: 'Circle area: 78.5\n',
         },
         createdAt: new Date('2026-01-04'),
     },

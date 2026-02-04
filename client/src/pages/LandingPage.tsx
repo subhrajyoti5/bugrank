@@ -187,17 +187,22 @@ const HorizontalScroll = ({ children }: { children: React.ReactNode }) => {
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
     const [centerCardIndex, setCenterCardIndex] = useState(0);
+    const cardWidth = 320; // card width
+    const gap = 80; // gap between cards
 
     const checkScroll = () => {
         if (scrollContainerRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-            setCanScrollLeft(scrollLeft > 0);
+            
+            // Account for padding in scroll position
+            const paddingLeft = (clientWidth - cardWidth) / 2;
+            const adjustedScrollLeft = scrollLeft - paddingLeft;
+            
+            setCanScrollLeft(scrollLeft > 10);
             setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
             
             // Calculate which card is in center
-            const cardWidth = 320; // card width
-            const gap = 80; // gap between cards
-            const centerViewport = scrollLeft + clientWidth / 2;
+            const centerViewport = adjustedScrollLeft + clientWidth / 2;
             const cardCenter = cardWidth / 2;
             
             // Find which card's center is closest to viewport center
@@ -207,6 +212,17 @@ const HorizontalScroll = ({ children }: { children: React.ReactNode }) => {
     };
 
     useEffect(() => {
+        // Center first card on initial load
+        if (scrollContainerRef.current) {
+            setTimeout(() => {
+                if (scrollContainerRef.current) {
+                    const paddingLeft = (scrollContainerRef.current.clientWidth - cardWidth) / 2;
+                    scrollContainerRef.current.scrollLeft = Math.max(0, paddingLeft);
+                    checkScroll();
+                }
+            }, 0);
+        }
+
         checkScroll();
         const container = scrollContainerRef.current;
         if (container) {
@@ -274,7 +290,12 @@ const HorizontalScroll = ({ children }: { children: React.ReactNode }) => {
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseLeave}
                 className={`flex gap-20 overflow-x-auto scrollbar-hide pb-4 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    paddingLeft: `calc((100% - 320px) / 2)`,
+                    paddingRight: `calc((100% - 320px) / 2)`
+                }}
             >
                 {React.Children.map(children, (child, index) => {
                     if (React.isValidElement(child)) {
@@ -298,12 +319,12 @@ const HorizontalScroll = ({ children }: { children: React.ReactNode }) => {
                 </button>
             )}
 
-            {/* Gradient overlays */}
+            {/* Gradient overlays - more subtle to not hide cards */}
             {canScrollLeft && (
-                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-950 via-slate-950/50 to-transparent pointer-events-none z-10" />
+                <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-950/80 via-slate-950/30 to-transparent pointer-events-none z-10" />
             )}
             {canScrollRight && (
-                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-950 via-slate-950/50 to-transparent pointer-events-none z-10" />
+                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-950/80 via-slate-950/30 to-transparent pointer-events-none z-10" />
             )}
         </div>
     );
@@ -402,14 +423,17 @@ const LandingPage: React.FC = () => {
                         {/* Left Content */}
                         <div>
                             <h1 className="text-6xl md:text-7xl font-bold text-white tracking-tight mb-6 leading-[1.1]">
-                                Turn <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
-                                    broken code
-                                </span>{' '}
-                                <br />into working software
+                                Debug like your{' '}
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
+                                    job depends on it
+                                </span>
+                                <br />
+                                (because it does)
                             </h1>
 
                             <p className="text-xl text-slate-400 mb-10 max-w-xl leading-relaxed">
-                                It's 2 AM. Your app just crashed. Users are complaining. We help you get better at finding and fixing bugs before they reach production.
+                                � Plot twist: You're about to release code with a bug that'll make 2 AM you want to quit programming. <br /> <br />
+                                Plot twist #2: You could've caught it in BugPulse. For free. While staying sane.
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -478,7 +502,7 @@ const LandingPage: React.FC = () => {
                                 The debugging practice you actually need
                             </h2>
                             <p className="text-xl text-slate-400 mb-4">
-                                Not leetcode-style puzzles. Real bugs from codebases like yours.
+                                Real bugs from real codebases. Not practice puzzles.
                             </p>
                             <p className="text-sm text-slate-500">← Drag to explore or use the arrows →</p>
                         </div>

@@ -114,25 +114,29 @@ server/
 - Password hashing and verification
 
 ### SubmissionService
-- Hybrid execution strategy coordination
+- Execution orchestration (self-hosted)
 - Test case validation
 - Scoring algorithm implementation
+- AI analysis integration
 
-### CompilerService
-- Fallback compilation using g++ (system compiler)
-- Error parsing and formatting
-
-### Judge0Service
-- API integration for remote code execution
-- Language-specific compilation settings
+### ExecutionService (NEW)
+- Self-hosted C++ code execution
+- SHA-256 result caching (1-hour TTL)
+- Job directory management
+- Status mapping and error handling
 
 ### GeminiService
 - AI code analysis integration
 - Response parsing and error handling
+- Fallback mechanisms
 
 ### UsageTracker
-- API usage monitoring and cost tracking
-- Rate limit enforcement
+- Execution monitoring and metrics
+- Cache performance tracking
+- Resource usage monitoring
+
+~~### CompilerService~~ (Removed)
+~~### Judge0Service~~ (Removed)
 
 ## Environment Configuration
 ### dotenv 16.3.1
@@ -149,20 +153,25 @@ server/
 ## Performance Considerations
 - **Database Connection Pooling**: Efficient connection management
 - **Rate Limiting**: Prevents server overload
-- **Caching**: Future consideration for frequently accessed data
+- **Result Caching**: SHA-256-based execution result caching (1-hour TTL)
 - **Horizontal Scaling**: Stateless design supports multiple instances
+- **Resource Optimization**: OS-level execution limits (CPU, memory, time)
 
 ## Deployment Considerations
 - **Process Management**: PM2 or similar for production
 - **Environment Variables**: Secure configuration management
 - **Database Migrations**: Automated schema updates
 - **Health Checks**: Application monitoring endpoints
+- **VPS Infrastructure**: Hostinger KVM with Ubuntu 25.10
+- **Security Hardening**: Isolated executor user, network blocking, resource limits
 
 ## Future Enhancements
+- **Multi-language Support**: Java, Python, C execution
+- **Queue-based Execution**: Parallel job processing
+- **Docker/Podman**: Enhanced container isolation
 - **GraphQL API**: Consider for complex data fetching
 - **Redis Caching**: For session storage and performance
 - **API Versioning**: For backward compatibility
-- **Microservices**: Potential split of execution services
 - **Monitoring**: Application Performance Monitoring (APM)
 - **Database Optimization**: Query optimization and indexing strategy</content>
 <parameter name="filePath">c:\Users\subhr\OneDrive\Desktop\Bigpulse\Backend-Tech-Stack.md

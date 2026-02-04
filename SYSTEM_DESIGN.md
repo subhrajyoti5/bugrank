@@ -148,8 +148,7 @@ User sees result ← Component State Update ← Response
 │ points_      │        │ base_score    │
 │   earned     │        │ test_cases    │
 └──────────────┘        └───────────────┘
-```
-
+``` 
 #### Indexes for Performance
 ```sql
 -- Users

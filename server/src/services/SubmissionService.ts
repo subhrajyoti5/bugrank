@@ -7,7 +7,7 @@ import {
   DEFAULT_SCORING_CONFIG 
 } from '@bugpulse/shared';
 import { BaseService, GeminiService } from './GeminiService';
-import { CompilerService } from './CompilerService';
+import { ExecutionService } from './ExecutionService';
 import { submissionDb, userDb, challengeDb } from '@/data/storage';
 
 /**
@@ -16,17 +16,15 @@ import { submissionDb, userDb, challengeDb } from '@/data/storage';
  */
 export class SubmissionService extends BaseService {
   private geminiService: GeminiService;
-  private compilerService: CompilerService;
 
   constructor() {
     super();
     this.geminiService = new GeminiService();
-    this.compilerService = new CompilerService();
   }
 
   /**
-   * Handle "Run" button - Test code using AI analysis only (FREE)
-   * Changed to use only AI analysis - no actual compilation to save costs
+   * Handle "Run" button - Test code with execution + AI analysis (FREE)
+   * Now uses self-hosted execution instead of just AI
    */
   async runCode(
     userId: string,
@@ -38,27 +36,38 @@ export class SubmissionService extends BaseService {
     aiAnalysis?: AIAnalysis; 
     feedback?: string;
   }> {
-    this.logInfo('Running code with AI analysis (no scoring)', { userId, challengeId });
+    this.logInfo('Running code with self-hosted execution + AI analysis', { userId, challengeId });
 
     const challenge = await this.getChallenge(challengeId);
     if (!challenge) {
       throw new Error('Challenge not found');
     }
 
-    // Use AI analysis only - FREE (no Judge0 API calls)
+    let compilerOutput = '';
+    
+    // For C++, run actual execution (self-hosted - FREE)
+    if (challenge.language === 'cpp') {
+      const executionResult = await ExecutionService.executeCode(
+        code,
+        testInput || challenge.testCase?.input || ''
+      );
+      compilerOutput = this.formatExecutionOutput(executionResult);
+    }
+
+    // Use AI analysis for additional insights - FREE
     const aiAnalysis = await this.geminiService.analyzeCode(
       challenge.buggyCode,
       code,
       challenge.language
     );
 
-    // Format AI feedback as if it were compiler output
+    // Combine execution output with AI feedback
     const feedback = this.generateFeedback(aiAnalysis, false);
-    const compilerOutput = `🤖 AI Code Analysis (Test Mode)\n\n${feedback}\n\n${
-      aiAnalysis.isCorrect 
-        ? '✅ AI suggests your code looks correct! Click Submit to verify with actual compilation.' 
-        : '❌ AI detected potential issues. Review the feedback above.'
-    }`;
+    if (!compilerOutput) {
+      compilerOutput = `🤖 AI Code Analysis (Test Mode)\n\n${feedback}`;
+    } else {
+      compilerOutput += `\n\n🤖 AI Insights:\n${aiAnalysis.feedback}`;
+    }
 
     return {
       compilerOutput,
@@ -68,8 +77,8 @@ export class SubmissionService extends BaseService {
   }
 
   /**
-   * Handle "Submit" button - Full evaluation with scoring using Judge0 API (PAID)
-   * Uses Judge0 for actual compilation with fallback to local
+   * Handle "Submit" button - Full evaluation with scoring using self-hosted execution (FREE)
+   * Uses ExecutionService for actual compilation instead of Judge0
    */
   async submitCode(
     userId: string,
@@ -84,7 +93,7 @@ export class SubmissionService extends BaseService {
     compilerOutput?: string;
     message: string;
   }> {
-    this.logInfo('Submitting code for evaluation (Judge0 API)', { userId, challengeId });
+    this.logInfo('Submitting code for evaluation (self-hosted execution)', { userId, challengeId });
 
     const challenge = await this.getChallenge(challengeId);
     if (!challenge) {
@@ -95,7 +104,7 @@ export class SubmissionService extends BaseService {
     const attempts = await this.getUserAttempts(userId, challengeId);
     const linesChanged = this.calculateLinesChanged(challenge.buggyCode, code);
 
-    // Compile and run if C++ using Judge0 (with local fallback)
+    // Compile and run if C++ using self-hosted execution (FREE)
     let compilerOutput = '';
     let compilationSuccess = true;
     let testCaseOutput = '';
@@ -106,24 +115,26 @@ export class SubmissionService extends BaseService {
     console.log(`🔍 Test case:`, challenge.testCase);
     
     if (challenge.language === 'cpp') {
-      const numChallengeId = typeof challengeId === 'string' ? parseInt(challengeId, 10) : challengeId;
-      
-      // Run with test case input (uses Judge0 - $0.0017)
+      // Run with test case input using ExecutionService (self-hosted - $0)
       if (challenge.testCase) {
-        console.log(`🚀 Calling compilerService.compileAndRun with input: "${challenge.testCase.input}"`);
-        const result = await this.compilerService.compileAndRun(code, challenge.testCase.input, numChallengeId);
-        console.log(`🎯 Compiler result:`, result);
-        compilationSuccess = result.compilation.success && result.execution?.success;
+        console.log(`🚀 Calling ExecutionService.executeCode with input: "${challenge.testCase.input}"`);
+        const executionResult = await ExecutionService.executeCode(
+          code,
+          challenge.testCase.input
+        );
+        console.log(`🎯 Execution result:`, executionResult);
+        
+        // Map execution result to compiler result format
+        compilationSuccess = executionResult.status !== 'CE' && executionResult.status !== 'SE';
         
         if (compilationSuccess) {
-          testCasePassed = this.compilerService.validateOutput(
-            result.execution!.output,
+          // Check if output matches expected
+          testCasePassed = ExecutionService.compareOutput(
+            executionResult.stdout,
             challenge.testCase.expectedOutput
           );
-          testCaseOutput = this.compilerService.formatOutputComparison(
-            challenge.testCase.expectedOutput,
-            result.execution!.output
-          );
+          
+          testCaseOutput = `Expected Output:\n${challenge.testCase.expectedOutput}\n\nActual Output:\n${executionResult.stdout}`;
           
           if (!testCasePassed) {
             compilationSuccess = false;
@@ -133,15 +144,17 @@ export class SubmissionService extends BaseService {
           testCasePassed = false;
         }
         
-        compilerOutput = this.compilerService.formatCompilerOutput(result.compilation, result.execution);
+        // Format compiler output
+        compilerOutput = this.formatExecutionOutput(executionResult);
       } else {
         // No test case, just run normally
-        const result = await this.compilerService.compileAndRun(code, testInput || '', numChallengeId);
-        compilationSuccess = result.compilation.success && result.execution?.success;
-        compilerOutput = this.compilerService.formatCompilerOutput(result.compilation, result.execution);
+        const executionResult = await ExecutionService.executeCode(
+          code,
+          testInput || ''
+        );
+        compilationSuccess = executionResult.status !== 'CE' && executionResult.status !== 'SE';
+        compilerOutput = this.formatExecutionOutput(executionResult);
       }
-      
-      this.compilerService.cleanup(numChallengeId);
     }
 
     // Perform AI analysis for additional insights
@@ -205,8 +218,6 @@ export class SubmissionService extends BaseService {
       score: finalScore,
       aiAnalysis,
       compilerOutput,
-      testCaseOutput,
-      testCasePassed,
       message: isCorrect 
         ? `✅ Bug fixed correctly! Score: ${finalScore}` 
         : `⚠️ Bug not fully fixed yet. Try again!`,
@@ -279,7 +290,7 @@ export class SubmissionService extends BaseService {
 
     // User should already exist (authenticated)
     if (!userData) {
-      this.logWarning('User not found in database', { userId });
+      this.logError('User not found in database', { userId });
       return;
     }
 
@@ -313,5 +324,51 @@ export class SubmissionService extends BaseService {
     return aiAnalysis.isCorrect 
       ? `✅ Code looks good! Use Submit to score.`
       : `⚠️ Bug still present. Keep trying!`;
+  }
+
+  /**
+   * Format execution result output (replaces CompilerService formatting)
+   */
+  private formatExecutionOutput(result: any): string {
+    let output = '';
+    
+    // Status indicator
+    switch (result.status) {
+      case 'AC':
+      case 'WA':
+        output += `✅ Compilation: Success\n`;
+        output += `✅ Execution: Completed\n\n`;
+        if (result.stdout) {
+          output += `📤 Output:\n${result.stdout}\n`;
+        }
+        break;
+      case 'CE':
+        output += `❌ Compilation: Failed\n\n`;
+        output += `📋 Compilation Errors:\n${result.compilationError || result.stderr || 'Unknown compilation error'}\n`;
+        break;
+      case 'TLE':
+        output += `⏱️ Time Limit Exceeded\n\n`;
+        output += `Your code took too long to execute (>5 seconds)\n`;
+        if (result.stderr) {
+          output += `\n📋 Error Output:\n${result.stderr}\n`;
+        }
+        break;
+      case 'RE':
+        output += `💥 Runtime Error\n\n`;
+        output += `Your code crashed during execution\n`;
+        if (result.stderr) {
+          output += `\n📋 Error Output:\n${result.stderr}\n`;
+        }
+        break;
+      case 'SE':
+        output += `⚠️ System Error\n\n`;
+        output += `An error occurred during execution. Please try again.\n`;
+        if (result.stderr) {
+          output += `\n📋 Error Details:\n${result.stderr}\n`;
+        }
+        break;
+    }
+    
+    return output;
   }
 }
