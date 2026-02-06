@@ -68,11 +68,17 @@ The backend is a Node.js/Express API server that handles authentication, challen
 - **Configuration**: Allows frontend origin in development/production
 
 ## Code Execution Services
-### Judge0 API Integration (axios 1.13.3)
-- **Purpose**: External code compilation and execution service
-- **Provider**: RapidAPI Judge0 service
-- **Languages Supported**: C++, Java (primary focus)
-- **Usage**: Accurate code validation for submissions
+### ExecutionService (Self-hosted)
+- **Purpose**: In-house code compilation and execution service
+- **Platform**: VPS-hosted on Hostinger KVM (Ubuntu)
+- **Languages Supported**: C++ (GCC 9.2.0+)
+- **Features**:
+  - SHA-256 result caching (1-hour TTL)
+  - Job directory management (/srv/bugpulse/jobs)
+  - Runner script execution (run_cpp.sh)
+  - Resource limits (5s CPU, 256MB memory)
+  - Isolated executor user with network blocking
+- **Usage**: Both "Run" and "Submit" - completely free
 
 ### Google Gemini AI (@google/generative-ai 0.1.3)
 - **Purpose**: AI-powered code analysis for instant feedback
@@ -118,12 +124,16 @@ server/
 - Test case validation
 - Scoring algorithm implementation
 - AI analysis integration
+- Output comparison and diff calculation
 
-### ExecutionService (NEW)
+### ExecutionService
 - Self-hosted C++ code execution
 - SHA-256 result caching (1-hour TTL)
-- Job directory management
-- Status mapping and error handling
+- Job directory management (/srv/bugpulse/jobs)
+- Status mapping (CE, TLE, RE, AC, WA, SE)
+- Error handling and cleanup
+- Mutex-based execution queue
+- Runner script invocation
 
 ### GeminiService
 - AI code analysis integration
@@ -134,9 +144,6 @@ server/
 - Execution monitoring and metrics
 - Cache performance tracking
 - Resource usage monitoring
-
-~~### CompilerService~~ (Removed)
-~~### Judge0Service~~ (Removed)
 
 ## Environment Configuration
 ### dotenv 16.3.1
@@ -156,14 +163,21 @@ server/
 - **Result Caching**: SHA-256-based execution result caching (1-hour TTL)
 - **Horizontal Scaling**: Stateless design supports multiple instances
 - **Resource Optimization**: OS-level execution limits (CPU, memory, time)
+- **Docker Containerization**: Isolated execution environment
+- **Execution Queue**: Mutex-based sequential execution
 
 ## Deployment Considerations
-- **Process Management**: PM2 or similar for production
-- **Environment Variables**: Secure configuration management
-- **Database Migrations**: Automated schema updates
-- **Health Checks**: Application monitoring endpoints
-- **VPS Infrastructure**: Hostinger KVM with Ubuntu 25.10
-- **Security Hardening**: Isolated executor user, network blocking, resource limits
+- **Containerization**: Docker-based deployment
+- **VPS Infrastructure**: Hostinger KVM with Ubuntu
+- **Process Management**: Docker container lifecycle management
+- **Environment Variables**: .env file with NODE_ENV=production
+- **Database Migrations**: Manual SQL execution on VPS
+- **Health Checks**: /health endpoint
+- **Security Hardening**: 
+  - Isolated executor user inside container
+  - Network blocking for executor user
+  - Resource limits (ulimit)
+  - Runner script with sudo isolation
 
 ## Future Enhancements
 - **Multi-language Support**: Java, Python, C execution

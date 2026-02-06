@@ -44,14 +44,16 @@ Traditional coding platforms focus on algorithmic problem-solving. BugPulse focu
 - Line-by-line comparison with original code
 
 ### 4. Code Execution & Validation
-- **Hybrid execution strategy**:
-  - "Run" button: AI-powered code analysis (Gemini AI) - FREE and instant
-  - "Submit" button: Real compilation via Judge0 API (RapidAPI) - accurate validation
+- **Self-hosted execution strategy**:
+  - "Run" button: AI-powered code analysis (Gemini AI) + actual execution - FREE and instant
+  - "Submit" button: Self-hosted C++ compilation and execution - FREE and accurate
 - Automatic test case validation
 - Compilation error detection with detailed feedback
+- Docker containerized execution environment
+- VPS-hosted judging system (Hostinger KVM)
 - Memory leak detection
 - Output comparison with expected results
-- Fallback to local g++ compiler if Judge0 unavailable
+- SHA-256 result caching (1-hour TTL)
 
 ### 5. AI-Powered Analysis
 - **Gemini AI integration** for instant code feedback on "Run"

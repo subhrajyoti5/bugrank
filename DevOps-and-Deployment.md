@@ -94,18 +94,24 @@ BugPulse employs a modern development workflow with automated tooling, container
 - **PlanetScale**: MySQL-compatible with better scaling
 - **AWS RDS**: Enterprise-grade PostgreSQL
 
-## Containerization (Future Consideration)
+## Containerization
 
 ### Docker
 - **Purpose**: Application containerization for consistent deployments
-- **Potential Structure**:
-  - Multi-stage builds for optimized images
-  - Separate containers for client and server
-  - Docker Compose for local development
+- **Implementation**: Production-ready Dockerfile
+- **Structure**:
+  - Multi-stage builds (build + runtime)
+  - Node 20 Bullseye base image
+  - Includes g++, gcc, and build tools
+  - Runner script integration (/srv/bugpulse/runner/run_cpp.sh)
+  - Isolated executor user with sudo
+- **Location**: `Dockerfile` at repository root
+- **Build**: `docker build -t bugpulse-backend .`
+- **Run**: `docker run -d -p 5000:5000 --env-file server/.env bugpulse-backend`
 
-### Docker Compose
-- **Purpose**: Local development environment orchestration
-- **Services**: PostgreSQL, Redis (future), application containers
+### Docker Compose (Future)
+- **Purpose**: Multi-service orchestration
+- **Planned Services**: Backend + PostgreSQL + (future: Redis)
 
 ## Environment Management
 

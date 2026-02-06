@@ -18,10 +18,10 @@
 - **JWT** (authentication tokens)
 - **bcryptjs** (password hashing)
 - **Google Gemini AI** (code analysis for "Run")
-- **Judge0 API via RapidAPI** (code compilation for "Submit")
+- **Self-hosted Execution** (C++ compilation and execution)
 - **express-rate-limit** (API rate limiting)
-- **axios** (HTTP client for Judge0)
-- **g++ compiler** (fallback execution)
+- **g++ compiler** (in Docker container)
+- **Docker** (containerized deployment)
 
 ### Database
 - **PostgreSQL 15.x**
@@ -131,17 +131,10 @@ JWT_EXPIRES_IN=24h
 
 # Server Configuration
 PORT=5000
-NODE_ENV=development
+NODE_ENV=development  # Use 'production' on VPS
 
 # Google Gemini AI (For "Run" button - AI analysis)
 GEMINI_API_KEY=your_gemini_api_key
-
-# Judge0 API via RapidAPI (For "Submit" button - actual compilation)
-JUDGE0_API_URL=https://judge0-ce.p.rapidapi.com
-JUDGE0_RAPIDAPI_KEY=your_rapidapi_key_here
-JUDGE0_RAPIDAPI_HOST=judge0-ce.p.rapidapi.com
-JUDGE0_ENABLE_CACHE=true
-JUDGE0_CACHE_TTL=3600
 ```
 
 #### Start Backend Server
@@ -153,16 +146,17 @@ Server will start on **http://localhost:5000**
 
 Expected output:
 ```
-🐛 BugPulse server running on port 5000
+🐛 Bugrank server running on port 5000
 📝 Environment: development
 🤖 Gemini API: Configured
-⚖️ Judge0 API: Configured (RapidAPI)
 🔐 Auth: PostgreSQL + JWT enabled
 Connected to PostgreSQL database
+🔧 DEVELOPMENT MODE - Code Execution
+⚠️  Self-hosted execution requires VPS setup (Phases 0-3)
+📝 Running locally will show "System Error" for code execution
+✅ AI analysis will still work for development
 📚 Seeding challenges to database...
 ✅ Seeded 17 challenges
-💾 Cache: Enabled (TTL: 3600s)
-🛡️ Rate limiting: Active
 ```
 
 ### 4. Frontend Setup

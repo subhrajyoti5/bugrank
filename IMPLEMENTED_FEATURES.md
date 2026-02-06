@@ -62,8 +62,8 @@
 - ✅ `GET /:id` - Get specific challenge by ID
 
 #### Submissions (`/api/submissions`)
-- ✅ `POST /run` - Test code with AI analysis (FREE)
-- ✅ `POST /submit` - Submit code for scoring (PAID - Judge0)
+- ✅ `POST /run` - Test code with self-hosted execution + AI analysis (FREE)
+- ✅ `POST /submit` - Submit code for scoring with self-hosted execution (FREE)
 - ✅ `GET /history` - Get user's submission history
 
 #### Leaderboard (`/api/leaderboard`)
@@ -89,37 +89,31 @@
 - ✅ Automatic session cleanup (expired sessions)
 
 #### SubmissionService
-- ✅ Hybrid execution strategy:
-  - **Run**: AI analysis only (free, fast)
-  - **Submit**: Judge0 + AI analysis (paid, accurate)
+- ✅ Self-hosted execution strategy:
+  - **Run**: ExecutionService + AI analysis (free, fast)
+  - **Submit**: ExecutionService + scoring (free, accurate)
 - ✅ Lines changed calculation (diff algorithm)
 - ✅ Score calculation with penalties
 - ✅ User statistics updates
 - ✅ Submission history tracking
+- ✅ Test case validation with ExecutionService
+- ✅ Output comparison and formatting
 
-#### CompilerService
-- ✅ Judge0 CE API integration via RapidAPI
+#### ExecutionService
+- ✅ Self-hosted C++ code execution
 - ✅ SHA-256 cache key generation
 - ✅ 1-hour in-memory result caching
-- ✅ Base64 encoding/decoding for I/O
-- ✅ Async submission with polling
-- ✅ Exponential backoff (500ms to 3s)
+- ✅ Job directory management (/srv/bugpulse/jobs)
+- ✅ Runner script invocation (run_cpp.sh)
+- ✅ Mutex-based execution queue
+- ✅ Status mapping (CE, TLE, RE, AC, WA, SE)
 - ✅ Automatic cache cleanup (every 10 minutes)
 - ✅ Test case validation
-- ✅ Output comparison
-
-#### Judge0Service
-- ✅ RapidAPI integration
-- ✅ C++ compilation (GCC 9.2.0, Language ID: 54)
-- ✅ Resource limits: 5s CPU, 256MB memory
-- ✅ Status code handling:
-  - 1,2: In Queue/Processing
-  - 3: Accepted (Success)
-  - 5: Time Limit Exceeded
-  - 6: Compilation Error
+- ✅ Output comparison with normalization
+- ✅ Code/input size validation (100KB/10KB limits)
+- ✅ Resource limits: 5s execution, 256MB memory
+- ✅ Compilation timeout: 10s
 - ✅ Detailed error logging
-- ✅ Cost tracking ($0.0017 per submission)
-- ✅ Cache hit savings tracking
 
 #### GeminiService
 - ✅ Google Gemini AI integration (free tier)
@@ -129,9 +123,9 @@
 - ✅ Fallback to local analysis when AI unavailable
 
 #### UsageTracker
-- ✅ Judge0 API call counting
-- ✅ Cost monitoring
-- ✅ Usage statistics
+- ✅ Execution monitoring and metrics
+- ✅ Cache performance tracking
+- ✅ Resource usage monitoring
 
 ---
 
@@ -223,15 +217,20 @@
 
 ## 🎯 Code Execution Features
 
-### Judge0 CE Integration
-- ✅ RapidAPI connection
-- ✅ C++ compilation (GCC 9.2.0)
-- ✅ Base64 I/O encoding
-- ✅ Async submission
-- ✅ Result polling with backoff
+### Self-hosted Execution (VPS)
+- ✅ Docker containerized environment
+- ✅ C++ compilation (GCC/g++ in container)
+- ✅ Runner script (run_cpp.sh) execution
+- ✅ Job directory isolation
+- ✅ Executor user with restricted permissions
+- ✅ Network blocking for executor user
 - ✅ Compilation error reporting
 - ✅ Runtime error detection
 - ✅ Time limit enforcement (5s)
+- ✅ Memory limit enforcement (256MB)
+- ✅ Status file tracking (CE, TLE, RE, COMPLETED)
+- ✅ Result caching (SHA-256 keys, 1-hour TTL)
+- ✅ Output normalization for comparison
 - ✅ Memory limit enforcement (256MB)
 - ✅ Exit code reporting
 
@@ -336,7 +335,8 @@
 - ✅ Error logging with stack traces
 - ✅ Service-level logging
 - ✅ Database query logging
-- ✅ API call logging (Judge0, Gemini)
+- ✅ API call logging (Gemini AI)
+- ✅ Execution service logging (job status, cache hits)
 
 ### Environment Configuration
 - ✅ .env file support
@@ -358,9 +358,9 @@
 - ✅ Environment variable configuration
 
 ### External Integrations
-- ✅ Judge0 CE via RapidAPI
 - ✅ Google Gemini AI API
 - ✅ PostgreSQL connection pooling
+- ✅ Self-hosted C++ execution (Docker container)
 
 ---
 
@@ -371,19 +371,21 @@
 - ✅ Active sessions
 - ✅ Submissions per challenge
 - ✅ Challenge completion rates
-- ✅ Judge0 API usage
-- ✅ API costs ($0.0017 per submission)
-- ✅ Cache hit rate
+- ✅ Execution queue monitoring
+- ✅ Cache hit rate (SHA-256 based)
 - ✅ Gemini AI request count
-- ✅ Error rates
+- ✅ Error rates (CE, TLE, RE, SE)
 - ✅ Response times
+- ✅ Job directory usage
 
 ### Cost Optimization
-- ✅ Run button: Free (AI only)
-- ✅ Submit button: Paid (Judge0)
-- ✅ 1-hour caching (saves $0.0017 per hit)
+- ✅ Run button: Free (self-hosted execution + AI)
+- ✅ Submit button: Free (self-hosted execution)
+- ✅ 1-hour caching (reduces execution overhead)
 - ✅ Rate limiting to prevent abuse
-- ✅ Usage tracking
+- ✅ Resource limits (5s CPU, 256MB memory)
+- ✅ Job directory cleanup
+- ✅ Mutex-based execution queue
 
 ---
 
