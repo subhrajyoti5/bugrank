@@ -161,6 +161,7 @@ export class ExecutionService {
     const jobDir = path.join(BASE_DIR, jobId);
 
     await fs.mkdir(jobDir, { recursive: true });
+    await fs.chmod(jobDir, 0o777);
     await fs.writeFile(path.join(jobDir, 'main.cpp'), code, 'utf8');
     await fs.writeFile(path.join(jobDir, 'input.txt'), input, 'utf8');
 
