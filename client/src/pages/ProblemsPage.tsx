@@ -39,7 +39,7 @@ const ProblemsPage: React.FC = () => {
     if (!user) return;
     try {
       const submissions = await submissionService.getUserSubmissions(user.id);
-      const solvedIds = new Set(
+      const solvedIds = new Set<string>(
         submissions
           .filter((sub: any) => sub.isCorrect)
           .map((sub: any) => sub.challengeId)

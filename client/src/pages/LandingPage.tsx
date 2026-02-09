@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Terminal, Code2, Cpu, Zap, ChevronRight, Hash, Bug, CheckCircle2, Star, Users, TrendingUp, Shield, Award, Clock, Coffee, ChevronLeft, Search, Edit3, Play } from 'lucide-react';
+import { Terminal, Code2, Zap, ChevronRight, Hash, Bug, CheckCircle2, Star, Users, TrendingUp, Clock, Coffee, ChevronLeft, Search, Edit3, Play } from 'lucide-react';
 
 const FloatingCodePreview = () => {
     return (
