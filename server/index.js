@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use((0, helmet_1.default)()); // Security headers
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'https://bugrank.in', 'https://www.bugrank.in',"https://bugrank-client.vercel.app"],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-session-token'],
