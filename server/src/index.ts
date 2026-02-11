@@ -45,21 +45,19 @@ const PORT = process.env.PORT || 5000;
 
 
 // CORS configuration
-app.use(
-  cors({
-    origin: [
-      "https://bugrank-client.vercel.app",
-      "https://bugrank.in",
-      "https://www.bugrank.in",
-      "http://localhost:5173"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization","x-session-token"],
-    credentials: true
-  })
-);
+const corsOptions = {
+  origin: [
+    "https://bugrank-client.vercel.app",
+    "https://bugrank.in",
+    "https://www.bugrank.in",
+    "http://localhost:5173",
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-session-token"],
+  credentials: true,
+};
 
-app.options("*", cors());
+app.use(cors(corsOptions));
 app.use(
 helmet(
 {

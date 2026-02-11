@@ -32,14 +32,19 @@ export interface SessionData {
 }
 
 export class AuthService {
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
+  }
+
   /**
    * Register a new user
    */
   async register(data: RegisterData): Promise<{ user: User; token: string; sessionToken: string }> {
     const { email, password, displayName } = data;
+    const normalizedEmail = this.normalizeEmail(email);
 
     // Check if user already exists
-    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [normalizedEmail]);
     if (existingUser.rows.length > 0) {
       throw new Error('User with this email already exists');
     }
@@ -53,7 +58,7 @@ export class AuthService {
       `INSERT INTO users (email, password_hash, display_name, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
        VALUES ($1, $2, $3, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
        RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login`,
-      [email, passwordHash, displayName || email.split('@')[0]]
+      [normalizedEmail, passwordHash, displayName || normalizedEmail.split('@')[0]]
     );
 
     const userRow = result.rows[0];
@@ -82,12 +87,13 @@ export class AuthService {
    */
   async login(data: LoginData, ipAddress?: string, userAgent?: string): Promise<{ user: User; token: string; sessionToken: string }> {
     const { email, password } = data;
+    const normalizedEmail = this.normalizeEmail(email);
 
     // Find user by email
     const result = await pool.query(
       `SELECT id, email, password_hash, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, profile_data
        FROM users WHERE email = $1`,
-      [email]
+      [normalizedEmail]
     );
 
     if (result.rows.length === 0) {
@@ -265,6 +271,7 @@ export class AuthService {
    */
   async googleAuth(data: GoogleOAuthData, ipAddress?: string, userAgent?: string): Promise<{ user: User; token: string; sessionToken: string }> {
     const { googleId, email, displayName, photoURL } = data;
+    const normalizedEmail = this.normalizeEmail(email);
 
     // Check if user already exists with this Google ID
     let result = await pool.query(
@@ -279,7 +286,7 @@ export class AuthService {
       // Check if user exists with this email
       const emailResult = await pool.query(
         `SELECT id FROM users WHERE email = $1`,
-        [email]
+        [normalizedEmail]
       );
 
       if (!emailResult.rows.length) {
@@ -288,7 +295,7 @@ export class AuthService {
           `INSERT INTO users (email, display_name, photo_url, google_id, google_profile, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
            VALUES ($1, $2, $3, $4, $5, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
            RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`,
-          [email, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]
+          [normalizedEmail, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]
         );
 
         userRow = createResult.rows[0];
@@ -299,7 +306,7 @@ export class AuthService {
            SET google_id = $1, google_profile = $2, photo_url = $3
            WHERE email = $4
            RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`,
-          [googleId, JSON.stringify({ googleId, displayName, photoURL }), photoURL, email]
+          [googleId, JSON.stringify({ googleId, displayName, photoURL }), photoURL, normalizedEmail]
         );
 
         userRow = linkResult.rows[0];
