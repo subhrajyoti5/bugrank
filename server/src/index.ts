@@ -92,7 +92,6 @@ passport.deserializeUser((user: any, done) => {
 });
 
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Rate limiting
 const limiter = rateLimit({
