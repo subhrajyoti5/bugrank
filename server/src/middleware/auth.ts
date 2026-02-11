@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import authService from '../services/AuthService';
-import { User } from '../../../shared/src/types';
+import { User } from '@bugpulse/shared';
 
 export interface AuthRequest extends Request {
   user?: User;

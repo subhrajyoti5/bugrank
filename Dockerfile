@@ -43,8 +43,5 @@ COPY --from=build /app/shared/dist ./shared/dist
 COPY server/package.json ./server/package.json
 COPY shared/package.json ./shared/package.json
 
-# 🔑 Fix path alias "@/..."
-RUN ln -s /app/server/dist /app/node_modules/@
-
 EXPOSE 5000
 CMD ["node", "server/dist/index.js"]

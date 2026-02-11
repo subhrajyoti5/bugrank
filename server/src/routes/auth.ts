@@ -76,7 +76,7 @@ router.post('/login', async (req: Request, res: Response) => {
  * POST /api/auth/logout
  * Logout and invalidate session
  */
-router.post('/logout', authMiddleware, async (req: Request, res: Response) => {
+router.post('/logout', authMiddleware, async (req, res) => {
   try {
     const sessionToken = req.headers['x-session-token'] as string;
 
@@ -95,7 +95,7 @@ router.post('/logout', authMiddleware, async (req: Request, res: Response) => {
  * GET /api/auth/me
  * Get current user info
  */
-router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = req.user;
 
@@ -114,7 +114,7 @@ router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
  * GET /api/auth/profile
  * Get user profile data
  */
-router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/profile', authMiddleware, async (req, res) => {
   try {
     const userId = req.user?.id;
 
@@ -134,7 +134,7 @@ router.get('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
  * PUT /api/auth/profile
  * Update user profile data
  */
-router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.put('/profile', authMiddleware, async (req, res) => {
   try {
     const userId = req.user?.id;
 

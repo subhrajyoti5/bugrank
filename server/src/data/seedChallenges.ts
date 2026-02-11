@@ -1,4 +1,4 @@
-import { Challenge } from '../../shared/dist';
+import { Challenge } from '@bugpulse/shared';
 
 /**
  * Initial seed challenges for the platform

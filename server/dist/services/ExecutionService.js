@@ -10,13 +10,70 @@ const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
 const crypto_1 = __importDefault(require("crypto"));
 const execFileAsync = (0, util_1.promisify)(child_process_1.execFile);
-const BASE_DIR = '/srv/bugpulse/jobs';
-const RUNNER_SCRIPT = '/srv/bugpulse/runner/run_cpp.sh';
+// Safety Limits
+const MAX_CODE_SIZE = 100 * 1024; // 100KB
+const MAX_INPUT_SIZE = 10 * 1024; // 10KB
+const BASE_DIR = process.env.NODE_ENV === 'production'
+    ? '/srv/bugpulse/jobs'
+    : process.env.BUGPULSE_JOBS_DIR || './temp/jobs';
+const RUNNER_SCRIPT = process.env.NODE_ENV === 'production'
+    ? '/srv/bugpulse/runner/run_cpp.sh'
+    : process.env.BUGPULSE_RUNNER || './scripts/run_cpp_local.bat';
 const EXECUTION_TIMEOUT = 12000; // 12 seconds (compile + run + overhead)
+const IS_WINDOWS = process.platform === 'win32';
+const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production';
+// Execution Queue (simple mutex)
+let isExecuting = false;
+const executionQueue = [];
 // In-memory cache (1 hour TTL)
 const resultCache = new Map();
 const CACHE_TTL = 3600000; // 1 hour in milliseconds
 class ExecutionService {
+    /**
+     * Validate code size
+     */
+    static validateCode(code) {
+        if (!code || code.trim().length === 0) {
+            throw new Error('Code cannot be empty');
+        }
+        if (code.length > MAX_CODE_SIZE) {
+            throw new Error(`Code size exceeds limit (${MAX_CODE_SIZE} bytes)`);
+        }
+    }
+    /**
+     * Validate input size
+     */
+    static validateInput(input) {
+        if (input.length > MAX_INPUT_SIZE) {
+            throw new Error(`Input size exceeds limit (${MAX_INPUT_SIZE} bytes)`);
+        }
+    }
+    /**
+     * Acquire execution lock (simple mutex)
+     */
+    static async acquireLock() {
+        return new Promise((resolve) => {
+            if (!isExecuting) {
+                isExecuting = true;
+                resolve();
+            }
+            else {
+                executionQueue.push(() => resolve());
+            }
+        });
+    }
+    /**
+     * Release execution lock
+     */
+    static releaseLock() {
+        const next = executionQueue.shift();
+        if (next) {
+            next();
+        }
+        else {
+            isExecuting = false;
+        }
+    }
     /**
      * Generate cache key from code and input
      */
@@ -77,6 +134,7 @@ class ExecutionService {
         const jobId = this.generateUUID();
         const jobDir = path_1.default.join(BASE_DIR, jobId);
         await promises_1.default.mkdir(jobDir, { recursive: true });
+        await promises_1.default.chmod(jobDir, 0o777);
         await promises_1.default.writeFile(path_1.default.join(jobDir, 'main.cpp'), code, 'utf8');
         await promises_1.default.writeFile(path_1.default.join(jobDir, 'input.txt'), input, 'utf8');
         return jobId;
@@ -135,6 +193,30 @@ class ExecutionService {
      * Execute code with caching
      */
     static async executeCode(code, input) {
+        const startTime = Date.now();
+        // Validate inputs
+        try {
+            this.validateCode(code);
+            this.validateInput(input);
+        }
+        catch (error) {
+            console.error('❌ Validation failed:', error.message);
+            return {
+                status: 'SE',
+                stdout: '',
+                stderr: error.message,
+            };
+        }
+        // Check if running in development without VPS setup
+        if (IS_DEVELOPMENT && !require('fs').existsSync(RUNNER_SCRIPT)) {
+            console.warn(`⚠️ Development mode: Runner script not found at ${RUNNER_SCRIPT}`);
+            return {
+                status: 'SE',
+                stdout: '',
+                stderr: 'Development mode: VPS execution environment not configured.\n\nTo enable code execution:\n\n1. Complete Phases 0-3 of JUDGE0_REPLACEMENT_GUIDE.md on your VPS\n2. Set NODE_ENV=production in .env\n3. Deploy to VPS\n\nFor now, only AI analysis is available.',
+                compilationError: 'Execution service not configured for local development',
+            };
+        }
         // Check cache first
         const cacheKey = this.generateCacheKey(code, input);
         const cachedResult = this.getCachedResult(cacheKey);
@@ -143,24 +225,52 @@ class ExecutionService {
             return cachedResult;
         }
         console.log(`🔄 Cache miss - executing code`);
-        // Create job
-        const jobId = await this.createJob(code, input);
-        console.log(`📁 Created job: ${jobId}`);
+        // Acquire execution lock
+        await this.acquireLock();
         try {
-            // Execute runner script
-            await execFileAsync(RUNNER_SCRIPT, [jobId], {
-                timeout: EXECUTION_TIMEOUT,
+            // Create job
+            const jobId = await this.createJob(code, input);
+            console.log(`📁 Created job: ${jobId}`);
+            try {
+                // Execute runner script
+                await execFileAsync(RUNNER_SCRIPT, [jobId], {
+                    timeout: EXECUTION_TIMEOUT,
+                });
+            }
+            catch (error) {
+                console.error(`⚠️ Execution error for job ${jobId}:`, error.message);
+                // Continue to collect results - script may have written status
+            }
+            // Collect results
+            const result = await this.collectResult(jobId);
+            // Cache the result
+            this.cacheResult(cacheKey, result);
+            const executionTime = Date.now() - startTime;
+            console.log(`🎯 Execution completed:`, {
+                jobId,
+                status: result.status,
+                executionTime: `${executionTime}ms`,
+                cached: false,
             });
+            return result;
         }
         catch (error) {
-            console.error(`⚠️ Execution error for job ${jobId}:`, error.message);
-            // Continue to collect results - script may have written status
+            const executionTime = Date.now() - startTime;
+            console.error(`❌ Fatal execution error:`, {
+                error: error.message,
+                executionTime: `${executionTime}ms`,
+            });
+            return {
+                status: 'SE',
+                stdout: '',
+                stderr: `System Error: ${error.message}\n\nThis usually means:\n- VPS not configured (Phases 0-3 incomplete)\n- Runner script not accessible\n- File system permissions issue\n\nCheck server logs for details.`,
+                compilationError: error.message,
+            };
         }
-        // Collect results
-        const result = await this.collectResult(jobId);
-        // Cache the result
-        this.cacheResult(cacheKey, result);
-        return result;
+        finally {
+            // Always release the lock
+            this.releaseLock();
+        }
     }
     /**
      * Compare output with expected output

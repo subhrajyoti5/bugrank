@@ -8,6 +8,8 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const passport_1 = __importDefault(require("passport"));
+const passport_google_oauth20_1 = require("passport-google-oauth20");
 const challenges_1 = __importDefault(require("./routes/challenges"));
 const submissions_1 = __importDefault(require("./routes/submissions"));
 const leaderboard_1 = __importDefault(require("./routes/leaderboard"));
@@ -25,19 +27,55 @@ if (!process.env.GEMINI_API_KEY) {
 if (!process.env.JWT_SECRET) {
     console.warn('⚠️  JWT_SECRET not set - using default (NOT SECURE FOR PRODUCTION)');
 }
+// Check execution environment
+if (process.env.NODE_ENV !== 'production') {
+    console.log('\n' + '='.repeat(70));
+    console.log('🔧 DEVELOPMENT MODE - Code Execution');
+    console.log('='.repeat(70));
+    console.log('⚠️  Self-hosted execution requires VPS setup (Phases 0-3)');
+    console.log('📝 Running locally will show "System Error" for code execution');
+    console.log('✅ AI analysis will still work for development');
+    console.log('📖 See: SYSTEM_ERROR_TROUBLESHOOTING.md for details');
+    console.log('🚀 Deploy to VPS for full execution functionality');
+    console.log('='.repeat(70) + '\n');
+}
 // Initialize Express app
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-// Middleware
-app.use((0, helmet_1.default)()); // Security headers
+// CORS configuration
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-session-token'],
+    origin: [
+        "https://bugrank-client.vercel.app",
+        "https://bugrank.in",
+        "https://www.bugrank.in",
+        "http://localhost:5173"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-session-token"],
+    credentials: true
+}));
+app.options("*", (0, cors_1.default)());
+app.use((0, helmet_1.default)({
+    crossOriginResourcePolicy: false,
 }));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
+// Passport configuration for Google OAuth
+passport_1.default.use(new passport_google_oauth20_1.Strategy({
+    clientID: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+}, (accessToken, refreshToken, profile, done) => {
+    // Return the profile for use in the callback route
+    return done(null, profile);
+}));
+passport_1.default.serializeUser((user, done) => {
+    done(null, user);
+});
+passport_1.default.deserializeUser((user, done) => {
+    done(null, user);
+});
+app.use(passport_1.default.initialize());
 // Rate limiting
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutes

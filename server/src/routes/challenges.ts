@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { AuthRequest, authMiddleware } from '@/middleware/auth';
-import { Challenge } from '../../shared/dist';
+import { Challenge } from '@bugpulse/shared';
 import { challengeDb } from '@/data/storage';
 
 const router = Router();

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../config/database';
-import { User } from '../../../shared/src/types';
+import { User } from '@bugpulse/shared';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_in_production';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';

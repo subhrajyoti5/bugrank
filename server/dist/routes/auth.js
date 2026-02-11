@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const AuthService_1 = __importDefault(require("../services/AuthService"));
 const auth_1 = require("../middleware/auth");
+const passport_1 = __importDefault(require("passport"));
 const router = (0, express_1.Router)();
 /**
  * POST /api/auth/register
@@ -136,6 +137,40 @@ router.put('/profile', auth_1.authMiddleware, async (req, res) => {
     catch (error) {
         console.error('Update profile error:', error);
         res.status(500).json({ error: 'Failed to update profile' });
+    }
+});
+/**
+ * GET /api/auth/google
+ * Initiate Google OAuth flow
+ */
+router.get('/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
+/**
+ * GET /api/auth/google/callback
+ * Google OAuth callback handler
+ */
+router.get('/google/callback', passport_1.default.authenticate('google', { failureRedirect: '/login' }), async (req, res) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({ error: 'Google authentication failed' });
+        }
+        // Get IP and user agent for session tracking
+        const ipAddress = req.ip || req.connection.remoteAddress;
+        const userAgent = req.get('user-agent');
+        // Use authService to handle Google auth
+        const result = await AuthService_1.default.googleAuth({
+            googleId: user.id,
+            email: user.emails[0].value,
+            displayName: user.displayName,
+            photoURL: user.photos[0]?.value || '',
+        }, ipAddress, userAgent);
+        // Redirect to frontend with token and session token
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        res.redirect(`${frontendUrl}/auth-success?token=${result.token}&sessionToken=${result.sessionToken}`);
+    }
+    catch (error) {
+        console.error('Google OAuth callback error:', error);
+        res.status(500).json({ error: 'Google authentication failed' });
     }
 });
 exports.default = router;

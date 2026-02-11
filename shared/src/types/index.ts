@@ -38,14 +38,14 @@ export interface Submission {
   userId: string;
   challengeId: string;
   code: string;
-  linesChanged: number;
-  attempts: number;
+  diff?: string;
+  attemptNumber: number;
   timeTaken: number; // seconds
-  aiAccuracyScore: number; // 1-10
+  codeQuality: number;
   isCorrect: boolean;
-  score?: number; // Only set if correct
-  aiAnalysis: AIAnalysis;
-  createdAt: Date;
+  pointsEarned?: number;
+  analysis: AIAnalysis;
+  submittedAt: Date;
 }
 
 // AI Analysis types

@@ -4,7 +4,6 @@ exports.SubmissionService = void 0;
 const diff_1 = require("diff");
 const shared_1 = require("@bugpulse/shared");
 const GeminiService_1 = require("./GeminiService");
-const CompilerService_1 = require("./CompilerService");
 const ExecutionService_1 = require("./ExecutionService");
 const storage_1 = require("@/data/storage");
 /**
@@ -15,7 +14,6 @@ class SubmissionService extends GeminiService_1.BaseService {
     constructor() {
         super();
         this.geminiService = new GeminiService_1.GeminiService();
-        this.compilerService = new CompilerService_1.CompilerService();
     }
     /**
      * Handle "Run" button - Test code with execution + AI analysis (FREE)
@@ -50,11 +48,11 @@ class SubmissionService extends GeminiService_1.BaseService {
         };
     }
     /**
-     * Handle "Submit" button - Full evaluation with scoring using Judge0 API (PAID)
-     * Uses Judge0 for actual compilation with fallback to local
+     * Handle "Submit" button - Full evaluation with scoring using self-hosted execution (FREE)
+     * Uses ExecutionService for actual compilation instead of Judge0
      */
     async submitCode(userId, challengeId, code, timeTaken, testInput) {
-        this.logInfo('Submitting code for evaluation (Judge0 API)', { userId, challengeId });
+        this.logInfo('Submitting code for evaluation (self-hosted execution)', { userId, challengeId });
         const challenge = await this.getChallenge(challengeId);
         if (!challenge) {
             throw new Error('Challenge not found');
@@ -125,157 +123,157 @@ class SubmissionService extends GeminiService_1.BaseService {
             userId,
             challengeId,
             code,
-            linesChanged,
-            attempts: attempts + 1,
+            diff: codeDiff,
+            attemptNumber: attempts + 1,
             timeTaken,
-            aiAccuracyScore: aiAnalysis.accuracyScore,
+            codeQuality: aiAnalysis.accuracyScore,
             isCorrect,
-            score: finalScore,
-            aiAnalysis,
-            createdAt: new Date(),
+            pointsEarned: finalScore,
+            analysis: aiAnalysis,
+            submittedAt: new Date(),
         };
-        // Save submission to database
-        await storage_1.submissionDb.create(submission);
-        // Update user stats if correct
-        if (isCorrect && finalScore !== undefined) {
-            await this.updateUserStats(userId, finalScore, true);
-        }
-        else {
-            await this.updateUserStats(userId, 0, false);
-        }
-        return {
-            submission,
-            score: finalScore,
+        score: finalScore,
             aiAnalysis,
-            compilerOutput,
-            testCaseOutput,
-            testCasePassed,
-            message: isCorrect
-                ? `✅ Bug fixed correctly! Score: ${finalScore}`
-                : `⚠️ Bug not fully fixed yet. Try again!`,
-        };
+            createdAt;
+        new Date(),
+        ;
     }
-    /**
-     * Calculate lines changed using diff algorithm
-     */
-    calculateLinesChanged(original, fixed) {
-        const diff = (0, diff_1.diffLines)(original, fixed);
-        return diff.filter(part => part.added || part.removed).length;
-    }
-    /**
-     * Calculate score using the penalty formula
-     * Only called when solution is correct
-     */
-    calculateScore(baseScore, attempts, linesChanged, timeTaken) {
-        // Convert time from seconds to minutes for penalty calculation
-        const timeInMinutes = timeTaken / 60;
-        const score = baseScore -
-            attempts * shared_1.DEFAULT_SCORING_CONFIG.attemptPenalty -
-            linesChanged * shared_1.DEFAULT_SCORING_CONFIG.linePenalty -
-            timeInMinutes * shared_1.DEFAULT_SCORING_CONFIG.timePenalty;
-        // Ensure score is not negative
-        return Math.max(0, Math.round(score));
-    }
-    /**
-     * Get challenge from database
-     */
-    async getChallenge(challengeId) {
-        return await storage_1.challengeDb.findById(challengeId);
-    }
-    /**
-     * Get user's attempt count for a specific challenge
-     */
-    async getUserAttempts(userId, challengeId) {
-        const userSubmissions = await storage_1.submissionDb.findByUserAndChallenge(userId, challengeId);
-        return userSubmissions.length;
-    }
-    /**
-     * Get all submissions for a user
-     */
-    async getUserSubmissions(userId) {
-        const userSubmissions = await storage_1.submissionDb.findByUserId(userId);
-        return userSubmissions.slice(0, 50);
-    }
-    /**
-     * Update user statistics
-     */
-    async updateUserStats(userId, scoreEarned, isSuccess) {
-        let userData = await storage_1.userDb.findById(userId);
-        // User should already exist (authenticated)
-        if (!userData) {
-            this.logWarning('User not found in database', { userId });
-            return;
-        }
-        // Update stats
-        await storage_1.userDb.update(userId, {
-            totalScore: userData.totalScore + scoreEarned,
-            totalSubmissions: userData.totalSubmissions + 1,
-            successfulSubmissions: userData.successfulSubmissions + (isSuccess ? 1 : 0),
-        });
-        this.logInfo('User stats updated', {
-            userId,
-            totalScore: userData.totalScore + scoreEarned,
-            submissions: userData.totalSubmissions + 1
-        });
-    }
-    /**
-     * Generate user-friendly feedback message
-     */
-    generateFeedback(aiAnalysis, isSubmit) {
-        // For submit: return simple success/failure message
-        // Detailed feedback is shown via compiler output or AI analysis
-        if (isSubmit) {
-            return aiAnalysis.isCorrect
-                ? `✅ Bug fixed correctly!`
-                : `⚠️ Bug not fully fixed yet. Try again!`;
-        }
-        // For run: return simple message
-        return aiAnalysis.isCorrect
-            ? `✅ Code looks good! Use Submit to score.`
-            : `⚠️ Bug still present. Keep trying!`;
-    }
-    /**
-     * Format execution result output (replaces CompilerService formatting)
-     */
-    formatExecutionOutput(result) {
-        let output = '';
-        // Status indicator
-        switch (result.status) {
-            case 'AC':
-            case 'WA':
-                output += `✅ Compilation: Success\n`;
-                output += `✅ Execution: Completed\n\n`;
-                if (result.stdout) {
-                    output += `📤 Output:\n${result.stdout}\n`;
-                }
-                break;
-            case 'CE':
-                output += `❌ Compilation: Failed\n\n`;
-                output += `📋 Compilation Errors:\n${result.compilationError || result.stderr || 'Unknown compilation error'}\n`;
-                break;
-            case 'TLE':
-                output += `⏱️ Time Limit Exceeded\n\n`;
-                output += `Your code took too long to execute (>5 seconds)\n`;
-                if (result.stderr) {
-                    output += `\n📋 Error Output:\n${result.stderr}\n`;
-                }
-                break;
-            case 'RE':
-                output += `💥 Runtime Error\n\n`;
-                output += `Your code crashed during execution\n`;
-                if (result.stderr) {
-                    output += `\n📋 Error Output:\n${result.stderr}\n`;
-                }
-                break;
-            case 'SE':
-                output += `⚠️ System Error\n\n`;
-                output += `An error occurred during execution. Please try again.\n`;
-                if (result.stderr) {
-                    output += `\n📋 Error Details:\n${result.stderr}\n`;
-                }
-                break;
-        }
-        return output;
-    }
+    ;
 }
 exports.SubmissionService = SubmissionService;
+// Save submission to database
+await storage_1.submissionDb.create(submission);
+// Update user stats if correct
+if (isCorrect && finalScore !== undefined) {
+    await this.updateUserStats(userId, finalScore, true);
+}
+else {
+    await this.updateUserStats(userId, 0, false);
+}
+return {
+    submission,
+    score: finalScore,
+    aiAnalysis,
+    compilerOutput,
+    message: isCorrect
+        ? `✅ Bug fixed correctly! Score: ${finalScore}`
+        : `⚠️ Bug not fully fixed yet. Try again!`,
+};
+calculateLinesChanged(original, string, fixed, string);
+number;
+{
+    const diff = (0, diff_1.diffLines)(original, fixed);
+    return diff.filter(part => part.added || part.removed).length;
+}
+calculateScore(baseScore, number, attempts, number, linesChanged, number, timeTaken, number);
+number;
+{
+    // Convert time from seconds to minutes for penalty calculation
+    const timeInMinutes = timeTaken / 60;
+    const score = baseScore -
+        attempts * shared_1.DEFAULT_SCORING_CONFIG.attemptPenalty -
+        linesChanged * shared_1.DEFAULT_SCORING_CONFIG.linePenalty -
+        timeInMinutes * shared_1.DEFAULT_SCORING_CONFIG.timePenalty;
+    // Ensure score is not negative
+    return Math.max(0, Math.round(score));
+}
+async;
+getChallenge(challengeId, string);
+Promise < shared_1.Challenge | null > {
+    return: await storage_1.challengeDb.findById(challengeId)
+};
+async;
+getUserAttempts(userId, string, challengeId, string);
+Promise < number > {
+    const: userSubmissions = await storage_1.submissionDb.findByUserAndChallenge(userId, challengeId),
+    return: userSubmissions.length
+};
+/**
+ * Get all submissions for a user
+ */
+async;
+getUserSubmissions(userId, string);
+Promise < shared_1.Submission[] > {
+    const: userSubmissions = await storage_1.submissionDb.findByUserId(userId),
+    return: userSubmissions.slice(0, 50)
+};
+async;
+updateUserStats(userId, string, scoreEarned, number, isSuccess, boolean);
+Promise < void  > {
+    let, userData = await storage_1.userDb.findById(userId),
+    // User should already exist (authenticated)
+    if(, userData) {
+        this.logError('User not found in database', { userId });
+        return;
+    }
+    // Update stats
+    ,
+    // Update stats
+    await, userDb: storage_1.userDb, : .update(userId, {
+        totalScore: userData.totalScore + scoreEarned,
+        totalSubmissions: userData.totalSubmissions + 1,
+        successfulSubmissions: userData.successfulSubmissions + (isSuccess ? 1 : 0),
+    }),
+    this: .logInfo('User stats updated', {
+        userId,
+        totalScore: userData.totalScore + scoreEarned,
+        submissions: userData.totalSubmissions + 1
+    })
+};
+generateFeedback(aiAnalysis, shared_1.AIAnalysis, isSubmit, boolean);
+string;
+{
+    // For submit: return simple success/failure message
+    // Detailed feedback is shown via compiler output or AI analysis
+    if (isSubmit) {
+        return aiAnalysis.isCorrect
+            ? `✅ Bug fixed correctly!`
+            : `⚠️ Bug not fully fixed yet. Try again!`;
+    }
+    // For run: return simple message
+    return aiAnalysis.isCorrect
+        ? `✅ Code looks good! Use Submit to score.`
+        : `⚠️ Bug still present. Keep trying!`;
+}
+formatExecutionOutput(result, any);
+string;
+{
+    let output = '';
+    // Status indicator
+    switch (result.status) {
+        case 'AC':
+        case 'WA':
+            output += `✅ Compilation: Success\n`;
+            output += `✅ Execution: Completed\n\n`;
+            if (result.stdout) {
+                output += `📤 Output:\n${result.stdout}\n`;
+            }
+            break;
+        case 'CE':
+            output += `❌ Compilation: Failed\n\n`;
+            output += `📋 Compilation Errors:\n${result.compilationError || result.stderr || 'Unknown compilation error'}\n`;
+            break;
+        case 'TLE':
+            output += `⏱️ Time Limit Exceeded\n\n`;
+            output += `Your code took too long to execute (>5 seconds)\n`;
+            if (result.stderr) {
+                output += `\n📋 Error Output:\n${result.stderr}\n`;
+            }
+            break;
+        case 'RE':
+            output += `💥 Runtime Error\n\n`;
+            output += `Your code crashed during execution\n`;
+            if (result.stderr) {
+                output += `\n📋 Error Output:\n${result.stderr}\n`;
+            }
+            break;
+        case 'SE':
+            output += `⚠️ System Error\n\n`;
+            output += `An error occurred during execution. Please try again.\n`;
+            if (result.stderr) {
+                output += `\n📋 Error Details:\n${result.stderr}\n`;
+            }
+            break;
+    }
+    return output;
+}

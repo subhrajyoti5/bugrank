@@ -16,8 +16,7 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@bugpulse/shared": ["../shared/src"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],
