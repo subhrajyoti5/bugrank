@@ -5,27 +5,32 @@ import { useAuth } from '@/contexts/AuthContext';
 const AuthSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setAuthToken, setSessionToken } = useAuth();
+  const { setAuthToken, setSessionToken, refreshUser } = useAuth();
 
   useEffect(() => {
     const token = searchParams.get('token');
     const sessionToken = searchParams.get('sessionToken');
 
-    if (token && sessionToken) {
-      // Store tokens in localStorage and context
-      localStorage.setItem('token', token);
-      localStorage.setItem('sessionToken', sessionToken);
-      
-      setAuthToken(token);
-      setSessionToken(sessionToken);
+    const finalizeAuth = async () => {
+      if (token && sessionToken) {
+        // Store tokens in localStorage and context
+        localStorage.setItem('bugrank_token', token);
+        localStorage.setItem('bugrank_session', sessionToken);
 
-      // Redirect to problems page
-      navigate('/problems', { replace: true });
-    } else {
-      // No tokens provided, redirect to login
-      navigate('/login', { replace: true });
-    }
-  }, [searchParams, navigate, setAuthToken, setSessionToken]);
+        await setAuthToken(token);
+        await setSessionToken(sessionToken);
+        await refreshUser();
+
+        // Redirect to problems page
+        navigate('/problems', { replace: true });
+      } else {
+        // No tokens provided, redirect to login
+        navigate('/login', { replace: true });
+      }
+    };
+
+    void finalizeAuth();
+  }, [searchParams, navigate, setAuthToken, setSessionToken, refreshUser]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">

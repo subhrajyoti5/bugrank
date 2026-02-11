@@ -27,8 +27,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Check for existing session on mount
     const checkAuth = async () => {
-      const token = localStorage.getItem('bugrank_token');
-      const sessionToken = localStorage.getItem('bugrank_session');
+      const token = localStorage.getItem('bugrank_token') || localStorage.getItem('token');
+      const sessionToken = localStorage.getItem('bugrank_session') || localStorage.getItem('sessionToken');
       
       if (token || sessionToken) {
         try {
@@ -47,6 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.removeItem('bugrank_token');
           localStorage.removeItem('bugrank_session');
           localStorage.removeItem('bugrank_user');
+          localStorage.removeItem('token');
+          localStorage.removeItem('sessionToken');
         }
       }
       
