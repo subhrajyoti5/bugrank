@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const auth_1 = require("@/middleware/auth");
-const SubmissionService_1 = require("@/services/SubmissionService");
-const storage_1 = require("@/data/storage");
-const rateLimiter_1 = require("@/middleware/rateLimiter");
+const auth_1 = require("../middleware/auth");
+const SubmissionService_1 = require("../services/SubmissionService");
+const storage_1 = require("../data/storage");
+const rateLimiter_1 = require("../middleware/rateLimiter");
 const router = (0, express_1.Router)();
 const submissionService = new SubmissionService_1.SubmissionService();
 /**

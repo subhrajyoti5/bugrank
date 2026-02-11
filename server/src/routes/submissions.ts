@@ -1,8 +1,8 @@
 import { Router, Response } from 'express';
-import { AuthRequest, authMiddleware } from '@/middleware/auth';
-import { SubmissionService } from '@/services/SubmissionService';
-import { userDb } from '@/data/storage';
-import { submissionLimiter, runLimiter } from '@/middleware/rateLimiter';
+import { AuthRequest, authMiddleware } from '../middleware/auth';
+import { SubmissionService } from '../services/SubmissionService';
+import { userDb } from '../data/storage';
+import { submissionLimiter, runLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 const submissionService = new SubmissionService();

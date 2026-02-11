@@ -8,7 +8,7 @@ import {
 } from '@bugpulse/shared';
 import { BaseService, GeminiService } from './GeminiService';
 import { ExecutionService } from './ExecutionService';
-import { submissionDb, userDb, challengeDb } from '@/data/storage';
+import { submissionDb, userDb, challengeDb } from '../data/storage';
 
 /**
  * Service for handling code submissions (Run & Submit)
@@ -201,10 +201,6 @@ export class SubmissionService extends BaseService {
       pointsEarned: finalScore,
       analysis: aiAnalysis,
       submittedAt: new Date(),
-    };
-      score: finalScore,
-      aiAnalysis,
-      createdAt: new Date(),
     };
 
     // Save submission to database

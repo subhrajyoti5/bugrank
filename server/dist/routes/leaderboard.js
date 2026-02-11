@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const auth_1 = require("@/middleware/auth");
-const storage_1 = require("@/data/storage");
+const auth_1 = require("../middleware/auth");
+const storage_1 = require("../data/storage");
 const router = (0, express_1.Router)();
 /**
  * GET /api/leaderboard

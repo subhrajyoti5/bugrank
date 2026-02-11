@@ -1,5 +1,5 @@
 import { AIAnalysis } from '@bugpulse/shared';
-import { geminiModel } from '@/config/gemini';
+import { geminiModel } from '../config/gemini';
 
 /**
  * Base service class following SOLID principles

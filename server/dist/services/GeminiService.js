@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeminiService = exports.BaseService = void 0;
-const gemini_1 = require("@/config/gemini");
+const gemini_1 = require("../config/gemini");
 /**
  * Base service class following SOLID principles
  * All services extend this base class for consistency

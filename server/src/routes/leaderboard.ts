@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
-import { AuthRequest, authMiddleware } from '@/middleware/auth';
+import { AuthRequest, authMiddleware } from '../middleware/auth';
 import { LeaderboardEntry, User } from '@bugpulse/shared';
-import { userDb } from '@/data/storage';
+import { userDb } from '../data/storage';
 
 const router = Router();
 
