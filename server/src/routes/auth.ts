@@ -160,7 +160,10 @@ router.put('/profile', authMiddleware, async (req, res) => {
  * GET /api/auth/google
  * Initiate Google OAuth flow
  */
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', { 
+  scope: ['profile', 'email'],
+  session: false 
+}));
 
 /**
  * GET /api/auth/google/callback
@@ -168,7 +171,10 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
  */
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { 
+    failureRedirect: '/login',
+    session: false 
+  }),
   async (req: Request, res: Response) => {
     try {
       const user = req.user as any;

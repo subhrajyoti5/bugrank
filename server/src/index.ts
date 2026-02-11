@@ -91,6 +91,7 @@ passport.deserializeUser((user: any, done) => {
   done(null, user);
 });
 
+// Initialize Passport without sessions (using custom JWT sessions)
 app.use(passport.initialize());
 
 // Rate limiting

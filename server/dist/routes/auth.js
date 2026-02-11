@@ -143,12 +143,18 @@ router.put('/profile', auth_1.authMiddleware, async (req, res) => {
  * GET /api/auth/google
  * Initiate Google OAuth flow
  */
-router.get('/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport_1.default.authenticate('google', {
+    scope: ['profile', 'email'],
+    session: false
+}));
 /**
  * GET /api/auth/google/callback
  * Google OAuth callback handler
  */
-router.get('/google/callback', passport_1.default.authenticate('google', { failureRedirect: '/login' }), async (req, res) => {
+router.get('/google/callback', passport_1.default.authenticate('google', {
+    failureRedirect: '/login',
+    session: false
+}), async (req, res) => {
     try {
         const user = req.user;
         if (!user) {
