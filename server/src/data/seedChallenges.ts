@@ -1,4 +1,4 @@
-import { Challenge } from '@bugrank/shared';
+import { Challenge } from '../../shared/dist';
 
 /**
  * Initial seed challenges for the platform

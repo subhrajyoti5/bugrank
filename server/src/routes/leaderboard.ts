@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { AuthRequest, authMiddleware } from '@/middleware/auth';
-import { LeaderboardEntry, User } from '@bugrank/shared';
+import { LeaderboardEntry, User } from '../../shared/dist';
 import { userDb } from '@/data/storage';
 
 const router = Router();

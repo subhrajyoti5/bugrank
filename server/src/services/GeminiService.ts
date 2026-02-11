@@ -1,4 +1,4 @@
-import { AIAnalysis } from '@bugrank/shared';
+import { AIAnalysis } from '../../shared/dist';
 import { geminiModel } from '@/config/gemini';
 
 /**

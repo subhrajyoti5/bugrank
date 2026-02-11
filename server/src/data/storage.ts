@@ -1,4 +1,4 @@
-import { Challenge, Submission, User, TestCase } from '@bugrank/shared';
+import { Challenge, Submission, User, TestCase } from '../../shared/dist';
 import pool from '../config/database';
 
 /**
