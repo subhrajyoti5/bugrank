@@ -12,6 +12,8 @@ interface AuthContextType {
   register: (email: string, password: string, displayName?: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  setAuthToken: (token: string) => Promise<void>;
+  setSessionToken: (token: string) => Promise<void>;
   // Keep for backward compatibility
   signInWithGoogle: () => Promise<void>;
 }
@@ -156,8 +158,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.error('Please use email/password login');
   };
 
+  // Set auth token and refresh user data
+  const setAuthToken = async (token: string) => {
+    localStorage.setItem('bugrank_token', token);
+    localStorage.setItem('token', token);
+    await refreshUser();
+  };
+
+  // Set session token
+  const setSessionToken = async (token: string) => {
+    localStorage.setItem('bugrank_session', token);
+    localStorage.setItem('sessionToken', token);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, signOut, refreshUser, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, loading, login, register, signOut, refreshUser, setAuthToken, setSessionToken, signInWithGoogle }}>
       {children}
     </AuthContext.Provider>
   );

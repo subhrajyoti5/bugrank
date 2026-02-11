@@ -5,6 +5,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Layout from '@/components/Layout';
 import LoginPage from '@/pages/LoginPage';
+import AuthSuccessPage from '@/pages/AuthSuccessPage';
 import ProblemsPage from '@/pages/ProblemsPage';
 import EditorPage from '@/pages/EditorPage';
 import LeaderboardPage from '@/pages/LeaderboardPage';
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth-success" element={<AuthSuccessPage />} />
 
           <Route element={<Layout />}>
             <Route

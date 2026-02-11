@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import authService from '../services/AuthService';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 const router = Router();
 
@@ -153,5 +155,54 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res: Response) =
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
+
+/**
+ * GET /api/auth/google
+ * Initiate Google OAuth flow
+ */
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+/**
+ * GET /api/auth/google/callback
+ * Google OAuth callback handler
+ */
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  async (req: Request, res: Response) => {
+    try {
+      const user = req.user as any;
+
+      if (!user) {
+        return res.status(401).json({ error: 'Google authentication failed' });
+      }
+
+      // Get IP and user agent for session tracking
+      const ipAddress = req.ip || req.connection.remoteAddress;
+      const userAgent = req.get('user-agent');
+
+      // Use authService to handle Google auth
+      const result = await authService.googleAuth(
+        {
+          googleId: user.id,
+          email: user.emails[0].value,
+          displayName: user.displayName,
+          photoURL: user.photos[0]?.value || '',
+        },
+        ipAddress,
+        userAgent
+      );
+
+      // Redirect to frontend with token and session token
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      res.redirect(
+        `${frontendUrl}/auth-success?token=${result.token}&sessionToken=${result.sessionToken}`
+      );
+    } catch (error: any) {
+      console.error('Google OAuth callback error:', error);
+      res.status(500).json({ error: 'Google authentication failed' });
+    }
+  }
+);
 
 export default router;

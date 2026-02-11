@@ -18,6 +18,13 @@ export interface LoginData {
   password: string;
 }
 
+export interface GoogleOAuthData {
+  googleId: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+}
+
 export interface SessionData {
   sessionToken: string;
   userId: number;
@@ -251,6 +258,75 @@ export class AuthService {
       return null;
     }
     return result.rows[0].profile_data;
+  }
+
+  /**
+   * Handle Google OAuth sign-in/sign-up
+   */
+  async googleAuth(data: GoogleOAuthData, ipAddress?: string, userAgent?: string): Promise<{ user: User; token: string; sessionToken: string }> {
+    const { googleId, email, displayName, photoURL } = data;
+
+    // Check if user already exists with this Google ID
+    let result = await pool.query(
+      `SELECT id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id
+       FROM users WHERE google_id = $1`,
+      [googleId]
+    );
+
+    let userRow = result.rows[0];
+
+    if (!userRow) {
+      // Check if user exists with this email
+      const emailResult = await pool.query(
+        `SELECT id FROM users WHERE email = $1`,
+        [email]
+      );
+
+      if (!emailResult.rows.length) {
+        // Create new user with Google OAuth
+        const createResult = await pool.query(
+          `INSERT INTO users (email, display_name, photo_url, google_id, google_profile, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
+           VALUES ($1, $2, $3, $4, $5, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
+           RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`,
+          [email, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]
+        );
+
+        userRow = createResult.rows[0];
+      } else {
+        // Link Google OAuth to existing email account
+        const linkResult = await pool.query(
+          `UPDATE users 
+           SET google_id = $1, google_profile = $2, photo_url = $3
+           WHERE email = $4
+           RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`,
+          [googleId, JSON.stringify({ googleId, displayName, photoURL }), photoURL, email]
+        );
+
+        userRow = linkResult.rows[0];
+      }
+    } else {
+      // Update last login for existing user
+      await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [userRow.id]);
+    }
+
+    const user: User = {
+      id: userRow.id.toString(),
+      email: userRow.email,
+      displayName: userRow.display_name,
+      photoURL: userRow.photo_url,
+      createdAt: userRow.created_at,
+      totalScore: userRow.total_score,
+      totalSubmissions: userRow.total_submissions,
+      successfulSubmissions: userRow.successful_submissions,
+    };
+
+    // Generate JWT token
+    const token = this.generateToken(user.id);
+
+    // Create session
+    const sessionToken = await this.createSession(userRow.id, ipAddress, userAgent);
+
+    return { user, token, sessionToken };
   }
 }
 
