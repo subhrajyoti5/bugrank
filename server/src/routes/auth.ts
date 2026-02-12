@@ -97,7 +97,7 @@ router.post('/logout', authMiddleware, async (req, res) => {
  */
 router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const user = req.user;
+    const user = (req as any).user;
 
     if (!user) {
       return res.status(401).json({ error: 'Not authenticated' });
@@ -116,7 +116,7 @@ router.get('/me', authMiddleware, async (req, res) => {
  */
 router.get('/profile', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user?.id;
+    const userId = (req as any).user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'Not authenticated' });
@@ -136,7 +136,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
  */
 router.put('/profile', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user?.id;
+    const userId = (req as any).user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: 'Not authenticated' });
