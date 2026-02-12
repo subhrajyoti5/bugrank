@@ -12,7 +12,7 @@ const submissionService = new SubmissionService();
  * Test code without scoring or attempt counting
  * Uses AI analysis only (FREE) - 30 runs per 5 minutes
  */
-router.post('/run', authMiddleware, runLimiter, async (req: AuthRequest, res: Response) => {
+router.post('/run', authMiddleware, runLimiter, async (req: any, res: Response) => {
   try {
     const { challengeId, code, testInput } = req.body;
     const userId = (req.user as any)?.id || 'demo-user';
@@ -44,7 +44,7 @@ router.post('/run', authMiddleware, runLimiter, async (req: AuthRequest, res: Re
  * Submit code for full evaluation with scoring
  * Uses self-hosted execution (FREE - $0 per submission) - 15 submissions per 15 minutes
  */
-router.post('/submit', authMiddleware, submissionLimiter, async (req: AuthRequest, res: Response) => {
+router.post('/submit', authMiddleware, submissionLimiter, async (req: any, res: Response) => {
   try {
     const { challengeId, code, timeTaken, testInput } = req.body;
     const userId = (req.user as any)?.id;
@@ -98,7 +98,7 @@ router.get('/user/:userId', async (req, res: Response) => {
  * GET /api/submissions/profile/:userId
  * Get user profile with stats
  */
-router.get('/profile/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/profile/:userId', authMiddleware, async (req: any, res: Response) => {
   try {
     const { userId } = req.params;
 

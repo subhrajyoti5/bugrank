@@ -9,7 +9,7 @@ const router = Router();
  * GET /api/challenges
  * Get all challenges
  */
-router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/', authMiddleware, async (req: any, res: Response) => {
   try {
     const challengesList = await challengeDb.getAll();
 
@@ -29,7 +29,7 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
  * GET /api/challenges/:id
  * Get a specific challenge by ID
  */
-router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/:id', authMiddleware, async (req: any, res: Response) => {
   try {
     const { id } = req.params;
 

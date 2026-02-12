@@ -9,7 +9,7 @@ const router = Router();
  * GET /api/leaderboard
  * Get top users by score
  */
-router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/', authMiddleware, async (req: any, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 20;
 
@@ -44,7 +44,7 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
  * GET /api/leaderboard/rank/:userId
  * Get rank for a specific user
  */
-router.get('/rank/:userId', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/rank/:userId', authMiddleware, async (req: any, res: Response) => {
   try {
     const { userId } = req.params;
 
