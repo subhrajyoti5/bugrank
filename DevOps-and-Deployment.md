@@ -105,9 +105,11 @@ BugPulse employs a modern development workflow with automated tooling, container
   - Includes g++, gcc, and build tools
   - Runner script integration (/srv/bugpulse/runner/run_cpp.sh)
   - Isolated executor user with sudo
+  - TypeScript compilation for both shared and server workspaces
 - **Location**: `Dockerfile` at repository root
-- **Build**: `docker build -t bugpulse-backend .`
-- **Run**: `docker run -d -p 5000:5000 --env-file server/.env bugpulse-backend`
+- **Build**: `docker build --no-cache -t bugpulse-backend .`
+- **Run**: `docker run -d --name bugpulse-backend --network bugpulse-net -p 5000:5000 --env-file server/.env --restart unless-stopped bugpulse-backend`
+- **Networking**: Bridge network for multi-container setup (backend + postgres)
 
 ### Docker Compose (Future)
 - **Purpose**: Multi-service orchestration

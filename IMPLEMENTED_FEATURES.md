@@ -50,8 +50,10 @@
 ### API Endpoints
 
 #### Authentication (`/api/auth`)
-- ✅ `POST /register` - User registration with email/password
-- ✅ `POST /login` - User login with JWT + session tokens
+- ✅ `POST /register` - User registration with email/password (email normalization)
+- ✅ `POST /login` - User login with JWT + session tokens (case-insensitive email)
+- ✅ `GET /google` - Initiate Google OAuth flow
+- ✅ `GET /google/callback` - Google OAuth callback handler
 - ✅ `POST /logout` - Session invalidation
 - ✅ `GET /me` - Get current user info
 - ✅ `GET /profile` - Get user profile with stats
@@ -71,11 +73,13 @@
 - ✅ `GET /rank/:userId` - Get specific user's rank
 
 ### Middleware
-- ✅ JWT authentication validator
+- ✅ JWT authentication validator with type-safe casting
 - ✅ Session validator (dual-token system)
 - ✅ Error handler with stack traces
-- ✅ CORS configuration (whitelist origins)
+- ✅ CORS configuration (Express-only, Nginx forwarding)
+- ✅ Trust proxy for correct IP detection behind Nginx
 - ✅ Rate limiters:
+  - 100 requests per 1 minute (general API)
   - 15 requests per 15 minutes (submit endpoint)
   - 30 requests per 5 minutes (run endpoint)
 
@@ -83,7 +87,9 @@
 
 #### AuthService
 - ✅ User registration with bcrypt hashing (10 rounds)
-- ✅ Login with password verification
+- ✅ Email normalization (lowercase + trim) on all auth operations
+- ✅ Login with password verification (case-insensitive email)
+- ✅ Google OAuth integration with random password generation
 - ✅ JWT token generation (24h expiry)
 - ✅ Session management with database
 - ✅ Automatic session cleanup (expired sessions)

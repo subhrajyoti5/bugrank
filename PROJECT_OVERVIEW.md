@@ -24,9 +24,12 @@ Traditional coding platforms focus on algorithmic problem-solving. BugPulse focu
 
 ### 1. Authentication System
 - **Email/Password authentication** with PostgreSQL
-- Secure bcrypt password hashing
+- **Google OAuth 2.0** integration for social login
+- Email normalization (case-insensitive, trimmed)
+- Secure bcrypt password hashing (salt rounds: 10)
 - JWT + Session-based authentication (24-hour sessions)
 - User profiles with statistics tracking
+- Automatic user creation for OAuth sign-ins
 
 ### 2. Challenge System
 - **15 pre-built C++ debugging challenges**

@@ -72,8 +72,10 @@ CREATE INDEX idx_users_email ON users(email);
 | Column | Type | Notes |
 |--------|------|-------|
 | `id` | SERIAL PK | Auto-increment user ID |
-| `email` | VARCHAR(255) UNIQUE | Login identifier |
-| `password_hash` | VARCHAR(255) | Bcrypt hashed password |
+| `email` | VARCHAR(255) UNIQUE | Login identifier (normalized: lowercase + trim) |
+| `password_hash` | VARCHAR(255) | Bcrypt hashed password (or random for OAuth) |
+| `google_id` | VARCHAR(255) | Google OAuth unique identifier |
+| `google_profile` | JSONB | Google profile data (name, photo, etc) |
 | `display_name` | VARCHAR(255) | Public username |
 | `photo_url` | VARCHAR(255) | Avatar image URL |
 | `created_at` | TIMESTAMP | Registration date |

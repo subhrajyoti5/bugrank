@@ -29,8 +29,9 @@
 │  │  ┌────────────────────────────────────────────────┐  │  │
 │  │  │  Middleware Layer                              │  │  │
 │  │  │  - JWT Validator  - Session Validator          │  │  │
-│  │  │  - Error Handler  - CORS                       │  │  │
-│  │  │  - Rate Limiter (15/15min, 30/5min)            │  │  │
+  │  │  - Error Handler  - CORS (Express-only)        │  │  │
+  │  │  - Trust Proxy (Nginx)                         │  │  │
+  │  │  - Rate Limiter (100/1min, 15/15min, 30/5min)  │  │  │
 │  │  └────────────────────────────────────────────────┘  │  │
 │  │  ┌────────────────────────────────────────────────┐  │  │
 │  │  │  Services Layer                                │  │  │

@@ -133,6 +133,12 @@ JWT_EXPIRES_IN=24h
 PORT=5000
 NODE_ENV=development  # Use 'production' on VPS
 
+# Google OAuth Configuration
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+FRONTEND_URL=http://localhost:5173
+
 # Google Gemini AI (For "Run" button - AI analysis)
 GEMINI_API_KEY=your_gemini_api_key
 ```

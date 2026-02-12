@@ -49,7 +49,8 @@ The backend is a Node.js/Express API server that handles authentication, challen
 
 ### bcryptjs 3.0.3
 - **Purpose**: Password hashing for secure credential storage
-- **Configuration**: Salt rounds for computational security
+- **Configuration**: Salt rounds (10) for computational security
+- **Features**: Random password generation for OAuth users
 
 ### Helmet 7.1.0
 - **Purpose**: Security middleware for setting HTTP headers
@@ -59,9 +60,11 @@ The backend is a Node.js/Express API server that handles authentication, challen
 ### Express Rate Limit 7.5.1
 - **Purpose**: API rate limiting to prevent abuse
 - **Configuration**:
-  - 15 requests per 15 minutes (general)
-  - 30 requests per 5 minutes (stricter windows)
+  - 100 requests per 1 minute (general API)
+  - 15 requests per 15 minutes (submit endpoint)
+  - 30 requests per 5 minutes (run endpoint)
 - **Storage**: Memory-based (suitable for single instance)
+- **Features**: X-Forwarded-For header support for proxied requests
 
 ### CORS 2.8.5
 - **Purpose**: Cross-Origin Resource Sharing configuration
@@ -115,9 +118,12 @@ server/
 
 ## Key Services Architecture
 ### AuthService
-- User registration and login
+- User registration with email normalization (lowercase + trim)
+- Login with case-insensitive email matching
+- Google OAuth integration with automatic user creation
 - JWT token generation and validation
-- Password hashing and verification
+- Password hashing and verification (bcrypt)
+- Random password generation for OAuth users
 
 ### SubmissionService
 - Execution orchestration (self-hosted)
