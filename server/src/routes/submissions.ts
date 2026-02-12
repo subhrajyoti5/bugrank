@@ -15,7 +15,7 @@ const submissionService = new SubmissionService();
 router.post('/run', authMiddleware, runLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { challengeId, code, testInput } = req.body;
-    const userId = req.user?.id || 'demo-user';
+    const userId = (req.user as any)?.id || 'demo-user';
 
     if (!challengeId || !code) {
       res.status(400).json({
@@ -47,12 +47,12 @@ router.post('/run', authMiddleware, runLimiter, async (req: AuthRequest, res: Re
 router.post('/submit', authMiddleware, submissionLimiter, async (req: AuthRequest, res: Response) => {
   try {
     const { challengeId, code, timeTaken, testInput } = req.body;
-    const userId = req.user?.id;
+    const userId = (req.user as any)?.id;
 
-    if (!challengeId || !code || timeTaken === undefined) {
+    if (!userId || !challengeId || !code || timeTaken === undefined) {
       res.status(400).json({
         success: false,
-        error: 'challengeId, code, and timeTaken are required',
+        error: 'userId, challengeId, code, and timeTaken are required',
       });
       return;
     }

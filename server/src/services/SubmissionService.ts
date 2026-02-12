@@ -187,6 +187,12 @@ export class SubmissionService extends BaseService {
       );
     }
 
+    // Calculate code diff
+    const diffResult = diffLines(challenge.buggyCode, code);
+    const codeDiff = diffResult.map(part => 
+      (part.added ? '+' : part.removed ? '-' : ' ') + part.value
+    ).join('');
+
     // Create submission document
     const submission: Submission = {
       id: `${userId}_${challengeId}_${Date.now()}`,
