@@ -10,7 +10,7 @@ export interface AuthRequest extends Request {
  * Middleware to authenticate requests using JWT or session token
  */
 export const authMiddleware = async (
-  req: AuthRequest,
+  req: any,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
