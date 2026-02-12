@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import pool from '../config/database';
 import { User } from '@bugpulse/shared';
 
@@ -290,12 +291,15 @@ export class AuthService {
       );
 
       if (!emailResult.rows.length) {
+        const randomPassword = crypto.randomBytes(24).toString('hex');
+        const passwordHash = await bcrypt.hash(randomPassword, 10);
+
         // Create new user with Google OAuth
         const createResult = await pool.query(
-          `INSERT INTO users (email, display_name, photo_url, google_id, google_profile, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
-           VALUES ($1, $2, $3, $4, $5, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
+          `INSERT INTO users (email, password_hash, display_name, photo_url, google_id, google_profile, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
+           VALUES ($1, $2, $3, $4, $5, $6, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
            RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`,
-          [normalizedEmail, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]
+          [normalizedEmail, passwordHash, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]
         );
 
         userRow = createResult.rows[0];

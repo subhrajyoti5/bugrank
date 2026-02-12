@@ -93,6 +93,9 @@ passport.deserializeUser((user: any, done) => {
 // Initialize Passport without sessions (using custom JWT sessions)
 app.use(passport.initialize());
 
+// Trust nginx proxy for correct client IP in rate limiter
+app.set('trust proxy', 1);
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
