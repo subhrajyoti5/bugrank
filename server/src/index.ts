@@ -96,11 +96,19 @@ app.use(passport.initialize());
 // Trust nginx proxy for correct client IP in rate limiter
 app.set('trust proxy', 1);
 
-// Rate limiting
+// Rate limiting - more lenient for general API usage
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // Limit each IP to 100 requests per minute
   message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Skip rate limiting for successful requests to reduce false positives
+  skipSuccessfulRequests: false,
+  // Use X-Forwarded-For header from Nginx
+  keyGenerator: (req: Request) => {
+    return req.ip || 'unknown';
+  },
 });
 app.use('/api/', limiter);
 
