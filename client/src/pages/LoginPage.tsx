@@ -14,7 +14,7 @@ const LoginPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-indigo"></div>
       </div>
     );
   }
@@ -41,24 +41,24 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 flex items-center justify-center px-4 transition-colors">
+    <div className="min-h-screen bg-gradient-to-br from-deep-navy via-premium-slate to-deep-navy flex items-center justify-center px-4 transition-colors">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="flex justify-center mb-4">
-            <Bug className="h-20 w-20 text-primary-600 animate-pulse-slow" />
+            <Bug className="h-20 w-20 text-electric-indigo animate-pulse-slow" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Welcome to Bugrank</h1>
-          <p className="text-lg text-gray-600 dark:text-slate-400">Debug. Compete. Win.</p>
+          <h1 className="text-4xl font-bold text-premium-text mb-2">Welcome to Bugrank</h1>
+          <p className="text-lg text-premium-muted">Debug. Compete. Win.</p>
         </div>
 
         {/* Login/Register Card */}
         <div className="card animate-slide-up">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-semibold text-premium-text mb-2">
               {isRegister ? 'Create Account' : 'Sign In'}
             </h2>
-            <p className="text-gray-600 dark:text-slate-400">
+            <p className="text-premium-muted">
               {isRegister 
                 ? 'Start your debugging journey' 
                 : 'Continue your debugging challenges'}
@@ -68,19 +68,19 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
               <div>
-                <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                <label htmlFor="displayName" className="block text-sm font-medium text-premium-text mb-1">
                   Display Name
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400 dark:text-slate-500" />
+                    <User className="h-5 w-5 text-premium-muted" />
                   </div>
                   <input
                     id="displayName"
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="block w-full pl-10 pr-3 py-2 border border-premium-muted/20 bg-premium-slate text-premium-text rounded-lg focus:ring-2 focus:ring-electric-indigo focus:border-electric-indigo"
                     placeholder="Your name"
                     required={isRegister}
                   />
@@ -89,19 +89,19 @@ const LoginPage: React.FC = () => {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-premium-text mb-1">
                 Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400 dark:text-slate-500" />
+                  <Mail className="h-5 w-5 text-premium-muted" />
                 </div>
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-premium-muted/20 bg-premium-slate text-premium-text rounded-lg focus:ring-2 focus:ring-electric-indigo focus:border-electric-indigo"
                   placeholder="you@example.com"
                   required
                 />
@@ -109,26 +109,26 @@ const LoginPage: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-premium-text mb-1">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400 dark:text-slate-500" />
+                  <Lock className="h-5 w-5 text-premium-muted" />
                 </div>
                 <input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-premium-muted/20 bg-premium-slate text-premium-text rounded-lg focus:ring-2 focus:ring-electric-indigo focus:border-electric-indigo"
                   placeholder="••••••••"
                   minLength={6}
                   required
                 />
               </div>
               {isRegister && (
-                <p className="mt-1 text-xs text-gray-500 dark:text-slate-500">Minimum 6 characters</p>
+                <p className="mt-1 text-xs text-premium-muted">Minimum 6 characters</p>
               )}
             </div>
 
@@ -148,17 +148,17 @@ const LoginPage: React.FC = () => {
           {/* Google Sign-In Divider */}
           <div className="mt-6 relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-slate-700"></div>
+              <div className="w-full border-t border-premium-muted/20"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-slate-900 text-gray-500 dark:text-slate-400">Or continue with</span>
+              <span className="px-2 bg-deep-navy text-premium-muted">Or continue with</span>
             </div>
           </div>
 
           {/* Google Sign-In Button */}
           <a
             href={`${import.meta.env.VITE_API_URL}/api/auth/google`}
-            className="w-full mt-6 inline-flex items-center justify-center px-4 py-3 border border-gray-300 dark:border-slate-700 rounded-lg shadow-sm bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+            className="w-full mt-6 inline-flex items-center justify-center px-4 py-3 border border-premium-muted/20 rounded-lg shadow-sm bg-premium-slate text-premium-text font-medium hover:bg-premium-slate/80 transition-colors"
           >
             <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -172,7 +172,7 @@ const LoginPage: React.FC = () => {
           <div className="mt-6 text-center">
             <button
               onClick={() => setIsRegister(!isRegister)}
-              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+              className="text-sm text-electric-indigo hover:text-indigo-cyan font-medium"
             >
               {isRegister 
                 ? 'Already have an account? Sign in' 
@@ -180,9 +180,9 @@ const LoginPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
-            <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-slate-400">
-              <Sparkles className="h-4 w-4 text-yellow-500" />
+          <div className="mt-6 pt-6 border-t border-premium-muted/20">
+            <div className="flex items-center justify-center space-x-2 text-sm text-premium-muted">
+              <Sparkles className="h-4 w-4 text-cyan-violet" />
               <span>AI-powered feedback on your code fixes</span>
             </div>
           </div>
@@ -191,16 +191,16 @@ const LoginPage: React.FC = () => {
         {/* Features */}
         <div className="mt-8 grid grid-cols-3 gap-4 text-center animate-fade-in">
           <div className="p-3">
-            <div className="text-2xl font-bold text-primary-600">16+</div>
-            <div className="text-xs text-gray-600 dark:text-slate-400">Challenges</div>
+            <div className="text-2xl font-bold text-electric-indigo">16+</div>
+            <div className="text-xs text-premium-muted">Challenges</div>
           </div>
           <div className="p-3">
-            <div className="text-2xl font-bold text-primary-600">AI</div>
-            <div className="text-xs text-gray-600 dark:text-slate-400">Powered</div>
+            <div className="text-2xl font-bold text-indigo-cyan">AI</div>
+            <div className="text-xs text-premium-muted">Powered</div>
           </div>
           <div className="p-3">
-            <div className="text-2xl font-bold text-primary-600">Free</div>
-            <div className="text-xs text-gray-600 dark:text-slate-400">Testing</div>
+            <div className="text-2xl font-bold text-cyan-violet">Free</div>
+            <div className="text-xs text-premium-muted">Testing</div>
           </div>
         </div>
       </div>

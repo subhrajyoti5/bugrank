@@ -6,21 +6,21 @@
   "important": "⚠️ This color scheme and the design intention should be maintained across the entire project. All pages, components, and features should follow these color guidelines to ensure consistency and brand identity.",
   "colors": {
     "primary": {
-      "name": "Orange",
-      "hex": "#f97316",
-      "description": "Primary action color representing energy, urgency, and bug-fixing action",
-      "psychology": "Conveys urgency and action without being alarming, perfect for debugging context",
+      "name": "Olive",
+      "hex": "#708238",
+      "description": "Primary action color representing grounded, earthy action",
+      "psychology": "Conveys stability and uniqueness, avoids tech clichés",
       "shades": {
-        "50": "#fff7ed",
-        "100": "#ffedd5",
-        "200": "#fed7aa",
-        "300": "#fdba74",
-        "400": "#fb923c",
-        "500": "#f97316",
-        "600": "#ea580c",
-        "700": "#c2410c",
-        "800": "#9a3412",
-        "900": "#7c2d12"
+        "50": "#f8fae3",
+        "100": "#e6edc3",
+        "200": "#d1e09a",
+        "300": "#b7c96b",
+        "400": "#9eb84a",
+        "500": "#708238",
+        "600": "#5c6a2e",
+        "700": "#495522",
+        "800": "#384217",
+        "900": "#232a0d"
       },
       "usage": {
         "400": {
@@ -76,21 +76,21 @@
       }
     },
     "secondary": {
-      "name": "Blue",
-      "hex": "#3b82f6",
-      "description": "Secondary accent color providing balance, trust, and professionalism",
-      "psychology": "Conveys reliability and technical expertise, balances the urgency of orange",
+      "name": "Ochre",
+      "hex": "#c2b280",
+      "description": "Secondary accent color providing warmth and vintage feel",
+      "psychology": "Suggests creativity and a non-digital vibe",
       "shades": {
-        "50": "#eff6ff",
-        "100": "#dbeafe",
-        "200": "#bfdbfe",
-        "300": "#93c5fd",
-        "400": "#60a5fa",
-        "500": "#3b82f6",
-        "600": "#2563eb",
-        "700": "#1d4ed8",
-        "800": "#1e40af",
-        "900": "#1e3a8a"
+        "50": "#fdfae6",
+        "100": "#f7f1c7",
+        "200": "#ede3a2",
+        "300": "#e0d37a",
+        "400": "#d1c05a",
+        "500": "#c2b280",
+        "600": "#a99c6b",
+        "700": "#8c7f54",
+        "800": "#6e633e",
+        "900": "#4d4327"
       },
       "usage": {
         "400": {
@@ -127,22 +127,22 @@
       }
     },
     "neutral": {
-      "name": "Slate",
-      "hex": "#64748b",
-      "description": "Primary neutral palette for backgrounds, text, and UI structure",
-      "psychology": "Modern, professional dark theme that reduces eye strain for developers",
+      "name": "Moss",
+      "hex": "#7a8450",
+      "description": "Earthy neutral for backgrounds, text, and UI structure",
+      "psychology": "Natural, calming, and non-techy",
       "shades": {
-        "50": "#f8fafc",
-        "100": "#f1f5f9",
-        "200": "#e2e8f0",
-        "300": "#cbd5e1",
-        "400": "#94a3b8",
-        "500": "#64748b",
-        "600": "#475569",
-        "700": "#334155",
-        "800": "#1e293b",
-        "900": "#0f172a",
-        "950": "#020617"
+        "50": "#f7faed",
+        "100": "#e6ecd2",
+        "200": "#d2deb2",
+        "300": "#b7c98e",
+        "400": "#a0b06d",
+        "500": "#7a8450",
+        "600": "#636a3f",
+        "700": "#4e5330",
+        "800": "#393d22",
+        "900": "#232613",
+        "950": "#18190c"
       },
       "usage": {
         "50": {
@@ -274,8 +274,8 @@
       }
     },
     "success": {
-      "name": "Emerald",
-      "hex": "#10b981",
+      "name": "Muted Teal",
+      "hex": "#4b7f82",
       "description": "Success states representing fixed bugs, passing tests, and positive outcomes",
       "psychology": "Clear success indication without being too bright or distracting",
       "shades": {
@@ -328,8 +328,8 @@
       }
     },
     "error": {
-      "name": "Red",
-      "hex": "#ef4444",
+      "name": "Brick",
+      "hex": "#b55239",
       "description": "Error states representing bugs, alerts, and issues requiring attention",
       "psychology": "Immediate attention without panic - critical but fixable",
       "shades": {
@@ -388,8 +388,8 @@
       }
     },
     "accent": {
-      "name": "Amber",
-      "hex": "#f59e0b",
+      "name": "Sand",
+      "hex": "#e5d7b2",
       "description": "Accent color for ratings, awards, and special highlights",
       "psychology": "Warm, positive reinforcement without being too bright",
       "shades": {

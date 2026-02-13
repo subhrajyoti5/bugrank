@@ -42,28 +42,28 @@ const LeaderboardPage: React.FC = () => {
     if (!entry) return null;
 
     let height = 'h-32';
-    let color = 'bg-slate-700';
-    let ringColor = 'ring-slate-500';
+    let color = 'bg-premium-slate';
+    let ringColor = 'ring-premium-muted';
     let icon = null;
     let order = 'order-2';
 
     if (rank === 1) {
       height = 'h-40';
-      color = 'bg-gradient-to-b from-yellow-400/20 to-yellow-600/5 border-yellow-500/30';
-      ringColor = 'ring-yellow-400';
-      icon = <Crown className="h-6 w-6 text-yellow-400 absolute -top-8 left-1/2 -translate-x-1/2" />;
+      color = 'bg-gradient-to-b from-electric-indigo/20 to-electric-indigo/5 border-electric-indigo/30';
+      ringColor = 'ring-electric-indigo';
+      icon = <Crown className="h-6 w-6 text-electric-indigo absolute -top-8 left-1/2 -translate-x-1/2" />;
       order = 'order-2 scale-110 z-10';
     } else if (rank === 2) {
       height = 'h-32';
-      color = 'bg-gradient-to-b from-slate-300/20 to-slate-500/5 border-slate-400/30';
-      ringColor = 'ring-slate-300';
-      icon = <Medal className="h-5 w-5 text-slate-300 absolute -top-7 left-1/2 -translate-x-1/2" />;
+      color = 'bg-gradient-to-b from-indigo-cyan/20 to-indigo-cyan/5 border-indigo-cyan/30';
+      ringColor = 'ring-indigo-cyan';
+      icon = <Medal className="h-5 w-5 text-indigo-cyan absolute -top-7 left-1/2 -translate-x-1/2" />;
       order = 'order-1';
     } else if (rank === 3) {
       height = 'h-28';
-      color = 'bg-gradient-to-b from-orange-400/20 to-orange-600/5 border-orange-500/30';
-      ringColor = 'ring-orange-500';
-      icon = <Award className="h-5 w-5 text-orange-500 absolute -top-7 left-1/2 -translate-x-1/2" />;
+      color = 'bg-gradient-to-b from-cyan-violet/20 to-cyan-violet/5 border-cyan-violet/30';
+      ringColor = 'ring-cyan-violet';
+      icon = <Award className="h-5 w-5 text-cyan-violet absolute -top-7 left-1/2 -translate-x-1/2" />;
       order = 'order-3';
     }
 
@@ -82,9 +82,9 @@ const LeaderboardPage: React.FC = () => {
         </div>
 
         <div className={`w-36 ${height} ${color} backdrop-blur-md rounded-t-xl border-t border-x flex flex-col items-center justify-center p-2`}>
-          <p className="font-bold text-slate-100 text-sm truncate w-full text-center">{entry.displayName}</p>
-          <p className="text-orange-400 font-bold text-xs mt-1">{entry.totalScore} pts</p>
-          <p className="text-slate-500 text-[10px]">{entry.successfulSubmissions} solved</p>
+          <p className="font-bold text-premium-text text-sm truncate w-full text-center">{entry.displayName}</p>
+          <p className="text-cyan-violet font-bold text-xs mt-1">{entry.totalScore} pts</p>
+          <p className="text-premium-muted text-[10px]">{entry.successfulSubmissions} solved</p>
         </div>
       </div>
     );
@@ -93,7 +93,7 @@ const LeaderboardPage: React.FC = () => {
   if (loading) {
     return (
       <div className="page-container flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-electric-indigo"></div>
       </div>
     );
   }
@@ -101,15 +101,15 @@ const LeaderboardPage: React.FC = () => {
   return (
     <div className="page-container relative overflow-hidden">
       {/* Background glow for podium */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-electric-indigo/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="content-wrapper max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-20 text-center animate-fade-in relative z-20">
-          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-200 dark:to-slate-400 mb-2">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-premium-text via-indigo-cyan to-electric-indigo mb-2">
             Leaderboard
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 text-sm">
+          <p className="text-premium-muted text-sm">
             Top debuggers climbing the ranks of excellence
           </p>
         </div>
@@ -125,20 +125,20 @@ const LeaderboardPage: React.FC = () => {
 
         {/* User Rank Card */}
         {userRank > 0 && userRank > 20 && (
-          <div className="glass border border-primary-500/30 rounded-xl p-4 mb-6 animate-slide-up flex items-center justify-between shadow-[0_0_15px_rgba(14,165,233,0.1)]">
+          <div className="glass border border-electric-indigo/30 rounded-xl p-4 mb-6 animate-slide-up flex items-center justify-between shadow-[0_0_15px_rgba(80,80,200,0.1)]">
             <div className="flex items-center gap-4">
-              <div className="bg-primary-500/20 p-2 rounded-lg">
-                <Zap className="h-5 w-5 text-primary-400" />
+              <div className="bg-electric-indigo/20 p-2 rounded-lg">
+                <Zap className="h-5 w-5 text-electric-indigo" />
               </div>
               <div>
-                <p className="text-xs text-primary-300 font-medium uppercase tracking-wide">Your Current Standing</p>
+                <p className="text-xs text-electric-indigo font-medium uppercase tracking-wide">Your Current Standing</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-white">#{userRank}</span>
-                  <span className="text-sm text-slate-400">Keep solving to climb up!</span>
+                  <span className="text-2xl font-bold text-premium-text">#{userRank}</span>
+                  <span className="text-sm text-premium-muted">Keep solving to climb up!</span>
                 </div>
               </div>
             </div>
-            <button onClick={handleSolveMore} className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors">
+            <button onClick={handleSolveMore} className="px-4 py-2 bg-electric-indigo hover:bg-cyan-violet text-premium-text rounded-lg text-sm font-medium transition-colors">
               Solve More
             </button>
           </div>
@@ -148,14 +148,14 @@ const LeaderboardPage: React.FC = () => {
         <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.1s' }}>
           {entries.length === 0 ? (
             <div className="text-center py-12 px-4 glass rounded-xl">
-              <Trophy className="h-12 w-12 text-slate-400 dark:text-slate-700 mx-auto mb-3" />
-              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">No Rankings Yet</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Be the first to complete a challenge!</p>
+              <Trophy className="h-12 w-12 text-premium-muted mx-auto mb-3" />
+              <h3 className="text-sm font-semibold text-premium-text mb-1">No Rankings Yet</h3>
+              <p className="text-xs text-premium-muted">Be the first to complete a challenge!</p>
             </div>
           ) : (
             <>
               {/* List Header */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <div className="grid grid-cols-12 gap-4 px-6 py-2 text-xs font-semibold text-premium-muted uppercase tracking-wider">
                 <div className="col-span-1">Rank</div>
                 <div className="col-span-1"></div>
                 <div className="col-span-6">User</div>
@@ -170,29 +170,29 @@ const LeaderboardPage: React.FC = () => {
                   <div
                     key={entry.userId}
                     className={`grid grid-cols-12 gap-4 px-6 py-3 items-center rounded-xl border transition-all duration-200 ${isMe
-                      ? 'bg-primary-500/10 border-primary-500/30 scale-[1.01]'
-                      : 'glass hover:bg-slate-200/50 dark:hover:bg-slate-800/60 border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10'
+                      ? 'bg-electric-indigo/10 border-electric-indigo/30 scale-[1.01]'
+                      : 'glass hover:bg-premium-slate/30 border-electric-indigo/10 hover:border-electric-indigo/20'
                       }`}
                   >
-                    <div className="col-span-1 font-mono text-slate-600 dark:text-slate-400 font-bold">#{rank}</div>
+                    <div className="col-span-1 font-mono text-premium-muted font-bold">#{rank}</div>
                     <div className="col-span-1">
                       <img
                         src={entry.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.displayName)}
                         alt={entry.displayName}
-                        className="h-8 w-8 rounded-full ring-1 ring-slate-300 dark:ring-slate-700"
+                        className="h-8 w-8 rounded-full ring-1 ring-electric-indigo/30"
                       />
                     </div>
                     <div className="col-span-6 flex items-center gap-2">
-                      <span className={`font-medium ${isMe ? 'text-primary-400' : 'text-slate-900 dark:text-slate-200'}`}>
+                      <span className={`font-medium ${isMe ? 'text-electric-indigo' : 'text-premium-text'}`}>
                         {entry.displayName}
                       </span>
-                      {isMe && <span className="text-[10px] bg-primary-500/20 text-primary-300 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">You</span>}
+                      {isMe && <span className="text-[10px] bg-electric-indigo/20 text-electric-indigo px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">You</span>}
                     </div>
                     <div className="col-span-2 text-right">
-                      <span className="font-bold text-slate-900 dark:text-slate-200">{entry.totalScore}</span>
+                      <span className="font-bold text-premium-text">{entry.totalScore}</span>
                     </div>
                     <div className="col-span-2 text-right">
-                      <span className="text-slate-600 dark:text-slate-400 text-sm">{entry.successfulSubmissions}</span>
+                      <span className="text-premium-muted text-sm">{entry.successfulSubmissions}</span>
                     </div>
                   </div>
                 );

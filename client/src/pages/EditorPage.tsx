@@ -112,20 +112,20 @@ const EditorPage: React.FC = () => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'easy':
-        return 'text-emerald-500 bg-emerald-500/10';
+        return 'text-indigo-cyan bg-indigo-cyan/10';
       case 'medium':
-        return 'text-amber-500 bg-amber-500/10';
+        return 'text-cyan-violet bg-cyan-violet/10';
       case 'hard':
-        return 'text-rose-500 bg-rose-500/10';
+        return 'text-electric-indigo bg-electric-indigo/10';
       default:
-        return 'text-slate-500 bg-slate-500/10';
+        return 'text-premium-muted bg-premium-muted/10';
     }
   };
 
   if (loading) {
     return (
       <div className="page-container flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-indigo"></div>
       </div>
     );
   }
@@ -145,18 +145,18 @@ const EditorPage: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-white dark:bg-slate-950">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <div className="h-12 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 bg-white dark:bg-slate-900">
+      <div className="h-12 border-b border-electric-indigo/10 flex items-center px-4 bg-background">
         <button
           onClick={() => navigate('/problems')}
-          className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors mr-4"
+          className="flex items-center gap-2 text-premium-muted hover:text-premium-text transition-colors mr-4"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm font-medium">Problems</span>
         </button>
-        <div className="h-4 w-px bg-slate-300 dark:bg-slate-700 mr-4" />
-        <h1 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mr-3">{challenge.title}</h1>
+        <div className="h-4 w-px bg-electric-indigo/10 mr-4" />
+        <h1 className="text-sm font-semibold text-premium-text mr-3">{challenge.title}</h1>
         <span className={`px-2 py-0.5 rounded text-xs font-semibold ${getDifficultyColor(challenge.difficulty)}`}>
           {challenge.difficulty}
         </span>
@@ -165,17 +165,17 @@ const EditorPage: React.FC = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Problem Description */}
-        <div className="w-1/2 border-r border-slate-200 dark:border-slate-800 flex flex-col">
+        <div className="w-1/2 border-r border-electric-indigo/10 flex flex-col">
           {/* Tabs */}
-          <div className="flex border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <div className="flex border-b border-electric-indigo/10 bg-background">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
                   activeTab === tab.id
-                    ? 'text-slate-900 dark:text-white border-primary-500'
-                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-200'
+                    ? 'text-premium-text border-electric-indigo'
+                    : 'text-premium-muted border-transparent hover:text-premium-text'
                 }`}
               >
                 <tab.icon className="h-4 w-4" />
@@ -185,44 +185,44 @@ const EditorPage: React.FC = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-slate-950">
+          <div className="flex-1 overflow-y-auto p-6 bg-premium-slate/30">
             {activeTab === 'description' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">{challenge.title}</h2>
-                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                  <h2 className="text-xl font-bold text-premium-text mb-4">{challenge.title}</h2>
+                  <p className="text-premium-muted leading-relaxed whitespace-pre-wrap">
                     {challenge.description}
                   </p>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Language:</span>
-                    <span className="font-mono text-slate-900 dark:text-slate-100 font-semibold">
+                    <span className="text-premium-muted">Language:</span>
+                    <span className="font-mono text-premium-text font-semibold">
                       {challenge.language.toUpperCase()}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Points:</span>
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{challenge.baseScore}</span>
+                    <span className="text-premium-muted">Points:</span>
+                    <span className="text-premium-text font-semibold">{challenge.baseScore}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Time Limit:</span>
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{challenge.timeLimit}s</span>
+                    <span className="text-premium-muted">Time Limit:</span>
+                    <span className="text-premium-text font-semibold">{challenge.timeLimit}s</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-                    <span className="text-slate-600 dark:text-slate-400">Time Elapsed:</span>
-                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{timeTaken}s</span>
+                    <Clock className="h-4 w-4 text-premium-muted" />
+                    <span className="text-premium-muted">Time Elapsed:</span>
+                    <span className="text-premium-text font-semibold">{timeTaken}s</span>
                   </div>
                 </div>
 
-                <div className="bg-slate-100 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-800">
+                <div className="bg-electric-indigo/5 rounded-lg p-4 border border-electric-indigo/20">
                   <div className="flex items-start gap-2">
-                    <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-slate-700 dark:text-slate-300">
-                      <p className="font-semibold mb-2">How it works:</p>
-                      <ul className="space-y-1 text-slate-600 dark:text-slate-400">
+                    <Info className="h-4 w-4 text-electric-indigo flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-premium-muted">
+                      <p className="font-semibold mb-2 text-premium-text">How it works:</p>
+                      <ul className="space-y-1 text-premium-muted">
                         <li>• <strong>Run:</strong> Test code with AI feedback (no penalties)</li>
                         <li>• <strong>Submit:</strong> Final evaluation - scores if correct</li>
                         <li>• Multiple attempts reduce points by 8% each time</li>
@@ -234,21 +234,21 @@ const EditorPage: React.FC = () => {
             )}
 
             {activeTab === 'editorial' && (
-              <div className="text-slate-600 dark:text-slate-400 text-center py-12">
+              <div className="text-premium-muted text-center py-12">
                 <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>Editorial coming soon...</p>
               </div>
             )}
 
             {activeTab === 'solutions' && (
-              <div className="text-slate-600 dark:text-slate-400 text-center py-12">
+              <div className="text-premium-muted text-center py-12">
                 <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>Community solutions coming soon...</p>
               </div>
             )}
 
             {activeTab === 'submissions' && (
-              <div className="text-slate-600 dark:text-slate-400 text-center py-12">
+              <div className="text-premium-muted text-center py-12">
                 <List className="h-12 w-12 mx-auto mb-3 opacity-50" />
                 <p>Submission history: {attempts} attempt{attempts !== 1 ? 's' : ''}</p>
               </div>
@@ -286,15 +286,15 @@ const EditorPage: React.FC = () => {
           </div>
 
           {/* Bottom Panel - Test Case / Results */}
-          <div className="h-64 border-t border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900">
+          <div className="h-64 border-t border-electric-indigo/10 flex flex-col bg-premium-slate/30">
             {/* Panel Tabs */}
-            <div className="flex border-b border-slate-200 dark:border-slate-800">
+            <div className="flex border-b border-electric-indigo/10">
               <button
                 onClick={() => setActivePanel('testcase')}
                 className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                   activePanel === 'testcase'
-                    ? 'text-slate-900 dark:text-white border-primary-500'
-                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-200'
+                    ? 'text-premium-text border-electric-indigo'
+                    : 'text-premium-muted border-transparent hover:text-premium-text'
                 }`}
               >
                 Testcase
@@ -303,8 +303,8 @@ const EditorPage: React.FC = () => {
                 onClick={() => setActivePanel('result')}
                 className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                   activePanel === 'result'
-                    ? 'text-slate-900 dark:text-white border-primary-500'
-                    : 'text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-slate-200'
+                    ? 'text-premium-text border-electric-indigo'
+                    : 'text-premium-muted border-transparent hover:text-premium-text'
                 }`}
               >
                 Test Result
@@ -316,12 +316,12 @@ const EditorPage: React.FC = () => {
               {activePanel === 'testcase' && (
                 <div className="space-y-3">
                   <div>
-                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Expected Output:</p>
-                    <pre className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded p-3 text-xs font-mono text-slate-900 dark:text-slate-300">
+                    <p className="text-xs font-semibold text-premium-muted mb-2">Expected Output:</p>
+                    <pre className="bg-premium-slate/50 border border-electric-indigo/10 rounded p-3 text-xs font-mono text-premium-text">
                       {challenge.expectedOutput}
                     </pre>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-500">
+                  <p className="text-xs text-premium-muted">
                     Click <strong>Run</strong> to test your code or <strong>Submit</strong> for evaluation
                   </p>
                 </div>
@@ -335,16 +335,16 @@ const EditorPage: React.FC = () => {
                       {(runResult?.testCaseOutput || submitResult?.testCaseOutput) && (
                         <div>
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Test Case Validation</span>
+                            <span className="text-xs font-semibold text-premium-text">Test Case Validation</span>
                             <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
                               (runResult?.testCasePassed || submitResult?.testCasePassed)
-                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                ? 'bg-indigo-cyan/20 text-indigo-cyan'
+                                : 'bg-cyan-violet/20 text-cyan-violet'
                             }`}>
                               {(runResult?.testCasePassed || submitResult?.testCasePassed) ? '✅ PASS' : '❌ FAIL'}
                             </span>
                           </div>
-                          <pre className="bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded p-3 text-xs font-mono text-slate-900 dark:text-slate-300 max-h-32 overflow-auto">
+                          <pre className="bg-premium-slate/50 border border-electric-indigo/10 rounded p-3 text-xs font-mono text-premium-text max-h-32 overflow-auto">
                             {runResult?.testCaseOutput || submitResult?.testCaseOutput}
                           </pre>
                         </div>
@@ -353,8 +353,8 @@ const EditorPage: React.FC = () => {
                       {/* Compiler Output */}
                       {(runResult?.compilerOutput || submitResult?.compilerOutput) && (
                         <div>
-                          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Compiler Output</p>
-                          <pre className="bg-slate-100 dark:bg-slate-950 border border-red-200 dark:border-red-900/50 rounded p-3 text-xs font-mono text-red-700 dark:text-red-400 max-h-32 overflow-auto">
+                          <p className="text-xs font-semibold text-premium-text mb-2">Compiler Output</p>
+                          <pre className="bg-premium-slate/50 border border-cyan-violet/20 rounded p-3 text-xs font-mono text-cyan-violet max-h-32 overflow-auto">
                             {runResult?.compilerOutput || submitResult?.compilerOutput}
                           </pre>
                         </div>
@@ -363,23 +363,23 @@ const EditorPage: React.FC = () => {
                       {/* AI Analysis */}
                       {(runResult?.aiAnalysis || submitResult?.aiAnalysis) && (
                         <div className="space-y-2 text-sm">
-                          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">AI Analysis</p>
+                          <p className="text-xs font-semibold text-premium-text">AI Analysis</p>
                           <div className="grid grid-cols-2 gap-3 text-xs">
                             <div>
-                              <span className="text-slate-600 dark:text-slate-400">Accuracy:</span>
-                              <span className="ml-2 font-semibold text-slate-900 dark:text-slate-100">
+                              <span className="text-premium-muted">Accuracy:</span>
+                              <span className="ml-2 font-semibold text-premium-text">
                                 {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.accuracyScore}/10
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-600 dark:text-slate-400">Time:</span>
-                              <span className="ml-2 font-mono text-slate-900 dark:text-slate-100">
+                              <span className="text-premium-muted">Time:</span>
+                              <span className="ml-2 font-mono text-premium-text">
                                 {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.timeComplexity}
                               </span>
                             </div>
                           </div>
                           <div className="mt-3">
-                            <p className="text-slate-600 dark:text-slate-400 text-xs">
+                            <p className="text-premium-muted text-xs">
                               {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.feedback}
                             </p>
                           </div>
@@ -390,8 +390,8 @@ const EditorPage: React.FC = () => {
                       {submitResult && (
                         <div className={`p-3 rounded-lg text-sm font-medium flex items-center gap-2 ${
                           submitResult.submission.isCorrect
-                            ? 'bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-red-100 text-red-900 dark:bg-red-900/30 dark:text-red-400'
+                            ? 'bg-indigo-cyan/20 text-indigo-cyan'
+                            : 'bg-cyan-violet/20 text-cyan-violet'
                         }`}>
                           {submitResult.submission.isCorrect ? (
                             <><CheckCircle className="h-5 w-5" /> Accepted - {submitResult.score} points earned!</>
@@ -402,7 +402,7 @@ const EditorPage: React.FC = () => {
                       )}
                     </>
                   ) : (
-                    <p className="text-slate-500 dark:text-slate-500 text-sm text-center py-8">
+                    <p className="text-premium-muted text-sm text-center py-8">
                       You must run your code first
                     </p>
                   )}
@@ -411,8 +411,8 @@ const EditorPage: React.FC = () => {
             </div>
 
             {/* Bottom Action Bar */}
-            <div className="border-t border-slate-200 dark:border-slate-800 p-3 flex items-center justify-between bg-white dark:bg-slate-900">
-              <div className="flex items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+            <div className="border-t border-electric-indigo/10 p-3 flex items-center justify-between bg-background">
+              <div className="flex items-center gap-4 text-xs text-premium-muted">
                 <span>Attempts: {attempts}</span>
                 <span>Changed: {linesChanged} lines</span>
               </div>
@@ -420,7 +420,7 @@ const EditorPage: React.FC = () => {
                 <button
                   onClick={handleRun}
                   disabled={running || submitting}
-                  className="px-6 py-2 text-sm font-medium rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-900 dark:text-white transition disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 text-sm font-medium rounded-lg bg-premium-slate hover:bg-premium-slate/80 text-premium-text transition disabled:opacity-50 flex items-center gap-2"
                 >
                   {running ? (
                     <>
@@ -437,7 +437,7 @@ const EditorPage: React.FC = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={running || submitting}
-                  className="px-6 py-2 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 text-sm font-medium rounded-lg bg-electric-indigo hover:bg-cyan-violet text-premium-text transition disabled:opacity-50 flex items-center gap-2"
                 >
                   {submitting ? (
                     <>

@@ -50,48 +50,48 @@ const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-white/5 transition-all duration-200 border border-white/10 hover:border-white/20 group"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-premium-slate/20 transition-all duration-200 border border-electric-indigo/10 hover:border-electric-indigo/20 group"
       >
         <div className="relative">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-600 to-orange-500 ring-1 ring-white/20 flex items-center justify-center overflow-hidden">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-electric-indigo to-cyan-violet ring-1 ring-electric-indigo/20 flex items-center justify-center overflow-hidden">
             {user.photoURL ? (
               <img src={user.photoURL} alt={user.displayName} className="h-full w-full object-cover" />
             ) : (
-              <span className="text-xs font-bold text-white">{(user.displayName || user.email || 'U').charAt(0).toUpperCase()}</span>
+              <span className="text-xs font-bold text-premium-text">{(user.displayName || user.email || 'U').charAt(0).toUpperCase()}</span>
             )}
           </div>
-          <div className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-400 border border-[#0a0a0a] rounded-full shadow-lg"></div>
+          <div className="absolute bottom-0 right-0 w-2 h-2 bg-indigo-cyan border border-background rounded-full shadow-lg"></div>
         </div>
 
         <div className="text-left hidden sm:block">
-          <p className="text-xs font-semibold text-white group-hover:text-white transition-colors">{user.displayName}</p>
+          <p className="text-xs font-semibold text-premium-text group-hover:text-cyan-violet transition-colors">{user.displayName}</p>
         </div>
 
         <ChevronDown
-          className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-300 group-hover:text-white ${isOpen ? 'rotate-180' : ''
+          className={`h-3.5 w-3.5 text-premium-muted transition-transform duration-300 group-hover:text-premium-text ${isOpen ? 'rotate-180' : ''
             }`}
         />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-72 bg-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
+        <div className="absolute right-0 mt-3 w-72 bg-premium-slate/80 backdrop-blur-xl border border-electric-indigo/20 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
           {/* Header Stats */}
-          <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-r from-violet-900/20 to-orange-900/20">
-            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-3">Quick Stats</p>
+          <div className="px-5 py-4 border-b border-electric-indigo/10 bg-gradient-to-r from-electric-indigo/10 to-cyan-violet/10">
+            <p className="text-[10px] text-premium-muted uppercase font-bold tracking-widest mb-3">Quick Stats</p>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
-                <span className="block text-xl font-black text-white">{user.totalScore || 0}</span>
-                <span className="text-[9px] text-slate-500 uppercase font-semibold tracking-wider">Points</span>
+                <span className="block text-xl font-black text-premium-text">{user.totalScore || 0}</span>
+                <span className="text-[9px] text-premium-muted uppercase font-semibold tracking-wider">Points</span>
               </div>
-              <div className="h-6 w-px bg-white/10"></div>
+              <div className="h-6 w-px bg-electric-indigo/10"></div>
               <div className="text-center">
-                <span className="block text-xl font-black text-emerald-400">{user.successfulSubmissions || 0}</span>
-                <span className="text-[9px] text-slate-500 uppercase font-semibold tracking-wider">Solved</span>
+                <span className="block text-xl font-black text-indigo-cyan">{user.successfulSubmissions || 0}</span>
+                <span className="text-[9px] text-premium-muted uppercase font-semibold tracking-wider">Solved</span>
               </div>
-              <div className="col-span-3 h-1 bg-white/5 rounded-full overflow-hidden mt-2">
+              <div className="col-span-3 h-1 bg-electric-indigo/10 rounded-full overflow-hidden mt-2">
                 <div 
-                  className="h-full bg-gradient-to-r from-violet-500 to-orange-500"
+                  className="h-full bg-gradient-to-r from-electric-indigo to-cyan-violet"
                   style={{
                     width: user.totalSubmissions > 0 
                       ? `${(user.successfulSubmissions || 0) / (user.totalSubmissions || 1) * 100}%` 
@@ -106,9 +106,9 @@ const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             <Link
               to="/profile"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-200 hover:bg-white/10 hover:text-white rounded-xl transition-all group"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-premium-text hover:bg-electric-indigo/10 hover:text-cyan-violet rounded-xl transition-all group"
             >
-              <User className="h-4 w-4 text-slate-500 group-hover:text-violet-400" />
+              <User className="h-4 w-4 text-premium-muted group-hover:text-electric-indigo" />
               <span className="font-medium">View Profile</span>
             </Link>
 
@@ -117,13 +117,13 @@ const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
                 e.preventDefault();
                 toggleTheme();
               }}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-sm text-slate-200 hover:bg-white/10 hover:text-white rounded-xl transition-all group"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-sm text-premium-text hover:bg-electric-indigo/10 hover:text-cyan-violet rounded-xl transition-all group"
             >
               <div className="flex items-center gap-3">
-                {isDark ? <Moon className="h-4 w-4 text-slate-500 group-hover:text-purple-400" /> : <Sun className="h-4 w-4 text-slate-500 group-hover:text-amber-400" />}
+                {isDark ? <Moon className="h-4 w-4 text-premium-muted group-hover:text-electric-indigo" /> : <Sun className="h-4 w-4 text-premium-muted group-hover:text-cyan-violet" />}
                 <span className="font-medium">Theme</span>
               </div>
-              <span className="text-[9px] font-semibold bg-white/10 px-2 py-1 rounded text-slate-400 border border-white/10">
+              <span className="text-[9px] font-semibold bg-electric-indigo/10 px-2 py-1 rounded text-premium-muted border border-electric-indigo/10">
                 {isDark ? 'Dark' : 'Light'}
               </span>
             </button>
@@ -131,20 +131,20 @@ const ProfileDropdown: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             <Link
               to="/settings"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-200 hover:bg-white/10 hover:text-white rounded-xl transition-all group"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-premium-text hover:bg-electric-indigo/10 hover:text-cyan-violet rounded-xl transition-all group"
             >
-              <Settings className="h-4 w-4 text-slate-500 group-hover:text-blue-400" />
+              <Settings className="h-4 w-4 text-premium-muted group-hover:text-electric-indigo" />
               <span className="font-medium">Settings</span>
             </Link>
           </div>
 
-          <div className="p-3 border-t border-white/5">
+          <div className="p-3 border-t border-electric-indigo/10">
             <button
               onClick={() => {
                 setIsOpen(false);
                 onLogout();
               }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-xl transition-all font-medium"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-cyan-violet hover:bg-cyan-violet/10 hover:text-indigo-cyan rounded-xl transition-all font-medium"
             >
               <LogOut className="h-4 w-4" />
               <span>Sign Out</span>
