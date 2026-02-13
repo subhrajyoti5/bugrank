@@ -45,10 +45,10 @@ router.post('/submit', auth_1.authMiddleware, rateLimiter_1.submissionLimiter, a
     try {
         const { challengeId, code, timeTaken, testInput } = req.body;
         const userId = req.user?.id;
-        if (!challengeId || !code || timeTaken === undefined) {
+        if (!userId || !challengeId || !code || timeTaken === undefined) {
             res.status(400).json({
                 success: false,
-                error: 'challengeId, code, and timeTaken are required',
+                error: 'userId, challengeId, code, and timeTaken are required',
             });
             return;
         }

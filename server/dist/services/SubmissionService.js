@@ -117,6 +117,9 @@ class SubmissionService extends GeminiService_1.BaseService {
         if (isCorrect) {
             finalScore = this.calculateScore(challenge.baseScore, attempts + 1, linesChanged, timeTaken);
         }
+        // Calculate code diff
+        const diffResult = (0, diff_1.diffLines)(challenge.buggyCode, code);
+        const codeDiff = diffResult.map(part => (part.added ? '+' : part.removed ? '-' : ' ') + part.value).join('');
         // Create submission document
         const submission = {
             id: `${userId}_${challengeId}_${Date.now()}`,

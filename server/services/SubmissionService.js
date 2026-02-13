@@ -59,6 +59,11 @@ class SubmissionService extends GeminiService_1.BaseService {
         if (!challenge) {
             throw new Error('Challenge not found');
         }
+        // Check if user has already solved this challenge
+        const previousSolution = await this.getUserCorrectSubmission(userId, challengeId);
+        if (previousSolution) {
+            this.logInfo('User already solved this challenge', { userId, challengeId });
+        }
         // Get current user and their attempt count for this challenge
         const attempts = await this.getUserAttempts(userId, challengeId);
         const linesChanged = this.calculateLinesChanged(challenge.buggyCode, code);
@@ -114,10 +119,16 @@ class SubmissionService extends GeminiService_1.BaseService {
             // Fall back to AI analysis for non-C++ or when no test case exists
             isCorrect = aiAnalysis.accuracyScore >= shared_1.DEFAULT_SCORING_CONFIG.successThreshold && compilationSuccess;
         }
-        // Calculate score ONLY if correct
+        // Calculate score ONLY if correct AND this is the first correct submission
         let finalScore;
-        if (isCorrect) {
+        if (isCorrect && !previousSolution) {
+            // Only award points for first correct submission
             finalScore = this.calculateScore(challenge.baseScore, attempts + 1, linesChanged, timeTaken);
+        }
+        else if (isCorrect && previousSolution) {
+            // User already solved it - don't award points
+            finalScore = 0;
+            isCorrect = true; // Mark as correct for display, but points = 0
         }
         // Create submission document
         const submission = {
@@ -136,9 +147,13 @@ class SubmissionService extends GeminiService_1.BaseService {
         };
         // Save submission to database
         await storage_1.submissionDb.create(submission);
-        // Update user stats if correct
-        if (isCorrect && finalScore !== undefined) {
+        // Update user stats - only award points for first correct submission
+        if (isCorrect && finalScore !== undefined && finalScore > 0) {
             await this.updateUserStats(userId, finalScore, true);
+        }
+        else if (isCorrect && previousSolution) {
+            // Already solved - don't add to successful submissions
+            await this.updateUserStats(userId, 0, false);
         }
         else {
             await this.updateUserStats(userId, 0, false);
@@ -150,8 +165,10 @@ class SubmissionService extends GeminiService_1.BaseService {
             compilerOutput,
             testCaseOutput,
             testCasePassed,
-            message: isCorrect
+            message: isCorrect && !previousSolution
                 ? `✅ Bug fixed correctly! Score: ${finalScore}`
+                : isCorrect && previousSolution
+                ? `✅ Already solved this challenge! No points earned.`
                 : `⚠️ Bug not fully fixed yet. Try again!`,
         };
     }
@@ -188,6 +205,12 @@ class SubmissionService extends GeminiService_1.BaseService {
     async getUserAttempts(userId, challengeId) {
         const userSubmissions = await storage_1.submissionDb.findByUserAndChallenge(userId, challengeId);
         return userSubmissions.length;
+    }
+    /**
+     * Check if user has already solved this challenge
+     */
+    async getUserCorrectSubmission(userId, challengeId) {
+        return await storage_1.submissionDb.findCorrectSubmissionByUserAndChallenge(userId, challengeId);
     }
     /**
      * Get all submissions for a user

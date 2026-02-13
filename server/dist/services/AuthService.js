@@ -6,18 +6,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const crypto_1 = __importDefault(require("crypto"));
 const database_1 = __importDefault(require("../config/database"));
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_in_production';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 const SESSION_EXPIRY_HOURS = 24;
 class AuthService {
+    normalizeEmail(email) {
+        return email.trim().toLowerCase();
+    }
     /**
      * Register a new user
      */
     async register(data) {
         const { email, password, displayName } = data;
+        const normalizedEmail = this.normalizeEmail(email);
         // Check if user already exists
-        const existingUser = await database_1.default.query('SELECT id FROM users WHERE email = $1', [email]);
+        const existingUser = await database_1.default.query('SELECT id FROM users WHERE email = $1', [normalizedEmail]);
         if (existingUser.rows.length > 0) {
             throw new Error('User with this email already exists');
         }
@@ -27,7 +32,7 @@ class AuthService {
         // Insert user into database
         const result = await database_1.default.query(`INSERT INTO users (email, password_hash, display_name, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
        VALUES ($1, $2, $3, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
-       RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login`, [email, passwordHash, displayName || email.split('@')[0]]);
+       RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login`, [normalizedEmail, passwordHash, displayName || normalizedEmail.split('@')[0]]);
         const userRow = result.rows[0];
         const user = {
             id: userRow.id.toString(),
@@ -50,9 +55,10 @@ class AuthService {
      */
     async login(data, ipAddress, userAgent) {
         const { email, password } = data;
+        const normalizedEmail = this.normalizeEmail(email);
         // Find user by email
         const result = await database_1.default.query(`SELECT id, email, password_hash, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, profile_data
-       FROM users WHERE email = $1`, [email]);
+       FROM users WHERE email = $1`, [normalizedEmail]);
         if (result.rows.length === 0) {
             throw new Error('Invalid email or password');
         }
@@ -193,18 +199,21 @@ class AuthService {
      */
     async googleAuth(data, ipAddress, userAgent) {
         const { googleId, email, displayName, photoURL } = data;
+        const normalizedEmail = this.normalizeEmail(email);
         // Check if user already exists with this Google ID
         let result = await database_1.default.query(`SELECT id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id
        FROM users WHERE google_id = $1`, [googleId]);
         let userRow = result.rows[0];
         if (!userRow) {
             // Check if user exists with this email
-            const emailResult = await database_1.default.query(`SELECT id FROM users WHERE email = $1`, [email]);
+            const emailResult = await database_1.default.query(`SELECT id FROM users WHERE email = $1`, [normalizedEmail]);
             if (!emailResult.rows.length) {
+                const randomPassword = crypto_1.default.randomBytes(24).toString('hex');
+                const passwordHash = await bcryptjs_1.default.hash(randomPassword, 10);
                 // Create new user with Google OAuth
-                const createResult = await database_1.default.query(`INSERT INTO users (email, display_name, photo_url, google_id, google_profile, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
-           VALUES ($1, $2, $3, $4, $5, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
-           RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`, [email, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]);
+                const createResult = await database_1.default.query(`INSERT INTO users (email, password_hash, display_name, photo_url, google_id, google_profile, created_at, total_score, total_submissions, successful_submissions, profile_data, last_login)
+           VALUES ($1, $2, $3, $4, $5, $6, NOW(), 0, 0, 0, '{}'::jsonb, NOW())
+           RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`, [normalizedEmail, passwordHash, displayName, photoURL, googleId, JSON.stringify({ googleId, displayName, photoURL })]);
                 userRow = createResult.rows[0];
             }
             else {
@@ -212,7 +221,7 @@ class AuthService {
                 const linkResult = await database_1.default.query(`UPDATE users 
            SET google_id = $1, google_profile = $2, photo_url = $3
            WHERE email = $4
-           RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`, [googleId, JSON.stringify({ googleId, displayName, photoURL }), photoURL, email]);
+           RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions, google_id`, [googleId, JSON.stringify({ googleId, displayName, photoURL }), photoURL, normalizedEmail]);
                 userRow = linkResult.rows[0];
             }
         }

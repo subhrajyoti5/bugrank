@@ -91,7 +91,7 @@ const EditorPage: React.FC = () => {
       const result = await submissionService.submit(challenge.id, code, timeTaken);
       
       setSubmitResult(result);
-      setAttempts(result.submission.attempts);
+      setAttempts(result.submission.attemptNumber);
       setActivePanel('result'); // Switch to result tab
 
       if (result.submission.isCorrect && result.score) {
@@ -266,6 +266,13 @@ const EditorPage: React.FC = () => {
               value={code}
               onChange={(value) => setCode(value || '')}
               theme="vs-dark"
+              onMount={(editor, monaco) => {
+                // Disable paste functionality
+                editor.addCommand(
+                  monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV,
+                  () => {} // Do nothing on paste
+                );
+              }}
               options={{
                 minimap: { enabled: false },
                 fontSize: 14,
@@ -273,6 +280,7 @@ const EditorPage: React.FC = () => {
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
                 padding: { top: 16, bottom: 16 },
+                contextmenu: false,
               }}
             />
           </div>

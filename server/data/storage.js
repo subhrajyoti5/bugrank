@@ -170,6 +170,10 @@ exports.submissionDb = {
         const result = await database_1.default.query('SELECT * FROM submissions WHERE user_id = $1 AND challenge_id = $2 ORDER BY submitted_at DESC', [parseInt(userId), challengeId]);
         return result.rows.map(row => this.mapRowToSubmission(row));
     },
+    async findCorrectSubmissionByUserAndChallenge(userId, challengeId) {
+        const result = await database_1.default.query('SELECT * FROM submissions WHERE user_id = $1 AND challenge_id = $2 AND is_correct = true LIMIT 1', [parseInt(userId), challengeId]);
+        return result.rows.length > 0 ? this.mapRowToSubmission(result.rows[0]) : null;
+    },
     async getAll() {
         const result = await database_1.default.query('SELECT * FROM submissions ORDER BY submitted_at DESC');
         return result.rows.map(row => this.mapRowToSubmission(row));
