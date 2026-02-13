@@ -182,18 +182,20 @@ const ProfilePage: React.FC = () => {
 
             {/* Badges Cabinet */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              [
-                { name: 'Bug Slayer', icon: '⚔️', desc: 'Solved 10+ bugs', bg: 'bg-cyan-violet/10 border-cyan-violet/20' },
-                { name: 'Early Bird', icon: '🌅', desc: 'Active at 5AM', bg: 'bg-indigo-cyan/10 border-indigo-cyan/20' },
-                { name: 'Sniper', icon: '🎯', desc: '100% Accuracy', bg: 'bg-electric-indigo/10 border-electric-indigo/20' },
-                { name: 'Veteran', icon: '🎖️', desc: 'Year Member', bg: 'bg-premium-muted/10 border-premium-muted/20' },
-              ].map((badge, i) => (
-                <div key={i} className={`rounded-2xl p-4 border ${badge.bg} flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg cursor-pointer group`}>
-                  <div className="text-3xl mb-2 group-hover:animate-bounce">{badge.icon}</div>
-                  <div className="font-bold text-premium-text text-sm">{badge.name}</div>
-                  <div className="text-[10px] text-premium-muted mt-1">{badge.desc}</div>
-                </div>
-              ))}
+              {
+                [
+                  { name: 'Bug Slayer', icon: '⚔️', desc: 'Solved 10+ bugs', bg: 'bg-cyan-violet/10 border-cyan-violet/20' },
+                  { name: 'Early Bird', icon: '🌅', desc: 'Active at 5AM', bg: 'bg-indigo-cyan/10 border-indigo-cyan/20' },
+                  { name: 'Sniper', icon: '🎯', desc: '100% Accuracy', bg: 'bg-electric-indigo/10 border-electric-indigo/20' },
+                  { name: 'Veteran', icon: '🎖️', desc: 'Year Member', bg: 'bg-premium-muted/10 border-premium-muted/20' },
+                ].map((badge, i) => (
+                  <div key={i} className={`rounded-2xl p-4 border ${badge.bg} flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg cursor-pointer group`}>
+                    <div className="text-3xl mb-2 group-hover:animate-bounce">{badge.icon}</div>
+                    <div className="font-bold text-premium-text text-sm">{badge.name}</div>
+                    <div className="text-[10px] text-premium-muted mt-1">{badge.desc}</div>
+                  </div>
+                ))
+              }
             </div>
 
           </div>
