@@ -11,29 +11,24 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        background: {
-          DEFAULT: '#0B1120',
-          alt: '#0F172A',
-        },
-        surface: {
-          DEFAULT: '#1E293B',
-          hover: '#273449',
-        },
+        // Premium Dark Palette
+        background: '#1a2a4a', // Deep Navy
+        'deep-navy': '#1a2a4a',
+        'premium-slate': '#1f3a5a',
+        'electric-indigo': '#5050c8',
+        'indigo-cyan': '#50c8c8',
+        'cyan-violet': '#c850c8',
+        'premium-text': '#e0e0ff',
+        'premium-muted': '#a0a0c0',
+        
+        // Maintained for compatibility
         primary: {
-          500: '#2563EB', // Electric Blue (Option A)
-          600: '#1D4ED8',
-        },
-        indigo: {
-          500: '#4F46E5', // Option B (Indigo)
+          500: '#5050c8', // Electric Indigo
+          600: '#3838a8',
         },
         secondary: {
-          cyan: '#22D3EE',
-          violet: '#8B5CF6',
-        },
-        text: {
-          primary: '#E2E8F0',
-          muted: '#94A3B8',
-          disabled: '#64748B',
+          cyan: '#50c8c8',
+          violet: '#c850c8',
         },
       },
       animation: {
