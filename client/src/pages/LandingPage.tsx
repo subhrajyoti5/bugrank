@@ -122,6 +122,19 @@ const LandingPage: React.FC = () => {
                 {/* Radial Gradient to prevent sharp edges */}
                 <div className="absolute inset-0 w-full h-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
             </section>
+
+            {/* Footer */}
+            <footer className="border-t border-electric-indigo/10 py-10 flex flex-col items-center gap-4">
+                <a
+                    href="https://subhrajyotisahoo.cloud"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col items-center gap-1 px-6 py-4 rounded-xl border border-electric-indigo/20 bg-electric-indigo/5 hover:bg-electric-indigo/10 hover:border-electric-indigo/40 transition-all duration-200 w-52 text-center"
+                >
+                    <span className="text-xs font-medium text-premium-muted uppercase tracking-widest">Dev&apos;s Portfolio</span>
+                    <span className="text-sm font-semibold text-electric-indigo group-hover:text-indigo-cyan transition-colors">subhrajyotisahoo.cloud</span>
+                </a>
+            </footer>
         </div>
     );
 };
