@@ -45,4 +45,7 @@ firestore-debug.log
 # Misc
 .cache/
 imp.txt
+question.txt
+ANSWER_GUIDE.md
+ANSWER_GUIDE_CONTINUATION.md
 
