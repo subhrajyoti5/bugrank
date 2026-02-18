@@ -49,3 +49,20 @@ question.txt
 ANSWER_GUIDE.md
 ANSWER_GUIDE_CONTINUATION.md
 
+# Documentation files
+Shared-Utilities.md
+SYSTEM_DESIGN.md
+TECHNICAL_GUIDE.md
+Thought-Process.md
+VPS_DEPLOYMENT.md
+AI-and-External-Services.md
+Backend-Tech-Stack.md
+Database-Tech-Stack.md
+DevOps-and-Deployment.md
+Frontend-Tech-Stack.md
+GOOGLE_OAUTH_DEPLOYMENT.md
+JUDGE0_REPLACEMENT_GUIDE.md
+DATABASE_SCHEMA.md
+IMPLEMENTED_FEATURES.md
+PROJECT_OVERVIEW.md
+
