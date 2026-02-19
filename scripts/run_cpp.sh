@@ -33,14 +33,23 @@ fi
 echo "RUNNING" > "$STATUS"
 
 # Run with time and resource limits
+# --kill-after=2s: send SIGKILL 2s after SIGTERM if the process is still alive
+# This prevents orphaned processes when the binary ignores SIGTERM (e.g. infinite loops)
 set +e
-/usr/bin/time -f "%e %M" \
-  timeout "$TIME_LIMIT"s \
-  sudo -u executor \
-  "$BIN" < "$INPUT" > "$OUTPUT" 2>> "$ERROR"
+(
+  # Apply per-process CPU and memory limits inside a subshell
+  ulimit -t "$TIME_LIMIT"
+  ulimit -v "$MEM_LIMIT"
+  exec /usr/bin/time -f "%e %M" \
+    timeout --kill-after=2s "$TIME_LIMIT"s \
+    "$BIN" < "$INPUT" > "$OUTPUT" 2>> "$ERROR"
+)
 
 EXIT_CODE=$?
 set -e
+
+# Belt-and-suspenders: kill any lingering process still running this binary
+pkill -KILL -f "$BIN" 2>/dev/null || true
 
 # Determine status
 if [ $EXIT_CODE -eq 124 ] || [ $EXIT_CODE -eq 137 ]; then
