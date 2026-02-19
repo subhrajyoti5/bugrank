@@ -1,7 +1,0 @@
-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
-
-github action password for vps.
-
-
-
-finally things are working. and 
