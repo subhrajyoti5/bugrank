@@ -5,7 +5,7 @@ import { diffLines } from 'diff';
 import { challengeService } from '@/services/challengeService';
 import { submissionService } from '@/services/submissionService';
 import { Challenge, RunResult, SubmitResult } from '@bugrank/shared';
-import { Play, Send, ArrowLeft, Clock, AlertCircle, CheckCircle, Info, FileText, BookOpen, Users, List, Terminal, Sparkles, ChevronRight, Activity } from 'lucide-react';
+import { Play, Send, ArrowLeft, Clock, AlertCircle, CheckCircle, FileText, BookOpen, Users, List, Terminal, Sparkles, ChevronRight, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -269,7 +269,6 @@ const EditorPage: React.FC = () => {
                 cursorSmoothCaretAnimation: 'on',
                 smoothScrolling: true,
                 renderLineHighlight: 'all',
-                backgroundColor: '#0b1120'
               }}
             />
           </div>

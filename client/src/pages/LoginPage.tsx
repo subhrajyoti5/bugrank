@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Hash, Mail, Lock, User, Github, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Hash, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
   const { user, loading, login, register } = useAuth();
