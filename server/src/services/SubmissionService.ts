@@ -49,7 +49,8 @@ export class SubmissionService extends BaseService {
     if (challenge.language === 'cpp') {
       const executionResult = await ExecutionService.executeCode(
         code,
-        testInput || challenge.testCase?.input || ''
+        testInput || challenge.testCase?.input || '',
+        'cpp'
       );
       compilerOutput = this.formatExecutionOutput(executionResult);
     }
@@ -120,7 +121,8 @@ export class SubmissionService extends BaseService {
         console.log(`🚀 Calling ExecutionService.executeCode with input: "${challenge.testCase.input}"`);
         const executionResult = await ExecutionService.executeCode(
           code,
-          challenge.testCase.input
+          challenge.testCase.input,
+          challenge.language
         );
         console.log(`🎯 Execution result:`, executionResult);
         
@@ -150,7 +152,8 @@ export class SubmissionService extends BaseService {
         // No test case, just run normally
         const executionResult = await ExecutionService.executeCode(
           code,
-          testInput || ''
+          testInput || '',
+          challenge.language
         );
         compilationSuccess = executionResult.status !== 'CE' && executionResult.status !== 'SE';
         compilerOutput = this.formatExecutionOutput(executionResult);

@@ -11,20 +11,30 @@ const path_1 = __importDefault(require("path"));
 const crypto_1 = __importDefault(require("crypto"));
 const execFileAsync = (0, util_1.promisify)(child_process_1.execFile);
 const BASE_DIR = '/srv/bugpulse/jobs';
-const RUNNER_SCRIPT = '/srv/bugpulse/runner/run_cpp.sh';
+const RUNNER_SCRIPT = '/srv/bugpulse/runner/run_all.sh';
 const EXECUTION_TIMEOUT = 12000; // 12 seconds (compile + run + overhead)
+// Supported languages
+const SUPPORTED_LANGUAGES = ['cpp', 'python', 'java'];
 // In-memory cache (1 hour TTL)
 const resultCache = new Map();
 const CACHE_TTL = 3600000; // 1 hour in milliseconds
 class ExecutionService {
     /**
-     * Generate cache key from code and input
+     * Generate cache key from code, input, and language
      */
-    static generateCacheKey(code, input) {
+    static generateCacheKey(code, input, language = 'cpp') {
         return crypto_1.default
             .createHash('sha256')
-            .update(`${code}|cpp|${input}`)
+            .update(`${code}|${language}|${input}`)
             .digest('hex');
+    }
+    /**
+     * Validate language is supported
+     */
+    static validateLanguage(language) {
+        if (!SUPPORTED_LANGUAGES.includes(language)) {
+            throw new Error(`Unsupported language: ${language}. Supported: ${SUPPORTED_LANGUAGES.join(', ')}`);
+        }
     }
     /**
      * Check cache for previous result
@@ -71,13 +81,30 @@ class ExecutionService {
         });
     }
     /**
+     * Get file extension for language
+     */
+    static getSourceFileName(language) {
+        switch (language) {
+            case 'cpp':
+                return 'main.cpp';
+            case 'python':
+                return 'main.py';
+            case 'java':
+                return 'Main.java';
+            default:
+                return 'main.cpp';
+        }
+    }
+    /**
      * Create job directory and write files
      */
-    static async createJob(code, input) {
+    static async createJob(code, input, language = 'cpp') {
+        this.validateLanguage(language);
         const jobId = this.generateUUID();
         const jobDir = path_1.default.join(BASE_DIR, jobId);
         await promises_1.default.mkdir(jobDir, { recursive: true });
-        await promises_1.default.writeFile(path_1.default.join(jobDir, 'main.cpp'), code, 'utf8');
+        const sourceFileName = this.getSourceFileName(language);
+        await promises_1.default.writeFile(path_1.default.join(jobDir, sourceFileName), code, 'utf8');
         await promises_1.default.writeFile(path_1.default.join(jobDir, 'input.txt'), input, 'utf8');
         return jobId;
     }
@@ -132,23 +159,24 @@ class ExecutionService {
         }
     }
     /**
-     * Execute code with caching
+     * Execute code with caching and multi-language support
      */
-    static async executeCode(code, input) {
+    static async executeCode(code, input, language = 'cpp') {
+        this.validateLanguage(language);
         // Check cache first
-        const cacheKey = this.generateCacheKey(code, input);
+        const cacheKey = this.generateCacheKey(code, input, language);
         const cachedResult = this.getCachedResult(cacheKey);
         if (cachedResult) {
-            console.log(`✅ Cache hit for key: ${cacheKey.substring(0, 16)}...`);
+            console.log(`✅ Cache hit for ${language}: ${cacheKey.substring(0, 16)}...`);
             return cachedResult;
         }
-        console.log(`🔄 Cache miss - executing code`);
+        console.log(`🔄 Cache miss - executing ${language} code`);
         // Create job
-        const jobId = await this.createJob(code, input);
-        console.log(`📁 Created job: ${jobId}`);
+        const jobId = await this.createJob(code, input, language);
+        console.log(`📁 Created job: ${jobId} (${language})`);
         try {
-            // Execute runner script
-            await execFileAsync(RUNNER_SCRIPT, [jobId], {
+            // Execute runner script with language parameter
+            await execFileAsync(RUNNER_SCRIPT, [language, jobId], {
                 timeout: EXECUTION_TIMEOUT,
             });
         }

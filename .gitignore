@@ -46,6 +46,8 @@ firestore-debug.log
 .cache/
 imp.txt
 question.txt
+QUICK_SQL_SETUP.sql
+setup-database.ps1
 ANSWER_GUIDE.md
 ANSWER_GUIDE_CONTINUATION.md
 
@@ -66,3 +68,15 @@ DATABASE_SCHEMA.md
 IMPLEMENTED_FEATURES.md
 PROJECT_OVERVIEW.md
 
+CHALLENGE_TRANSLATION_GUIDE.md
+DEPLOYMENT_ARCHITECTURE.md
+IMPLEMENTATION_SUMMARY.md
+QUICK_START.md
+SKILL.md
+VPS_MULTILANGUAGE_SETUP.md
+challenges/java/Challenge1.java
+challenges/java/Challenge2.java
+challenges/python/challenge-1.py
+challenges/python/challenge-2.py
+challenges/python/README.md
+client/src/index.css

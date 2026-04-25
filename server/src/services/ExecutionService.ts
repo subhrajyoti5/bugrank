@@ -14,11 +14,12 @@ const BASE_DIR = process.env.NODE_ENV === 'production'
   ? '/srv/bugpulse/jobs' 
   : process.env.BUGPULSE_JOBS_DIR || './temp/jobs';
 const RUNNER_SCRIPT = process.env.NODE_ENV === 'production'
-  ? '/srv/bugpulse/runner/run_cpp.sh'
-  : process.env.BUGPULSE_RUNNER || './scripts/run_cpp_local.bat';
+  ? '/srv/bugpulse/runner/run_all.sh'
+  : process.env.BUGPULSE_RUNNER || './scripts/run_all.sh';
 const EXECUTION_TIMEOUT = 12000; // 12 seconds (compile + run + overhead)
 const IS_WINDOWS = process.platform === 'win32';
 const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production';
+const SUPPORTED_LANGUAGES = ['cpp', 'python', 'java'];
 
 // Execution Queue (simple mutex)
 let isExecuting = false;
@@ -57,11 +58,27 @@ export class ExecutionService {
   }
 
   /**
-   * Validate input size
+   * Validate language is supported
    */
-  private static validateInput(input: string): void {
-    if (input.length > MAX_INPUT_SIZE) {
-      throw new Error(`Input size exceeds limit (${MAX_INPUT_SIZE} bytes)`);
+  private static validateLanguage(language: string): void {
+    if (!SUPPORTED_LANGUAGES.includes(language)) {
+      throw new Error(`Unsupported language: ${language}. Supported: ${SUPPORTED_LANGUAGES.join(', ')}`);
+    }
+  }
+
+  /**
+   * Get file extension for language
+   */
+  private static getSourceFileName(language: string): string {
+    switch (language) {
+      case 'cpp':
+        return 'main.cpp';
+      case 'python':
+        return 'main.py';
+      case 'java':
+        return 'Main.java';
+      default:
+        return 'main.cpp';
     }
   }
 
@@ -92,12 +109,12 @@ export class ExecutionService {
   }
 
   /**
-   * Generate cache key from code and input
+   * Generate cache key from code, input, and language
    */
-  private static generateCacheKey(code: string, input: string): string {
+  private static generateCacheKey(code: string, input: string, language: string = 'cpp'): string {
     return crypto
       .createHash('sha256')
-      .update(`${code}|cpp|${input}`)
+      .update(`${code}|${language}|${input}`)
       .digest('hex');
   }
 
@@ -155,14 +172,17 @@ export class ExecutionService {
    */
   private static async createJob(
     code: string,
-    input: string
+    input: string,
+    language: string = 'cpp'
   ): Promise<string> {
+    this.validateLanguage(language);
     const jobId = this.generateUUID();
     const jobDir = path.join(BASE_DIR, jobId);
 
     await fs.mkdir(jobDir, { recursive: true });
     await fs.chmod(jobDir, 0o777);
-    await fs.writeFile(path.join(jobDir, 'main.cpp'), code, 'utf8');
+    const sourceFileName = this.getSourceFileName(language);
+    await fs.writeFile(path.join(jobDir, sourceFileName), code, 'utf8');
     await fs.writeFile(path.join(jobDir, 'input.txt'), input, 'utf8');
 
     return jobId;
@@ -230,16 +250,18 @@ export class ExecutionService {
   }
 
   /**
-   * Execute code with caching
+   * Execute code with caching and multi-language support
    */
   public static async executeCode(
     code: string,
-    input: string
+    input: string,
+    language: string = 'cpp'
   ): Promise<ExecutionResult> {
     const startTime = Date.now();
 
-    // Validate inputs
+    // Validate language
     try {
+      this.validateLanguage(language);
       this.validateCode(code);
       this.validateInput(input);
     } catch (error: any) {
@@ -263,26 +285,26 @@ export class ExecutionService {
     }
 
     // Check cache first
-    const cacheKey = this.generateCacheKey(code, input);
+    const cacheKey = this.generateCacheKey(code, input, language);
     const cachedResult = this.getCachedResult(cacheKey);
     if (cachedResult) {
-      console.log(`✅ Cache hit for key: ${cacheKey.substring(0, 16)}...`);
+      console.log(`✅ Cache hit for ${language}: ${cacheKey.substring(0, 16)}...`);
       return cachedResult;
     }
 
-    console.log(`🔄 Cache miss - executing code`);
+    console.log(`🔄 Cache miss - executing ${language} code`);
 
     // Acquire execution lock
     await this.acquireLock();
 
     try {
       // Create job
-      const jobId = await this.createJob(code, input);
-      console.log(`📁 Created job: ${jobId}`);
+      const jobId = await this.createJob(code, input, language);
+      console.log(`📁 Created job: ${jobId} (${language})`);
 
       try {
-        // Execute runner script
-        await execFileAsync(RUNNER_SCRIPT, [jobId], {
+        // Execute runner script with language parameter
+        await execFileAsync(RUNNER_SCRIPT, [language, jobId], {
           timeout: EXECUTION_TIMEOUT,
         });
       } catch (error: any) {

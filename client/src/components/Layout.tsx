@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 
 const Layout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background transition-colors">
+    <div className="min-h-screen">
       <Navbar />
       <main>
         <Outlet />
@@ -14,3 +14,4 @@ const Layout: React.FC = () => {
 };
 
 export default Layout;
+

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Hash, ChevronRight, Code2, Zap } from 'lucide-react';
+import { Hash, ChevronRight, Code2, Zap, Trophy, Shield, Terminal } from 'lucide-react';
 import { SparklesCore } from '@/components/ui/sparkles';
 
 const LandingPage: React.FC = () => {
@@ -17,35 +17,37 @@ const LandingPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background text-text-primary font-sans selection:bg-electric-indigo/30 selection:text-premium-text">
+        <div className="min-h-screen bg-[#0b1120] text-slate-200 selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden">
             {/* Navbar */}
-            <nav className="border-b border-electric-indigo/10 backdrop-blur-md sticky top-0 z-50 bg-background/95">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-electric-indigo">
-                        <Hash className="w-6 h-6" />
-                        <span className="text-xl font-semibold tracking-tight text-premium-text">BugRank</span>
+            <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#0b1120]/80 backdrop-blur-xl">
+                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/')}>
+                        <div className="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20 group-hover:border-indigo-500/40 transition-all">
+                            <Hash className="w-6 h-6 text-indigo-400" />
+                        </div>
+                        <span className="text-2xl font-bold tracking-tight text-white">BugRank</span>
                     </div>
-                    <div className="flex items-center gap-6">
-                        {!user && (
+                    
+                    <div className="flex items-center gap-4">
+                        {!user ? (
                             <>
                                 <button
                                     onClick={() => navigate('/login')}
-                                    className="text-sm font-medium text-premium-muted hover:text-premium-text transition-colors"
+                                    className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
                                 >
                                     Sign In
                                 </button>
                                 <button
                                     onClick={() => navigate('/login')}
-                                    className="px-4 py-2 rounded-lg bg-premium-text text-background text-sm font-medium hover:bg-premium-muted transition-colors"
+                                    className="btn-primary-premium py-2 text-sm"
                                 >
                                     Get Started
                                 </button>
                             </>
-                        )}
-                        {user && (
+                        ) : (
                             <button
                                 onClick={() => navigate('/problems')}
-                                className="px-4 py-2 rounded-lg bg-electric-indigo text-premium-text text-sm font-medium hover:bg-indigo-cyan transition-colors"
+                                className="btn-primary-premium py-2 text-sm"
                             >
                                 Dashboard
                             </button>
@@ -55,88 +57,140 @@ const LandingPage: React.FC = () => {
             </nav>
 
             {/* Hero Section */}
-            <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-                {/* Sparkles Background */}
-                <div className="absolute inset-0 w-full h-full">
+            <section className="relative pt-32 pb-20 min-h-screen flex flex-col items-center justify-center overflow-hidden mesh-gradient">
+                {/* Background Elements */}
+                <div className="absolute top-1/4 -left-20 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-glow" />
+                <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px] animate-glow" style={{ animationDelay: '2s' }} />
+
+                <div className="absolute inset-0 w-full h-full pointer-events-none">
                     <SparklesCore
                         id="tsparticles-hero"
                         background="transparent"
-                        minSize={0.6}
-                        maxSize={1.4}
-                        particleDensity={100}
+                        minSize={0.4}
+                        maxSize={1.2}
+                        particleDensity={60}
                         className="w-full h-full"
-                        particleColor="#ffffff"
-                        speed={1}
+                        particleColor="#6366f1"
+                        speed={0.5}
                     />
                 </div>
 
-                {/* Content */}
-                <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-electric-indigo/10 border border-electric-indigo/20 text-sm text-electric-indigo mb-8">
-                        <Zap className="w-4 h-4" />
-                        <span>Debug like a pro</span>
+                <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-indigo-300 mb-8 animate-float">
+                        <Zap className="w-4 h-4 text-indigo-400" />
+                        <span>The Ultimate Debugging Arena</span>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold text-premium-text tracking-tight mb-6 leading-[1.1]">
-                        Master debugging with{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-indigo to-indigo-cyan">
-                            real bugs
+                    <h1 className="text-6xl md:text-8xl font-black text-white tracking-tight mb-8 leading-[1.05] text-gradient">
+                        Master the art of{' '}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-blue-500">
+                            debugging
                         </span>
                     </h1>
 
-                    <p className="text-xl text-premium-muted mb-10 max-w-2xl mx-auto leading-relaxed">
-                        Practice debugging with actual code problems from real applications.
-                        Build your skills with challenges that matter.
+                    <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+                        Don't just write code. Learn to fix it. Practice with real-world bugs, 
+                        edge cases, and architectural flaws in a safe environment.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
                         <button
                             onClick={handleStartSolving}
-                            className="group inline-flex h-14 items-center justify-center rounded-lg bg-premium-text px-8 font-semibold text-background transition-all duration-200 hover:bg-premium-muted hover:shadow-xl hover:shadow-premium-text/10"
+                            className="btn-primary-premium h-16 px-10 text-lg group"
                         >
-                            <span className="flex items-center gap-2">
-                                <Code2 className="w-5 h-5" />
-                                Start Debugging
-                                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </span>
+                            <Code2 className="w-6 h-6 mr-2" />
+                            Start Debugging
+                            <ChevronRight className="w-6 h-6 ml-1 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        <button className="btn-premium h-16 px-10 text-lg">
+                            <Trophy className="w-6 h-6 mr-2 text-indigo-400" />
+                            Leaderboard
                         </button>
                     </div>
 
-                    {/* Simple stats */}
-                    <div className="grid grid-cols-3 gap-8 max-w-md mx-auto">
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-premium-text">19</div>
-                            <div className="text-premium-muted text-sm">Challenges</div>
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto pt-10 border-t border-white/5">
+                        <div className="flex flex-col items-center">
+                            <div className="text-3xl font-bold text-white mb-1">500+</div>
+                            <div className="text-slate-500 text-sm font-medium">Bugs Squashed</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-premium-text">C++</div>
-                            <div className="text-premium-muted text-sm">Languages</div>
+                        <div className="flex flex-col items-center">
+                            <div className="text-3xl font-bold text-white mb-1">19+</div>
+                            <div className="text-slate-500 text-sm font-medium">Challenges</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-premium-text">Free</div>
-                            <div className="text-premium-muted text-sm">Forever</div>
+                        <div className="flex flex-col items-center">
+                            <div className="text-3xl font-bold text-white mb-1">C++/Java</div>
+                            <div className="text-slate-500 text-sm font-medium">Supported</div>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <div className="text-3xl font-bold text-white mb-1">100%</div>
+                            <div className="text-slate-500 text-sm font-medium">Free Access</div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                {/* Radial Gradient to prevent sharp edges */}
-                <div className="absolute inset-0 w-full h-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+            {/* Features Section */}
+            <section className="py-32 relative">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-20">
+                        <h2 className="text-4xl font-bold text-white mb-4">Built for Developers</h2>
+                        <p className="text-slate-400 max-w-xl mx-auto">Everything you need to sharpen your investigative skills.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                icon: <Terminal className="w-8 h-8 text-indigo-400" />,
+                                title: "Real Environments",
+                                desc: "Work in a full-featured online editor with real-time feedback and execution."
+                            },
+                            {
+                                icon: <Shield className="w-8 h-8 text-cyan-400" />,
+                                title: "Production Grade",
+                                desc: "Challenges based on actual production bugs found in open-source projects."
+                            },
+                            {
+                                icon: <Trophy className="w-8 h-8 text-blue-400" />,
+                                title: "Competitive Edge",
+                                desc: "Climb the global leaderboard and prove you're the master of the hunt."
+                            }
+                        ].map((f, i) => (
+                            <div key={i} className="card-premium group">
+                                <div className="p-4 bg-white/5 rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform">
+                                    {f.icon}
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3">{f.title}</h3>
+                                <p className="text-slate-400 leading-relaxed">{f.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-electric-indigo/10 py-10 flex flex-col items-center gap-4">
-                <a
-                    href="https://subhrajyotisahoo.cloud"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center gap-1 px-6 py-4 rounded-xl border border-electric-indigo/20 bg-electric-indigo/5 hover:bg-electric-indigo/10 hover:border-electric-indigo/40 transition-all duration-200 w-52 text-center"
-                >
-                    <span className="text-xs font-medium text-premium-muted uppercase tracking-widest">Dev&apos;s Portfolio</span>
-                    <span className="text-sm font-semibold text-electric-indigo group-hover:text-indigo-cyan transition-colors">subhrajyotisahoo.cloud</span>
-                </a>
+            <footer className="border-t border-white/5 py-20 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
+                    <div className="flex items-center gap-2 text-indigo-400 mb-10">
+                        <Hash className="w-8 h-8" />
+                        <span className="text-2xl font-bold text-white">BugRank</span>
+                    </div>
+                    <a
+                        href="https://subhrajyotisahoo.cloud"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative px-8 py-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[0.08] transition-all duration-300"
+                    >
+                        <div className="flex flex-col items-center gap-1">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Designed & Developed by</span>
+                            <span className="text-lg font-bold text-indigo-400 group-hover:text-cyan-400 transition-colors">subhrajyotisahoo.cloud</span>
+                        </div>
+                    </a>
+                </div>
             </footer>
         </div>
     );
 };
 
 export default LandingPage;
+
