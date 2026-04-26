@@ -67,6 +67,15 @@ export class ExecutionService {
   }
 
   /**
+   * Validate input size
+   */
+  private static validateInput(input: string): void {
+    if (input && input.length > MAX_INPUT_SIZE) {
+      throw new Error(`Input size exceeds limit (${MAX_INPUT_SIZE} bytes)`);
+    }
+  }
+
+  /**
    * Get file extension for language
    */
   private static getSourceFileName(language: string): string {
