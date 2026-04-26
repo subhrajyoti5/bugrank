@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { challengeService } from '@/services/challengeService';
 import { submissionService } from '@/services/submissionService';
-import { Challenge } from '@bugrank/shared';
+import { Challenge } from '@bugpulse/shared';
 import { Search, Rocket, Code2, Filter, CheckCircle2, ChevronRight, Trophy, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';

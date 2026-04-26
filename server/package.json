@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bugpulse/shared": "*",
+    "@bugpulse/shared": "file:../shared",
     "@google/generative-ai": "^0.1.3",
     "axios": "^1.15.0",
     "bcryptjs": "^3.0.3",

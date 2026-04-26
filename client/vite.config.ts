@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@bugrank/shared': path.resolve(__dirname, '../shared/src')
+      '@bugpulse/shared': path.resolve(__dirname, '../shared/src')
     }
   },
   server: {

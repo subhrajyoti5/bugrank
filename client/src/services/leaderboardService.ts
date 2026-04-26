@@ -1,5 +1,5 @@
 import apiClient from './api';
-import { LeaderboardEntry, ApiResponse } from '@bugrank/shared';
+import { LeaderboardEntry, ApiResponse } from '@bugpulse/shared';
 
 export const leaderboardService = {
   getTop: async (limit: number = 20): Promise<LeaderboardEntry[]> => {

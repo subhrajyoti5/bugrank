@@ -1,5 +1,5 @@
 import apiClient from './api';
-import { RunResult, SubmitResult, ApiResponse } from '@bugrank/shared';
+import { RunResult, SubmitResult, ApiResponse } from '@bugpulse/shared';
 
 export const submissionService = {
   run: async (challengeId: string, code: string, testInput?: string): Promise<RunResult> => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { leaderboardService } from '@/services/leaderboardService';
-import { LeaderboardEntry } from '@bugrank/shared';
+import { LeaderboardEntry } from '@bugpulse/shared';
 import { Trophy, Medal, Award, Crown, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';

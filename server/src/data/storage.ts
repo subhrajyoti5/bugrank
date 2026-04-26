@@ -41,6 +41,9 @@ export const userDb = {
   },
 
   async findById(id: string): Promise<User | null> {
+    if (!id || isNaN(parseInt(id))) {
+      return null;
+    }
     const result = await pool.query(
       `SELECT id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions
        FROM users WHERE id = $1`,
@@ -115,7 +118,10 @@ export const userDb = {
 
     if (fields.length === 0) return user;
 
-    values.push(parseInt(id));
+    const numericId = parseInt(id);
+    if (isNaN(numericId)) return null;
+
+    values.push(numericId);
     const result = await pool.query(
       `UPDATE users SET ${fields.join(', ')} WHERE id = $${paramIndex}
        RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions`,
@@ -188,9 +194,12 @@ export const submissionDb = {
   },
 
   async findByUserId(userId: string): Promise<Submission[]> {
+    const numericUserId = parseInt(userId);
+    if (isNaN(numericUserId)) return [];
+
     const result = await pool.query(
       'SELECT * FROM submissions WHERE user_id = $1 ORDER BY submitted_at DESC',
-      [parseInt(userId)]
+      [numericUserId]
     );
     return result.rows.map(row => this.mapRowToSubmission(row));
   },
@@ -204,9 +213,12 @@ export const submissionDb = {
   },
 
   async findByUserAndChallenge(userId: string, challengeId: string): Promise<Submission[]> {
+    const numericUserId = parseInt(userId);
+    if (isNaN(numericUserId)) return [];
+
     const result = await pool.query(
       'SELECT * FROM submissions WHERE user_id = $1 AND challenge_id = $2 ORDER BY submitted_at DESC',
-      [parseInt(userId), challengeId]
+      [numericUserId, challengeId]
     );
     return result.rows.map(row => this.mapRowToSubmission(row));
   },

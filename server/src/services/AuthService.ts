@@ -171,7 +171,11 @@ export class AuthService {
   /**
    * Get user by ID
    */
-  async getUserById(userId: string): Promise<User | null> {
+  async getUserById(userId: string | undefined): Promise<User | null> {
+    if (!userId || isNaN(parseInt(userId))) {
+      return null;
+    }
+
     const result = await pool.query(
       `SELECT id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions
        FROM users WHERE id = $1`,
@@ -207,8 +211,11 @@ export class AuthService {
    */
   verifyToken(token: string): { userId: string } {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-      return decoded;
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      if (!decoded || typeof decoded !== 'object' || !decoded.userId) {
+        throw new Error('Invalid token payload');
+      }
+      return decoded as { userId: string };
     } catch (error) {
       throw new Error('Invalid or expired token');
     }
@@ -235,7 +242,9 @@ export class AuthService {
    * Generate a random session token
    */
   private generateSessionToken(): string {
-    return jwt.sign({ random: Math.random() }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
+    // Generate a secure random hex string instead of a JWT to ensure it fits in VARCHAR(255)
+    // and to distinguish it from the main JWT token.
+    return crypto.randomBytes(32).toString('hex');
   }
 
   /**

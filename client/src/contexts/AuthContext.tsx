@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@bugrank/shared';
+import { User } from '@bugpulse/shared';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 

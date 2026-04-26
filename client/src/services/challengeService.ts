@@ -1,5 +1,5 @@
 import apiClient from './api';
-import { Challenge, ApiResponse } from '@bugrank/shared';
+import { Challenge, ApiResponse } from '@bugpulse/shared';
 
 export const challengeService = {
   getAll: async (): Promise<Challenge[]> => {
