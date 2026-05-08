@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Hash, Trophy, Code2, Menu, X, Bell, Terminal } from 'lucide-react';
+import { Hash, Trophy, Menu, X, Bell, Terminal } from 'lucide-react';
 import ProfileDropdown from './ProfileDropdown';
 
 const Navbar: React.FC = () => {

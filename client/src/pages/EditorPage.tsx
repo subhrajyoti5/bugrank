@@ -270,9 +270,9 @@ const EditorPage: React.FC = () => {
                 cursorSmoothCaretAnimation: 'on',
                 smoothScrolling: true,
                 renderLineHighlight: 'all',
-                backgroundColor: '#000000',
               }}
             />
+
           </div>
 
           {/* Bottom Diagnostics Panel */}

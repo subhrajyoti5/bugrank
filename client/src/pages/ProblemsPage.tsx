@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { challengeService } from '@/services/challengeService';
 import { submissionService } from '@/services/submissionService';
 import { Challenge } from '@bugpulse/shared';
-import { Search, Rocket, Code2, Filter, CheckCircle2, ChevronRight, Trophy, Zap, Terminal } from 'lucide-react';
+import { Search, Code2, Filter, ChevronRight, Trophy, Zap, Terminal } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 

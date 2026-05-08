@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Hash, ChevronRight, Code2, Zap, Trophy, Shield, Terminal } from 'lucide-react';
-import { SparklesCore } from '@/components/ui/sparkles';
+import { Hash, ChevronRight, Trophy, Shield, Terminal } from 'lucide-react';
+
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
