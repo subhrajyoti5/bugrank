@@ -15,7 +15,7 @@ const BASE_DIR = process.env.NODE_ENV === 'production'
   : process.env.BUGPULSE_JOBS_DIR || './temp/jobs';
 const RUNNER_SCRIPT = process.env.NODE_ENV === 'production'
   ? '/srv/bugpulse/runner/run_all.sh'
-  : process.env.BUGPULSE_RUNNER || './scripts/run_all.sh';
+  : process.env.BUGPULSE_RUNNER || path.resolve(__dirname, '../../../scripts/run_all.sh');
 const EXECUTION_TIMEOUT = 12000; // 12 seconds (compile + run + overhead)
 const IS_WINDOWS = process.platform === 'win32';
 const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production';

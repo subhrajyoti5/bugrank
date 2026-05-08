@@ -354,8 +354,52 @@ echo ""
 echo "Next steps:"
 echo "1. Deploy your backend code to this VPS"
 echo "2. Set NODE_ENV=production in your .env file"
-echo "3. Install Node.js and start your backend"
+echo "3. Insta# Create Multi-language runner script
+echo "Creating Multi-language execution script (run_all.sh)..."
+sudo cp "$(dirname "$0")/run_all.sh" /srv/bugpulse/runner/run_all.sh 2>/dev/null || cat << 'EOFSCRIPT2' | sudo tee /srv/bugpulse/runner/run_all.sh > /dev/null
+#!/bin/bash
+set -e
+LANGUAGE="${1:-cpp}"
+JOB_ID="${2}"
+JOB_DIR="/srv/bugpulse/jobs/$JOB_ID"
+INPUT="$JOB_DIR/input.txt"
+OUTPUT="$JOB_DIR/output.txt"
+ERROR="$JOB_DIR/error.txt"
+STATUS="$JOB_DIR/status.txt"
+COMPILE_ERROR="$JOB_DIR/compile_error.txt"
+TIME_LIMIT=5
+MEM_LIMIT=262144
+COMPILE_TIMEOUT=10
+cd "$JOB_DIR" || exit 1
+case "$LANGUAGE" in
+    cpp)
+        ulimit -t "$COMPILE_TIMEOUT"
+        if ! g++ -std=c++17 -O2 main.cpp -o a.out 2> "$COMPILE_ERROR"; then
+            echo "CE" > "$STATUS"; exit 0
+        fi
+        echo "RUNNING" > "$STATUS"
+        timeout "$TIME_LIMIT"s sudo -u executor ./a.out < "$INPUT" > "$OUTPUT" 2>> "$ERROR" || echo "TLE" > "$STATUS"
+        ;;
+    python)
+        echo "RUNNING" > "$STATUS"
+        timeout "$TIME_LIMIT"s sudo -u executor python3 main.py < "$INPUT" > "$OUTPUT" 2>> "$ERROR" || echo "TLE" > "$STATUS"
+        ;;
+    java)
+        if ! javac Main.java 2> "$COMPILE_ERROR"; then
+            echo "CE" > "$STATUS"; exit 0
+        fi
+        echo "RUNNING" > "$STATUS"
+        timeout "$TIME_LIMIT"s sudo -u executor java Main < "$INPUT" > "$OUTPUT" 2>> "$ERROR" || echo "TLE" > "$STATUS"
+        ;;
+esac
+echo "COMPLETED" > "$STATUS"
+exit 0
+EOFSCRIPT2
+
+sudo chmod +x /srv/bugpulse/runner/run_all.sh
+sudo chown executor:executor /srv/bugpulse/runner/run_all.sh
+
+echo -e "${GREEN}✓ run_all.sh created and executable${NC}"
 echo ""
-echo "Your VPS is now ready for code execution!"
-echo ""
-Also, because you're a big **** no OK, I would like to say, but OK. OK, bro. I think, I think it's it's done. Yeah, it's done. Alright, Steve. Yeah, OK. Thank you. Can I say thanks? You know what? That might be the unfortunate thing I've seen today. Yo, what's up guys? I'm mine and I'm going to try to make you guys laugh today. OK, OK. So I love telling jokes about orphans because what are they going to do, tell their parents? 26 feet tall depends on the hills. Me and my friends started a band. What happened to it? Alive and well, thank you very much. I. There's a cold in India right now. Bonfire. Just. It doesn't turn on the buttons. No, it doesn't turn on like that. You have to turn it on. Turn it on. Hello hello. Hello. I stayed hate this guy but. Please. Then then. Second one no, no, no. This was, this was that was that was it? So the elephant was in the act or the ad was made. I. Me is that these guys are gonna be rich now. Yeah, this is. They're gonna motivate more people now. Next person, please. Hey guys. Yo, what's up? My name is Singh. I'm from New Delhi. I'm 25. Can I hand this out to you? If you make the floor, yes. Alright. So I have a joke now. Knock knock. Who's there? Jake. Jake. Looking for his job. Next. One guess, my favorite numbers between zero to 20. 6 and 7 No 7 eleven. Last one, why doesn't Andrew tape like therapy? Because this thing is for the poor. This time we go bro OK. Thank you. All right, next question please. They said II can make you laugh. I will get a car, I will drive it around Bandra. I'll look at people who dream time. So I score the highest mark in my 10th standard, which is high school. This is what they gave me. This is my master. I'm so black. Hello everyone. My name is 19 years old and I'll be honest, I haven't come here alone today. I have got someone who is like an emotional supporter. He is to me what Mcdonald's was to Tanmay after the AIB roast. So JJ. Will you handle him carefully? Sure, unlike you handle Morpheus. I mean, he just died of natural causes. You'll die. If you fought with that, you know. Well, yes, I guess. Well done. One more. One OK. Alright, number two. Hi guys. Hello. My name is Anubhava. I'm a bisexual. I was this both sides. Whenever I want to have sex girls say bye. Bye. Bisexual. Yes. Bisexual. Yeah. I'm very excited. I just got circumcised today. I wanted to reduce my weight for this show. Just like cut my **** KSI. I'm a boxer just like you. I package boxes for Amazon delivery. It's going good. So shall I kiss it? Where's the consent part of this man? Do you want to try do somebody else to try Microsoft? Why don't you guys have a joke? And he always calls me, he misses India. Always like, hey, I miss India, I miss India. And I'm like, why don't you come back? And he's like, how do I miss India then? You're from NIFT though. Basically, he's asking about. She's a classical singer. She's also a music professor. Professional ethnicity behavior. Favorite stand up comedian? And you have your favorite house. My dad is in parametric. I. This is not Kashmir we won't go through. People from two broken collectors. Shut up the man from broken state. What are you doing on 21st? Spanish. Straight. Hey, Cortana. You are going to go to a relationship. How? What makes you feel secure about a man? India got late in here. I think she knows a lot more about his relations. Hey, Cortana play. Jokes about jokes. I. Tumhe Jerry kesar trayta hai billna tom ticket sahih mili to AA bhai Karnataka. Maggie Ecosystem 80s and 90%. Level. Related otherwise Mexico. Famous. Ecosystem. Silent restructuring firing. If you're not aligned with our AI post future, this is your exit. Yeah, concerning, you can just Google this top tech company. Industry wide message. Upset gold engineer Mona is not enough. Companies want. I. Degree. Please. 
+echo -e "${GREEN}✅ SETUP COMPLETE${NC}"
+. Industry wide message. Upset gold engineer Mona is not enough. Companies want. I. Degree. Please. 
