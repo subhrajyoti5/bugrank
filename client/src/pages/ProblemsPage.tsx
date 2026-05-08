@@ -61,66 +61,61 @@ const ProblemsPage: React.FC = () => {
   const getDifficultyStyles = (difficulty: string) => {
     switch (difficulty) {
       case 'easy':
-        return 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20';
+        return 'text-white/40 border-white/5';
       case 'medium':
-        return 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20';
+        return 'text-white/60 border-white/10';
       case 'hard':
-        return 'text-rose-400 bg-rose-400/10 border-rose-400/20';
+        return 'text-white border-white/20';
       default:
-        return 'text-slate-400 bg-slate-400/10 border-slate-400/20';
+        return 'text-white/30 border-white/5';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0b1120] flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="relative">
-          <div className="h-16 w-16 rounded-full border-2 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-          <div className="absolute inset-0 flex items-center justify-center">
-             <div className="h-8 w-8 bg-indigo-500/10 rounded-full blur-xl animate-pulse" />
-          </div>
+          <div className="h-12 w-12 rounded-full border border-white/10 border-t-white animate-spin" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0b1120] text-slate-200 selection:bg-indigo-500/30">
-      {/* Background Glows */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-600/5 rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+      {/* Background elements */}
+      <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
+      <div className="fixed top-0 left-0 w-full h-full radial-glow pointer-events-none" />
 
       <div className="relative z-10 pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
           {/* Header & Filters */}
-          <div className="mb-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="mb-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
               <div>
-                <div className="flex items-center gap-2 text-indigo-400 mb-2">
-                  <Rocket className="w-5 h-5" />
-                  <span className="text-xs font-bold uppercase tracking-widest">Training Ground</span>
+                <div className="flex items-center gap-2 text-white/40 mb-3">
+                  <Terminal className="w-4 h-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Operational Terminal</span>
                 </div>
-                <h1 className="text-4xl font-black text-white tracking-tight">Challenges</h1>
+                <h1 className="text-5xl font-bold text-white tracking-tighter">Missions</h1>
               </div>
 
               <div className="relative group w-full max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-white transition-colors" />
                 <input
                   type="text"
-                  placeholder="Search by title or description..."
+                  placeholder="Query system database..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input-premium pl-12 h-12"
+                  className="input-premium pl-12 h-12 text-sm"
                 />
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 py-4 border-y border-white/5">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest mr-4">
+            <div className="flex flex-wrap items-center gap-4 py-6 border-y border-white/[0.05]">
+              <div className="flex items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mr-4">
                 <Filter className="w-3.5 h-3.5" />
-                <span>Filters</span>
+                <span>Filter Engine</span>
               </div>
               
               <div className="flex items-center gap-2">
@@ -128,10 +123,10 @@ const ProblemsPage: React.FC = () => {
                   <button
                     key={diff}
                     onClick={() => setSelectedDifficulty(selectedDifficulty === diff ? '' : diff)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-tight border transition-all duration-300 ${
+                    className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border transition-all duration-200 ${
                       selectedDifficulty === diff
-                        ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
-                        : 'bg-white/5 text-slate-400 border-white/5 hover:border-white/10 hover:text-white'
+                        ? 'bg-white text-black border-white'
+                        : 'bg-white/[0.02] text-white/40 border-white/[0.05] hover:border-white/20 hover:text-white'
                     }`}
                   >
                     {diff}
@@ -139,17 +134,17 @@ const ProblemsPage: React.FC = () => {
                 ))}
               </div>
 
-              <div className="w-px h-6 bg-white/5 mx-2" />
+              <div className="w-px h-4 bg-white/10 mx-2" />
 
               <div className="flex items-center gap-2">
                 {['cpp', 'java'].map(lang => (
                   <button
                     key={lang}
                     onClick={() => setSelectedLanguage(selectedLanguage === lang ? '' : lang)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-tight border transition-all duration-300 ${
+                    className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border transition-all duration-200 ${
                       selectedLanguage === lang
-                        ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50 shadow-[0_0_15px_rgba(34,211,238,0.2)]'
-                        : 'bg-white/5 text-slate-400 border-white/5 hover:border-white/10 hover:text-white'
+                        ? 'bg-white text-black border-white'
+                        : 'bg-white/[0.02] text-white/40 border-white/[0.05] hover:border-white/20 hover:text-white'
                     }`}
                   >
                     {lang}
@@ -159,19 +154,19 @@ const ProblemsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-8">
+          <div className="grid lg:grid-cols-12 gap-12">
             {/* List */}
             <div className="lg:col-span-8 space-y-4">
               {filteredChallenges.length === 0 ? (
-                <div className="card-premium py-20 text-center border-dashed">
+                <div className="py-24 text-center border border-dashed border-white/10 rounded-2xl">
                   <div className="p-4 bg-white/5 rounded-full w-fit mx-auto mb-6">
-                    <Search className="w-8 h-8 text-slate-600" />
+                    <Search className="w-6 h-6 text-white/20" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">No matches found</h3>
-                  <p className="text-slate-500">Try adjusting your filters or search terms.</p>
+                  <h3 className="text-lg font-bold text-white mb-2 tracking-tight">No results in sector</h3>
+                  <p className="text-white/30 text-sm font-medium">Reconfigure filters or query parameters.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {filteredChallenges.map((challenge, index) => {
                     const isSolved = solvedChallengeIds.has(challenge.id);
                     return (
@@ -180,23 +175,23 @@ const ProblemsPage: React.FC = () => {
                         to={`/editor/${challenge.id}`}
                         className="group block"
                       >
-                        <div className={`card-premium p-4 flex items-center gap-6 border border-white/5 hover:border-indigo-500/30 transition-all ${isSolved ? 'bg-emerald-500/5' : ''}`}>
-                          <div className="hidden sm:flex items-center justify-center w-10 text-slate-600 font-mono text-sm">
+                        <div className={`p-6 rounded-xl flex items-center gap-6 border border-white/[0.05] transition-all duration-300 hover:border-white/20 hover:bg-white/[0.02] ${isSolved ? 'bg-white/[0.01]' : 'bg-[#050505]'}`}>
+                          <div className="hidden sm:flex items-center justify-center w-8 text-white/10 font-bold text-[10px] tracking-widest">
                             {(index + 1).toString().padStart(2, '0')}
                           </div>
                           
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-1">
-                              <h3 className="text-lg font-bold text-white truncate group-hover:text-indigo-400 transition-colors">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-lg font-bold text-white tracking-tight group-hover:text-white transition-colors">
                                 {challenge.title}
                               </h3>
-                              {isSolved && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                              {isSolved && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
                             </div>
-                            <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
-                              <span className={`px-2 py-0.5 rounded-md border font-bold uppercase tracking-tighter ${getDifficultyStyles(challenge.difficulty)}`}>
+                            <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">
+                              <span className={`px-2 py-0.5 rounded border ${getDifficultyStyles(challenge.difficulty)}`}>
                                 {challenge.difficulty}
                               </span>
-                              <div className="flex items-center gap-1.5 uppercase tracking-widest text-[10px]">
+                              <div className="flex items-center gap-1.5">
                                 <Code2 className="w-3 h-3" />
                                 {challenge.language}
                               </div>
@@ -204,14 +199,14 @@ const ProblemsPage: React.FC = () => {
                           </div>
 
                           <div className="text-right shrink-0">
-                            <div className="text-xl font-black text-white group-hover:text-indigo-400 transition-colors">
+                            <div className="text-2xl font-bold text-white tracking-tighter">
                               {challenge.baseScore}
                             </div>
-                            <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Points</div>
+                            <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest">XP</div>
                           </div>
                           
-                          <div className="p-2 rounded-lg bg-white/5 group-hover:bg-indigo-500 group-hover:text-white transition-all text-slate-500">
-                            <ChevronRight className="w-5 h-5" />
+                          <div className="p-2 rounded-lg bg-white/5 group-hover:bg-white group-hover:text-black transition-all text-white/20">
+                            <ChevronRight className="w-4 h-4" />
                           </div>
                         </div>
                       </Link>
@@ -222,54 +217,54 @@ const ProblemsPage: React.FC = () => {
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="card-premium border border-white/10 bg-white/[0.03] sticky top-24">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
-                    <Trophy className="w-5 h-5 text-indigo-400" />
+            <div className="lg:col-span-4 space-y-8">
+              <div className="p-8 rounded-2xl border border-white/[0.05] bg-[#050505] sticky top-24">
+                <div className="flex items-center gap-3 mb-10">
+                  <div className="p-2 bg-white/5 rounded-lg border border-white/10">
+                    <Trophy className="w-4 h-4 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Your Progress</h3>
+                  <h3 className="text-md font-bold text-white uppercase tracking-widest">Mission Status</h3>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
-                    <div className="flex justify-between items-end mb-2">
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Completion</span>
-                      <span className="text-sm font-bold text-white">{solvedChallengeIds.size} <span className="text-slate-500 font-medium">/ {challenges.length}</span></span>
+                    <div className="flex justify-between items-end mb-3">
+                      <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Global Completion</span>
+                      <span className="text-sm font-bold text-white tracking-tighter">{solvedChallengeIds.size} <span className="text-white/30">/ {challenges.length}</span></span>
                     </div>
-                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-1000 ease-out" 
+                        className="h-full bg-white transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.5)]" 
                         style={{ width: `${(solvedChallengeIds.size / Math.max(challenges.length, 1)) * 100}%` }}
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                      <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Solved</div>
-                      <div className="text-2xl font-black text-white">{solvedChallengeIds.size}</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                      <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">Solved</div>
+                      <div className="text-3xl font-bold text-white tracking-tighter">{solvedChallengeIds.size}</div>
                     </div>
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                      <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Rank</div>
-                      <div className="text-2xl font-black text-indigo-400">#--</div>
+                    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                      <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">Rank</div>
+                      <div className="text-3xl font-bold text-white tracking-tighter">--</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="card-premium border-white/5">
-                <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-widest">Daily Goal</h4>
-                <div className="flex items-center gap-4 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10 mb-4">
-                   <div className="p-2 bg-indigo-500/10 rounded-lg">
-                      <Zap className="w-4 h-4 text-indigo-400" />
+              <div className="p-8 rounded-2xl border border-white/[0.05] bg-[#020202]">
+                <h4 className="text-[10px] font-bold text-white/40 mb-6 uppercase tracking-[0.3em]">Directives</h4>
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-6">
+                   <div className="p-2 bg-white/5 rounded-lg border border-white/10">
+                      <Zap className="w-3.5 h-3.5 text-white" />
                    </div>
                    <div className="flex-1">
-                      <div className="text-xs font-bold text-white mb-0.5">Solve 2 Problems</div>
-                      <div className="text-[10px] text-slate-500 uppercase tracking-tighter">0 / 2 Completed</div>
+                      <div className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Daily Quota</div>
+                      <div className="text-[10px] text-white/20 font-bold uppercase tracking-tighter">0 / 2 Missions Solved</div>
                    </div>
                 </div>
-                <button className="w-full btn-premium py-2 text-xs font-bold uppercase tracking-widest">View Roadmap</button>
+                <button className="w-full btn-premium py-2 text-[10px] font-bold uppercase tracking-widest">Access Roadmap</button>
               </div>
             </div>
           </div>
@@ -280,4 +275,5 @@ const ProblemsPage: React.FC = () => {
 };
 
 export default ProblemsPage;
+
 

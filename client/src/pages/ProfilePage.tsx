@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Target, Trophy, Code2 } from 'lucide-react';
+import { Target, Trophy, Code2, Zap, Activity } from 'lucide-react';
 
 const ProfilePage: React.FC = () => {
+
   const { user, refreshUser } = useAuth();
 
   useEffect(() => {
@@ -18,8 +19,8 @@ const ProfilePage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-deep-navy dark:bg-deep-navy">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-electric-indigo"></div>
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin"></div>
       </div>
     );
   }
@@ -29,121 +30,124 @@ const ProfilePage: React.FC = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-deep-navy text-premium-text font-sans selection:bg-indigo-cyan pb-20 transition-colors">
-
-      {/* Hero Banner with organic mesh gradient */}
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black pb-20 relative overflow-hidden">
+      {/* Background elements */}
+      <div className="fixed inset-0 grid-bg opacity-10 pointer-events-none" />
+      
+      {/* Hero Banner */}
       <div className="relative h-64 w-full overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-electric-indigo via-indigo-cyan to-premium-slate"></div>
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-cyan-violet/30 via-transparent to-transparent opacity-70"></div>
-        <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-indigo-cyan/30 via-transparent to-transparent opacity-70"></div>
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-deep-navy to-transparent"></div>
+        <div className="absolute inset-0 bg-black"></div>
+        <div className="absolute inset-0 grid-bg opacity-30"></div>
+        <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        <div className="absolute top-0 right-0 w-[50%] h-full bg-white/[0.02] blur-[120px] rounded-full"></div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10 -mt-32">
-
+      <div className="max-w-5xl mx-auto px-6 relative z-10 -mt-32">
         {/* Player Card Header */}
         <div className="flex flex-col items-center text-center">
-          <div className="relative group cursor-pointer">
-            <div className="absolute -inset-1 bg-gradient-to-br from-electric-indigo to-cyan-violet rounded-full blur opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"></div>
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-white/20 rounded-full blur opacity-50 group-hover:opacity-100 transition-all duration-700"></div>
             <img
-              src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=random&size=150`}
+              src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=000&color=fff&size=200`}
               alt={user.displayName}
-              className="w-40 h-40 rounded-full object-cover border-4 border-premium-slate relative z-10 shadow-2xl transition-transform duration-500 group-hover:rotate-3 group-hover:scale-105"
+              className="w-40 h-40 rounded-full object-cover border border-white/20 relative z-10 shadow-2xl transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute bottom-2 right-2 z-20 bg-premium-slate text-cyan-violet p-1.5 rounded-full border border-cyan-violet/30 shadow-lg">
-              <Trophy className="w-5 h-5" fill="currentColor" />
+            <div className="absolute bottom-2 right-2 z-20 bg-white text-black p-2 rounded-full border border-black shadow-lg">
+              <Trophy className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="mt-6 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-100">
-            <h1 className="text-5xl font-black text-premium-text tracking-tight mb-2 drop-shadow-xl">{user.displayName}</h1>
-            <div className="flex items-center justify-center gap-3 text-sm font-medium">
-              <span className="px-3 py-1 bg-electric-indigo/10 text-electric-indigo rounded-full border border-electric-indigo/20 shadow-[0_0_15px_rgba(80,80,200,0.2)]">Level {Math.floor(user.totalScore / 100) + 1} Hacker</span>
-              <span className="text-indigo-cyan">•</span>
-              <span className="text-premium-muted">@{user.username || 'code_wizard'}</span>
+          <div className="mt-8">
+            <div className="flex items-center justify-center gap-2 text-white/40 mb-4">
+               <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Internal Profile Verified</span>
+            </div>
+            <h1 className="text-6xl font-bold text-white tracking-tighter mb-3 leading-none">{user.displayName}</h1>
+            <div className="flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em]">
+              <span className="px-4 py-1 bg-white/5 text-white/60 rounded-full border border-white/10">Level {Math.floor(user.totalScore / 100) + 1} Operative</span>
+              <span className="text-white/20">•</span>
+              <span className="text-white/30">@{user.username || 'unknown_node'}</span>
             </div>
           </div>
 
           {/* Main Stats - Floating Pills */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-200">
-            <div className="bg-premium-slate hover:bg-premium-slate/80 border border-electric-indigo/10 px-6 py-3 rounded-2xl flex items-center gap-3 transition-all hover:scale-105 hover:border-electric-indigo group">
-              <div className="bg-electric-indigo/20 p-2 rounded-lg text-electric-indigo group-hover:text-indigo-cyan">
+          <div className="flex flex-wrap justify-center gap-4 mt-12">
+            <div className="p-6 rounded-2xl bg-[#050505] border border-white/[0.05] flex items-center gap-6 transition-all hover:border-white/20 group min-w-[200px]">
+              <div className="bg-white/5 p-3 rounded-xl border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
                 <Target className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <div className="text-3xl font-bold text-premium-text leading-none">{user.totalScore}</div>
-                <div className="text-[10px] text-premium-muted uppercase font-bold tracking-wider">Reputation</div>
+                <div className="text-3xl font-bold text-white tracking-tighter">{user.totalScore}</div>
+                <div className="text-[10px] text-white/20 uppercase font-bold tracking-widest mt-1">Total XP</div>
               </div>
             </div>
 
-            <div className="bg-premium-slate hover:bg-premium-slate/80 border border-indigo-cyan/10 px-6 py-3 rounded-2xl flex items-center gap-3 transition-all hover:scale-105 hover:border-indigo-cyan group">
-              <div className="bg-indigo-cyan/20 p-2 rounded-lg text-indigo-cyan group-hover:text-electric-indigo">
+            <div className="p-6 rounded-2xl bg-[#050505] border border-white/[0.05] flex items-center gap-6 transition-all hover:border-white/20 group min-w-[200px]">
+              <div className="bg-white/5 p-3 rounded-xl border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
                 <Code2 className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <div className="text-3xl font-bold text-premium-text leading-none">{user.successfulSubmissions || 0}</div>
-                <div className="text-[10px] text-premium-muted uppercase font-bold tracking-wider">Solutions</div>
+                <div className="text-3xl font-bold text-white tracking-tighter">{user.successfulSubmissions || 0}</div>
+                <div className="text-[10px] text-white/20 uppercase font-bold tracking-widest mt-1">Missions</div>
               </div>
             </div>
 
-            <div className="bg-premium-slate hover:bg-premium-slate/80 border border-cyan-violet/10 px-6 py-3 rounded-2xl flex items-center gap-3 transition-all hover:scale-105 hover:border-cyan-violet group">
-              <div className="bg-cyan-violet/20 p-2 rounded-lg text-cyan-violet group-hover:text-electric-indigo">
-                <Target className="w-5 h-5" />
+            <div className="p-6 rounded-2xl bg-[#050505] border border-white/[0.05] flex items-center gap-6 transition-all hover:border-white/20 group min-w-[200px]">
+              <div className="bg-white/5 p-3 rounded-xl border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
+                <Zap className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <div className="text-3xl font-bold text-premium-text leading-none">{successRate}%</div>
-                <div className="text-[10px] text-premium-muted uppercase font-bold tracking-wider">Precision</div>
+                <div className="text-3xl font-bold text-white tracking-tighter">{successRate}%</div>
+                <div className="text-[10px] text-white/20 uppercase font-bold tracking-widest mt-1">Accuracy</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Content Bento Grid */}
-        <div className="grid md:grid-cols-12 gap-6 mt-16 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
-
+        <div className="grid md:grid-cols-12 gap-8 mt-24">
           {/* Left Col - Attributes & Skills (4 cols) */}
-          <div className="md:col-span-4 space-y-6">
-            <div className="bg-premium-slate border border-electric-indigo/10 rounded-3xl p-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-electric-indigo/10 rounded-full blur-3xl pointer-events-none group-hover:bg-electric-indigo/20 transition-all"></div>
-              <h3 className="text-lg font-bold text-premium-text mb-6 flex items-center gap-2">
-                <span>⚡</span> Attributes
+          <div className="md:col-span-4 space-y-8">
+            <div className="p-8 rounded-3xl bg-[#050505] border border-white/[0.05] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.01] rounded-full blur-3xl pointer-events-none"></div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] mb-10 flex items-center gap-3">
+                <Activity className="w-4 h-4 text-white/40" /> Attributes
               </h3>
 
-              <div className="space-y-5">
+              <div className="space-y-8">
                 <div>
-                  <div className="flex justify-between text-xs font-bold text-premium-muted mb-1 uppercase tracking-wide">
-                    <span>Problem Solving</span>
-                    <span className="text-electric-indigo">85/100</span>
+                  <div className="flex justify-between text-[10px] font-bold text-white/30 mb-3 uppercase tracking-widest">
+                    <span>Problem Identification</span>
+                    <span className="text-white">85%</span>
                   </div>
-                  <div className="h-2 bg-premium-muted/30 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-electric-indigo to-cyan-violet w-[85%] rounded-full shadow-[0_0_10px_rgba(80,80,200,0.3)]"></div>
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-white w-[85%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-xs font-bold text-premium-muted mb-1 uppercase tracking-wide">
-                    <span>Debugging</span>
-                    <span className="text-indigo-cyan">92/100</span>
+                  <div className="flex justify-between text-[10px] font-bold text-white/30 mb-3 uppercase tracking-widest">
+                    <span>Code Optimization</span>
+                    <span className="text-white">92%</span>
                   </div>
-                  <div className="h-2 bg-premium-muted/30 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-indigo-cyan to-electric-indigo w-[92%] rounded-full shadow-[0_0_10px_rgba(80,200,200,0.3)]"></div>
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-white w-[92%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-xs font-bold text-premium-muted mb-1 uppercase tracking-wide">
-                    <span>Consistency</span>
-                    <span className="text-cyan-violet">74/100</span>
+                  <div className="flex justify-between text-[10px] font-bold text-white/30 mb-3 uppercase tracking-widest">
+                    <span>Tactical Consistency</span>
+                    <span className="text-white">74%</span>
                   </div>
-                  <div className="h-2 bg-premium-muted/30 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-cyan-violet to-electric-indigo w-[74%] rounded-full shadow-[0_0_10px_rgba(200,80,200,0.3)]"></div>
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-white w-[74%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/5">
-                <h4 className="text-xs font-bold text-premium-muted uppercase tracking-widest mb-3">Tech Arsenal</h4>
+              <div className="mt-12 pt-8 border-t border-white/[0.05]">
+                <h4 className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-6">Internal Stack</h4>
                 <div className="flex flex-wrap gap-2">
-                  {['React', 'Node.js', 'Python', 'Rust'].map(tag => (
-                    <span key={tag} className="px-3 py-1 bg-premium-muted/20 text-premium-text text-xs rounded-lg border border-premium-muted hover:border-electric-indigo hover:bg-electric-indigo/10 transition-all cursor-default">
+                  {['C++', 'Java', 'Python', 'Rust'].map(tag => (
+                    <span key={tag} className="px-4 py-1.5 bg-white/[0.02] text-white/40 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-white/[0.05] hover:border-white/20 hover:text-white transition-all cursor-default">
                       {tag}
                     </span>
                   ))}
@@ -153,27 +157,25 @@ const ProfilePage: React.FC = () => {
           </div>
 
           {/* Right Col - Activity & Badges (8 cols) */}
-          <div className="md:col-span-8 space-y-6">
-
-            {/* Activity Heatmap Area - Styled as QUEST LOG */}
-            <div className="bg-premium-slate border border-electric-indigo/10 rounded-3xl p-8 relative overflow-hidden">
-              <div className="flex items-center justify-between mb-6">
+          <div className="md:col-span-8 space-y-8">
+            {/* Activity Heatmap */}
+            <div className="p-8 rounded-3xl bg-[#050505] border border-white/[0.05] relative overflow-hidden">
+              <div className="flex items-center justify-between mb-10">
                 <div>
-                  <h3 className="text-xl font-bold text-premium-text mb-1">Quest Log</h3>
-                  <p className="text-sm text-premium-muted">Contribution history over the last year</p>
+                  <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] mb-1">Operational Pulse</h3>
+                  <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest">Historical deployment frequency</p>
                 </div>
                 <div className="text-right hidden sm:block">
-                  <span className="text-2xl font-bold text-indigo-cyan">{user.totalSubmissions}</span>
-                  <p className="text-[10px] text-premium-muted uppercase font-bold tracking-wider">Total Actions</p>
+                  <span className="text-3xl font-bold text-white tracking-tighter">{user.totalSubmissions}</span>
+                  <p className="text-[9px] text-white/20 font-bold uppercase tracking-[0.2em]">Deployments</p>
                 </div>
               </div>
 
-              {/* Faux Heatmap Visual for now - Replace with actual logic if needed */}
-              <div className="flex gap-1 h-32 items-end justify-between opacity-50 mask-image-gradient">
+              <div className="flex gap-1.5 h-32 items-end justify-between opacity-30">
                 {heatmapHeights.map((height, i) => (
                   <div
                     key={i}
-                    className="w-full bg-electric-indigo/20 rounded-t-sm hover:bg-electric-indigo/60 transition-colors"
+                    className="w-full bg-white/10 rounded-sm hover:bg-white/60 transition-all duration-300"
                     style={{ height: `${height}%` }}
                   ></div>
                 ))}
@@ -184,26 +186,25 @@ const ProfilePage: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {
                 [
-                  { name: 'Bug Slayer', icon: '⚔️', desc: 'Solved 10+ bugs', bg: 'bg-cyan-violet/10 border-cyan-violet/20' },
-                  { name: 'Early Bird', icon: '🌅', desc: 'Active at 5AM', bg: 'bg-indigo-cyan/10 border-indigo-cyan/20' },
-                  { name: 'Sniper', icon: '🎯', desc: '100% Accuracy', bg: 'bg-electric-indigo/10 border-electric-indigo/20' },
-                  { name: 'Veteran', icon: '🎖️', desc: 'Year Member', bg: 'bg-premium-muted/10 border-premium-muted/20' },
+                  { name: 'Slayer', icon: '⚔️', desc: '10+ Missions', bg: 'bg-white/[0.01] border-white/[0.05]' },
+                  { name: 'Wraith', icon: '👻', desc: 'Ghost Fixer', bg: 'bg-white/[0.01] border-white/[0.05]' },
+                  { name: 'Sniper', icon: '🎯', desc: 'Zero Failures', bg: 'bg-white/[0.01] border-white/[0.05]' },
+                  { name: 'Veteran', icon: '🎖️', desc: 'Legacy User', bg: 'bg-white/[0.01] border-white/[0.05]' },
                 ].map((badge, i) => (
-                  <div key={i} className={`rounded-2xl p-4 border ${badge.bg} flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg cursor-pointer group`}>
-                    <div className="text-3xl mb-2 group-hover:animate-bounce">{badge.icon}</div>
-                    <div className="font-bold text-premium-text text-sm">{badge.name}</div>
-                    <div className="text-[10px] text-premium-muted mt-1">{badge.desc}</div>
+                  <div key={i} className={`rounded-2xl p-6 border ${badge.bg} flex flex-col items-center text-center transition-all hover:border-white/20 cursor-pointer group`}>
+                    <div className="text-3xl mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">{badge.icon}</div>
+                    <div className="font-bold text-white text-[10px] uppercase tracking-widest mb-1">{badge.name}</div>
+                    <div className="text-[9px] text-white/20 font-bold uppercase tracking-tighter">{badge.desc}</div>
                   </div>
                 ))
               }
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
   );
 };
 
 export default ProfilePage;
+

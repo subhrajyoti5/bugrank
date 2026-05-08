@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "frontend-design": {
+      "source": "majesticlabs-dev/majestic-marketplace",
+      "sourceType": "github",
+      "skillPath": "plugins/majestic-engineer/skills/frontend-design/SKILL.md",
+      "computedHash": "f7378e8c05dde818c0fef3528bad0369f2bbbaafa531ed459fdf2a0facae1d5b"
+    }
+  }
+}
