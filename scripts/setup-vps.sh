@@ -402,4 +402,3 @@ sudo chown executor:executor /srv/bugpulse/runner/run_all.sh
 echo -e "${GREEN}✓ run_all.sh created and executable${NC}"
 echo ""
 echo -e "${GREEN}✅ SETUP COMPLETE${NC}"
-. Industry wide message. Upset gold engineer Mona is not enough. Companies want. I. Degree. Please. 
