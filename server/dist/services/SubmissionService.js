@@ -28,7 +28,7 @@ class SubmissionService extends GeminiService_1.BaseService {
         let compilerOutput = '';
         // For C++, run actual execution (self-hosted - FREE)
         if (challenge.language === 'cpp') {
-            const executionResult = await ExecutionService_1.ExecutionService.executeCode(code, testInput || challenge.testCase?.input || '');
+            const executionResult = await ExecutionService_1.ExecutionService.executeCode(code, testInput || challenge.testCase?.input || '', 'cpp');
             compilerOutput = this.formatExecutionOutput(executionResult);
         }
         // Use AI analysis for additional insights - FREE
@@ -72,7 +72,7 @@ class SubmissionService extends GeminiService_1.BaseService {
             // Run with test case input using ExecutionService (self-hosted - $0)
             if (challenge.testCase) {
                 console.log(`🚀 Calling ExecutionService.executeCode with input: "${challenge.testCase.input}"`);
-                const executionResult = await ExecutionService_1.ExecutionService.executeCode(code, challenge.testCase.input);
+                const executionResult = await ExecutionService_1.ExecutionService.executeCode(code, challenge.testCase.input, challenge.language);
                 console.log(`🎯 Execution result:`, executionResult);
                 // Map execution result to compiler result format
                 compilationSuccess = executionResult.status !== 'CE' && executionResult.status !== 'SE';
@@ -93,7 +93,7 @@ class SubmissionService extends GeminiService_1.BaseService {
             }
             else {
                 // No test case, just run normally
-                const executionResult = await ExecutionService_1.ExecutionService.executeCode(code, testInput || '');
+                const executionResult = await ExecutionService_1.ExecutionService.executeCode(code, testInput || '', challenge.language);
                 compilationSuccess = executionResult.status !== 'CE' && executionResult.status !== 'SE';
                 compilerOutput = this.formatExecutionOutput(executionResult);
             }

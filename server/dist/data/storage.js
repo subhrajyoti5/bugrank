@@ -39,6 +39,9 @@ exports.userDb = {
         };
     },
     async findById(id) {
+        if (!id || isNaN(parseInt(id))) {
+            return null;
+        }
         const result = await database_1.default.query(`SELECT id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions
        FROM users WHERE id = $1`, [parseInt(id)]);
         if (result.rows.length === 0)
@@ -101,7 +104,10 @@ exports.userDb = {
         }
         if (fields.length === 0)
             return user;
-        values.push(parseInt(id));
+        const numericId = parseInt(id);
+        if (isNaN(numericId))
+            return null;
+        values.push(numericId);
         const result = await database_1.default.query(`UPDATE users SET ${fields.join(', ')} WHERE id = $${paramIndex}
        RETURNING id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions`, values);
         const row = result.rows[0];
@@ -159,7 +165,10 @@ exports.submissionDb = {
         return result.rows.length > 0 ? this.mapRowToSubmission(result.rows[0]) : null;
     },
     async findByUserId(userId) {
-        const result = await database_1.default.query('SELECT * FROM submissions WHERE user_id = $1 ORDER BY submitted_at DESC', [parseInt(userId)]);
+        const numericUserId = parseInt(userId);
+        if (isNaN(numericUserId))
+            return [];
+        const result = await database_1.default.query('SELECT * FROM submissions WHERE user_id = $1 ORDER BY submitted_at DESC', [numericUserId]);
         return result.rows.map(row => this.mapRowToSubmission(row));
     },
     async findByChallengeId(challengeId) {
@@ -167,7 +176,10 @@ exports.submissionDb = {
         return result.rows.map(row => this.mapRowToSubmission(row));
     },
     async findByUserAndChallenge(userId, challengeId) {
-        const result = await database_1.default.query('SELECT * FROM submissions WHERE user_id = $1 AND challenge_id = $2 ORDER BY submitted_at DESC', [parseInt(userId), challengeId]);
+        const numericUserId = parseInt(userId);
+        if (isNaN(numericUserId))
+            return [];
+        const result = await database_1.default.query('SELECT * FROM submissions WHERE user_id = $1 AND challenge_id = $2 ORDER BY submitted_at DESC', [numericUserId, challengeId]);
         return result.rows.map(row => this.mapRowToSubmission(row));
     },
     async getAll() {

@@ -119,6 +119,9 @@ class AuthService {
      * Get user by ID
      */
     async getUserById(userId) {
+        if (!userId || isNaN(parseInt(userId))) {
+            return null;
+        }
         const result = await database_1.default.query(`SELECT id, email, display_name, photo_url, created_at, total_score, total_submissions, successful_submissions
        FROM users WHERE id = $1`, [parseInt(userId)]);
         if (result.rows.length === 0) {
@@ -148,6 +151,9 @@ class AuthService {
     verifyToken(token) {
         try {
             const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
+            if (!decoded || typeof decoded !== 'object' || !decoded.userId) {
+                throw new Error('Invalid token payload');
+            }
             return decoded;
         }
         catch (error) {
@@ -169,7 +175,9 @@ class AuthService {
      * Generate a random session token
      */
     generateSessionToken() {
-        return jsonwebtoken_1.default.sign({ random: Math.random() }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+        // Generate a secure random hex string instead of a JWT to ensure it fits in VARCHAR(255)
+        // and to distinguish it from the main JWT token.
+        return crypto_1.default.randomBytes(32).toString('hex');
     }
     /**
      * Clean up expired sessions (run periodically)

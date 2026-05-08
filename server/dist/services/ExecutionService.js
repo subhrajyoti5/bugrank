@@ -17,11 +17,12 @@ const BASE_DIR = process.env.NODE_ENV === 'production'
     ? '/srv/bugpulse/jobs'
     : process.env.BUGPULSE_JOBS_DIR || './temp/jobs';
 const RUNNER_SCRIPT = process.env.NODE_ENV === 'production'
-    ? '/srv/bugpulse/runner/run_cpp.sh'
-    : process.env.BUGPULSE_RUNNER || './scripts/run_cpp_local.bat';
+    ? '/srv/bugpulse/runner/run_all.sh'
+    : process.env.BUGPULSE_RUNNER || './scripts/run_all.sh';
 const EXECUTION_TIMEOUT = 12000; // 12 seconds (compile + run + overhead)
 const IS_WINDOWS = process.platform === 'win32';
 const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production';
+const SUPPORTED_LANGUAGES = ['cpp', 'python', 'java'];
 // Execution Queue (simple mutex)
 let isExecuting = false;
 const executionQueue = [];
@@ -41,11 +42,34 @@ class ExecutionService {
         }
     }
     /**
+     * Validate language is supported
+     */
+    static validateLanguage(language) {
+        if (!SUPPORTED_LANGUAGES.includes(language)) {
+            throw new Error(`Unsupported language: ${language}. Supported: ${SUPPORTED_LANGUAGES.join(', ')}`);
+        }
+    }
+    /**
      * Validate input size
      */
     static validateInput(input) {
-        if (input.length > MAX_INPUT_SIZE) {
+        if (input && input.length > MAX_INPUT_SIZE) {
             throw new Error(`Input size exceeds limit (${MAX_INPUT_SIZE} bytes)`);
+        }
+    }
+    /**
+     * Get file extension for language
+     */
+    static getSourceFileName(language) {
+        switch (language) {
+            case 'cpp':
+                return 'main.cpp';
+            case 'python':
+                return 'main.py';
+            case 'java':
+                return 'Main.java';
+            default:
+                return 'main.cpp';
         }
     }
     /**
@@ -75,12 +99,12 @@ class ExecutionService {
         }
     }
     /**
-     * Generate cache key from code and input
+     * Generate cache key from code, input, and language
      */
-    static generateCacheKey(code, input) {
+    static generateCacheKey(code, input, language = 'cpp') {
         return crypto_1.default
             .createHash('sha256')
-            .update(`${code}|cpp|${input}`)
+            .update(`${code}|${language}|${input}`)
             .digest('hex');
     }
     /**
@@ -130,12 +154,14 @@ class ExecutionService {
     /**
      * Create job directory and write files
      */
-    static async createJob(code, input) {
+    static async createJob(code, input, language = 'cpp') {
+        this.validateLanguage(language);
         const jobId = this.generateUUID();
         const jobDir = path_1.default.join(BASE_DIR, jobId);
         await promises_1.default.mkdir(jobDir, { recursive: true });
         await promises_1.default.chmod(jobDir, 0o777);
-        await promises_1.default.writeFile(path_1.default.join(jobDir, 'main.cpp'), code, 'utf8');
+        const sourceFileName = this.getSourceFileName(language);
+        await promises_1.default.writeFile(path_1.default.join(jobDir, sourceFileName), code, 'utf8');
         await promises_1.default.writeFile(path_1.default.join(jobDir, 'input.txt'), input, 'utf8');
         return jobId;
     }
@@ -190,12 +216,13 @@ class ExecutionService {
         }
     }
     /**
-     * Execute code with caching
+     * Execute code with caching and multi-language support
      */
-    static async executeCode(code, input) {
+    static async executeCode(code, input, language = 'cpp') {
         const startTime = Date.now();
-        // Validate inputs
+        // Validate language
         try {
+            this.validateLanguage(language);
             this.validateCode(code);
             this.validateInput(input);
         }
@@ -218,22 +245,22 @@ class ExecutionService {
             };
         }
         // Check cache first
-        const cacheKey = this.generateCacheKey(code, input);
+        const cacheKey = this.generateCacheKey(code, input, language);
         const cachedResult = this.getCachedResult(cacheKey);
         if (cachedResult) {
-            console.log(`✅ Cache hit for key: ${cacheKey.substring(0, 16)}...`);
+            console.log(`✅ Cache hit for ${language}: ${cacheKey.substring(0, 16)}...`);
             return cachedResult;
         }
-        console.log(`🔄 Cache miss - executing code`);
+        console.log(`🔄 Cache miss - executing ${language} code`);
         // Acquire execution lock
         await this.acquireLock();
         try {
             // Create job
-            const jobId = await this.createJob(code, input);
-            console.log(`📁 Created job: ${jobId}`);
+            const jobId = await this.createJob(code, input, language);
+            console.log(`📁 Created job: ${jobId} (${language})`);
             try {
-                // Execute runner script
-                await execFileAsync(RUNNER_SCRIPT, [jobId], {
+                // Execute runner script with language parameter
+                await execFileAsync(RUNNER_SCRIPT, [language, jobId], {
                     timeout: EXECUTION_TIMEOUT,
                 });
             }
