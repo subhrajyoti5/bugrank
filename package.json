@@ -28,5 +28,8 @@
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "tsconfig-paths": "^4.2.0"
   }
 }
