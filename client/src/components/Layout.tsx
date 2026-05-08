@@ -6,9 +6,10 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main>
+      <main className="pt-16">
         <Outlet />
       </main>
+
     </div>
   );
 };

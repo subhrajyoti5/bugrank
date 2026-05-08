@@ -18,46 +18,9 @@ const LandingPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black overflow-x-hidden font-sans">
-            {/* Navbar */}
-            <nav className="fixed top-0 w-full z-50 border-b border-white/[0.05] bg-black/50 backdrop-blur-xl">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/')}>
-                        <div className="p-1.5 bg-white/5 rounded-lg border border-white/10 group-hover:border-white/20 transition-all">
-                            <Hash className="w-5 h-5 text-white" />
-                        </div>
-                        <span className="text-xl font-bold tracking-tighter text-white">BugRank</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                        {!user ? (
-                            <>
-                                <button
-                                    onClick={() => navigate('/login')}
-                                    className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors"
-                                >
-                                    Login
-                                </button>
-                                <button
-                                    onClick={() => navigate('/login')}
-                                    className="btn-primary-premium py-2 px-6 text-xs uppercase tracking-widest"
-                                >
-                                    Launch App
-                                </button>
-                            </>
-                        ) : (
-                            <button
-                                onClick={() => navigate('/problems')}
-                                className="btn-primary-premium py-2 px-6 text-xs uppercase tracking-widest"
-                            >
-                                Dashboard
-                            </button>
-                        )}
-                    </div>
-                </div>
-            </nav>
-
             {/* Hero Section */}
-            <section className="relative min-h-screen flex flex-col items-center justify-center pt-20">
+            <section className="relative min-h-screen flex flex-col items-center justify-center">
+
                 {/* Background Grid */}
                 <div className="absolute inset-0 grid-bg opacity-30" />
                 <div className="absolute inset-0 radial-glow" />

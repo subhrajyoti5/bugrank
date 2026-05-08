@@ -18,24 +18,27 @@ const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth-success" element={<AuthSuccessPage />} />
 
+          <Route
+            path="/editor/:id"
+            element={
+              <ProtectedRoute>
+                <EditorPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route element={<Layout />}>
+            <Route path="/" element={<LandingPage />} />
+
+
             <Route
               path="/problems"
               element={
                 <ProtectedRoute>
                   <ProblemsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/editor/:id"
-              element={
-                <ProtectedRoute>
-                  <EditorPage />
                 </ProtectedRoute>
               }
             />

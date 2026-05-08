@@ -95,19 +95,25 @@ const LeaderboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-[calc(100vh-64px)] bg-black flex items-center justify-center">
         <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans relative overflow-hidden pt-24 pb-12">
+    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans relative overflow-hidden">
       {/* Background elements */}
       <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-white/[0.03] rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed inset-0 radial-glow pointer-events-none" />
+      
+      {/* Animated Light Beams - Match LandingPage */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }} />
 
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
+      <div className="relative z-10 pt-8 pb-24">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+
         {/* Header */}
         <div className="mb-20 text-center">
           <div className="flex items-center justify-center gap-2 text-white/40 mb-3">
@@ -207,7 +213,8 @@ const LeaderboardPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default LeaderboardPage;

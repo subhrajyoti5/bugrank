@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { challengeService } from '@/services/challengeService';
 import { submissionService } from '@/services/submissionService';
 import { Challenge } from '@bugpulse/shared';
-import { Search, Rocket, Code2, Filter, CheckCircle2, ChevronRight, Trophy, Zap } from 'lucide-react';
+import { Search, Rocket, Code2, Filter, CheckCircle2, ChevronRight, Trophy, Zap, Terminal } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -73,21 +73,25 @@ const ProblemsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-[calc(100vh-64px)] bg-black flex items-center justify-center">
         <div className="relative">
-          <div className="h-12 w-12 rounded-full border border-white/10 border-t-white animate-spin" />
+          <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans relative overflow-hidden">
       {/* Background elements */}
       <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
-      <div className="fixed top-0 left-0 w-full h-full radial-glow pointer-events-none" />
+      <div className="fixed inset-0 radial-glow pointer-events-none" />
+      
+      {/* Animated Light Beams - Match LandingPage */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }} />
 
-      <div className="relative z-10 pt-24 pb-12">
+      <div className="relative z-10 pt-8 pb-24">
         <div className="max-w-7xl mx-auto px-6">
           {/* Header & Filters */}
           <div className="mb-12">
@@ -111,6 +115,7 @@ const ProblemsPage: React.FC = () => {
                 />
               </div>
             </div>
+
 
             <div className="flex flex-wrap items-center gap-4 py-6 border-y border-white/[0.05]">
               <div className="flex items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mr-4">

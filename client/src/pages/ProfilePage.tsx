@@ -33,16 +33,22 @@ const ProfilePage: React.FC = () => {
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black pb-20 relative overflow-hidden">
       {/* Background elements */}
       <div className="fixed inset-0 grid-bg opacity-10 pointer-events-none" />
+      <div className="fixed inset-0 radial-glow pointer-events-none" />
+
+      {/* Animated Light Beams - Match LandingPage */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }} />
       
       {/* Hero Banner */}
       <div className="relative h-64 w-full overflow-hidden">
-        <div className="absolute inset-0 bg-black"></div>
+        <div className="absolute inset-0 bg-black/50"></div>
         <div className="absolute inset-0 grid-bg opacity-30"></div>
         <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black via-black/50 to-transparent"></div>
         <div className="absolute top-0 right-0 w-[50%] h-full bg-white/[0.02] blur-[120px] rounded-full"></div>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 relative z-10 -mt-32">
+
         {/* Player Card Header */}
         <div className="flex flex-col items-center text-center">
           <div className="relative group">
