@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -12,38 +12,27 @@ import authRouter from './routes/auth';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import authService from './services/AuthService';
 import { challengeDb } from './data/storage';
-import { seedChallenges } from './data/seedChallenges';
-
 
 // Load environment variables
 dotenv.config();
 
-// Validate optional environment variables
-if (!process.env.GEMINI_API_KEY) {
-  console.warn('⚠️  GEMINI_API_KEY not set - AI analysis will use default responses');
-}
-
-if (!process.env.JWT_SECRET) {
-  console.warn('⚠️  JWT_SECRET not set - using default (NOT SECURE FOR PRODUCTION)');
-}
-
-// Check execution environment
-if (process.env.NODE_ENV !== 'production') {
-  console.log('\n' + '='.repeat(70));
-  console.log('🔧 DEVELOPMENT MODE - Code Execution');
-  console.log('='.repeat(70));
-  console.log('⚠️  Self-hosted execution requires VPS setup (Phases 0-3)');
-  console.log('📝 Running locally will show "System Error" for code execution');
-  console.log('✅ AI analysis will still work for development');
-  console.log('📖 See: SYSTEM_ERROR_TROUBLESHOOTING.md for details');
-  console.log('🚀 Deploy to VPS for full execution functionality');
-  console.log('='.repeat(70) + '\n');
-}
-
-// Initialize Express app
+// Trust nginx proxy
 const app: Express = express();
-const PORT = process.env.PORT || 5000;
+app.set('trust proxy', 1);
 
+// Rate limiting configuration
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 1000, // Limit each IP to 1000 requests per minute
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => {
+    return (req.headers['x-forwarded-for'] as string) || req.ip || 'unknown';
+  },
+});
+
+app.use('/api/', limiter);
 
 // CORS configuration
 const corsOptions = {
@@ -61,15 +50,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-app.use(
-  helmet(
-    {
-      crossOriginResourcePolicy: false,
-    }));
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Passport configuration for Google OAuth
+// Passport setup
 passport.use(
   new GoogleStrategy(
     {
@@ -77,98 +62,46 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
       callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
     },
-    (accessToken, refreshToken, profile, done) => {
-      // Return the profile for use in the callback route
-      return done(null, profile);
-    }
+    (accessToken, refreshToken, profile, done) => done(null, profile)
   )
 );
 
-passport.serializeUser((user: any, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user: any, done) => {
-  done(null, user);
-});
-
-// Initialize Passport without sessions (using custom JWT sessions)
+passport.serializeUser((user: any, done) => done(null, user));
+passport.deserializeUser((user: any, done) => done(null, user));
 app.use(passport.initialize());
 
-// Trust nginx proxy for correct client IP in rate limiter
-app.set('trust proxy', 1);
-
-
-
-// Root route
-app.get('/', (req: Request, res: Response) => {
-  res.json({
-    success: true,
-    message: 'Bugrank API Server',
-    version: '1.0.0',
-    endpoints: {
-      health: '/health',
-      auth: '/api/auth',
-      challenges: '/api/challenges',
-      submissions: '/api/submissions',
-      leaderboard: '/api/leaderboard',
-    },
-  });
-});
-
-// Health check
-app.get('/health', (req: Request, res: Response) => {
-  res.json({
-    success: true,
-    message: 'Bugrank API is running',
-    timestamp: new Date().toISOString(),
-  });
-});
-
 // API Routes
+app.get('/', (req, res) => res.json({ success: true, message: 'Bugrank API' }));
+app.get('/health', (req, res) => res.json({ success: true, timestamp: new Date().toISOString() }));
+
 app.use('/api/auth', authRouter);
 app.use('/api/challenges', challengesRouter);
 app.use('/api/submissions', submissionsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 
-// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
-// Start server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
   console.log(`🐛 Bugrank server running on port ${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🤖 Gemini API: ${process.env.GEMINI_API_KEY ? 'Configured' : 'Not configured (using defaults)'}`);
-  console.log(`🔐 Auth: PostgreSQL + JWT enabled`);
-
-
-
-  // Auto-seed challenges if database is empty
+  
+  // Verify DB connection
   try {
-    const existing = await challengeDb.getAll();
-    if (existing.length === 0) {
-      console.log('📚 Database empty. Seeding initial challenges...');
-      for (const challenge of seedChallenges) {
-        await challengeDb.create(challenge);
-      }
-      console.log(`✅ Seeded ${seedChallenges.length} challenges`);
-    }
+    const count = await challengeDb.getAll();
+    console.log(`✅ Connected to DB. Found ${count.length} challenges.`);
   } catch (error) {
-    console.error('❌ Auto-seeding failed:', error);
+    console.error('❌ DB Connection failed:', error);
   }
 
-  // Start session cleanup job (runs every hour)
+  // Session cleanup
   setInterval(async () => {
     try {
-      const deleted = await authService.cleanupExpiredSessions();
-      if (deleted > 0) {
-        console.log(`🧹 Cleaned up ${deleted} expired sessions`);
-      }
+      await authService.cleanupExpiredSessions();
     } catch (error) {
-      console.error('Error cleaning up sessions:', error);
+      console.error('Session cleanup error:', error);
     }
-  }, 60 * 60 * 1000); // 1 hour
+  }, 60 * 60 * 1000);
 });
 
 export default app;
