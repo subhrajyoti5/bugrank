@@ -29,11 +29,56 @@ const EditorPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('description');
   const [activePanel, setActivePanel] = useState<PanelType>('testcase');
 
+  // Resizable Panel States
+  const [sidebarWidth, setSidebarWidth] = useState(400);
+  const [panelHeight, setPanelHeight] = useState(320);
+  const isResizingSidebar = useRef(false);
+  const isResizingPanel = useRef(false);
+
   useEffect(() => {
     if (id) {
       loadChallenge(id);
     }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizingSidebar.current) {
+        const newWidth = Math.max(300, Math.min(600, e.clientX));
+        setSidebarWidth(newWidth);
+      }
+      if (isResizingPanel.current) {
+        const newHeight = Math.max(150, Math.min(window.innerHeight - 200, window.innerHeight - e.clientY - 16));
+        setPanelHeight(newHeight);
+      }
+    };
+
+    const handleMouseUp = () => {
+      isResizingSidebar.current = false;
+      isResizingPanel.current = false;
+      document.body.style.cursor = 'default';
+      document.body.style.userSelect = 'auto';
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
   }, [id]);
+
+  const startResizingSidebar = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizingSidebar.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  const startResizingPanel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizingPanel.current = true;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   const loadChallenge = async (challengeId: string) => {
     try {
@@ -172,7 +217,10 @@ const EditorPage: React.FC = () => {
       {/* Workspace Area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar Tabs Area */}
-        <div className="w-[400px] border-r border-white/[0.05] flex flex-col bg-black shrink-0">
+        <div 
+          className="border-r border-white/[0.05] flex flex-col bg-black shrink-0 relative"
+          style={{ width: `${sidebarWidth}px` }}
+        >
           <div className="flex p-1 bg-white/[0.01] border-b border-white/[0.05]">
             {tabs.map((tab) => (
               <button
@@ -247,11 +295,17 @@ const EditorPage: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Vertical Resizer Divider */}
+          <div 
+            onMouseDown={startResizingSidebar}
+            className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-white/20 transition-colors z-20"
+          />
         </div>
 
         {/* Editor & Panel Area */}
         <div className="flex-1 flex flex-col bg-black">
-          <div className="flex-1 relative border-b border-white/[0.05]">
+          <div className="flex-1 relative">
             <Editor
               height="100%"
               language={challenge.language === 'cpp' ? 'cpp' : 'java'}
@@ -272,11 +326,19 @@ const EditorPage: React.FC = () => {
                 renderLineHighlight: 'all',
               }}
             />
-
           </div>
 
+          {/* Horizontal Resizer Divider */}
+          <div 
+            onMouseDown={startResizingPanel}
+            className="h-1 w-full cursor-row-resize hover:bg-white/20 transition-colors z-20 shrink-0"
+          />
+
           {/* Bottom Diagnostics Panel */}
-          <div className="h-80 flex flex-col bg-black">
+          <div 
+            className="flex flex-col bg-black border-t border-white/[0.05]"
+            style={{ height: `${panelHeight}px` }}
+          >
             <div className="flex border-b border-white/[0.05] px-2 bg-white/[0.01]">
               {[
                 { id: 'testcase' as PanelType, label: 'Schema', icon: Terminal },
