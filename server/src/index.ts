@@ -12,7 +12,7 @@ import authRouter from './routes/auth';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import authService from './services/AuthService';
 import { challengeDb } from './data/storage';
-import { seedChallenges } from './data/seedChallenges';
+
 
 // Load environment variables
 dotenv.config();
@@ -155,21 +155,7 @@ app.listen(PORT, async () => {
   console.log(`🤖 Gemini API: ${process.env.GEMINI_API_KEY ? 'Configured' : 'Not configured (using defaults)'}`);
   console.log(`🔐 Auth: PostgreSQL + JWT enabled`);
   
-  // Seed challenges if database is empty
-  try {
-    const existingChallenges = await challengeDb.getAll();
-    if (existingChallenges.length === 0) {
-      console.log('📚 Seeding challenges to database...');
-      for (const challenge of seedChallenges) {
-        await challengeDb.create(challenge);
-      }
-      console.log(`✅ Seeded ${seedChallenges.length} challenges`);
-    } else {
-      console.log(`✅ Found ${existingChallenges.length} challenges in database`);
-    }
-  } catch (error) {
-    console.error('Error seeding challenges:', error);
-  }
+
   
   // Start session cleanup job (runs every hour)
   setInterval(async () => {
