@@ -1,82 +1,74 @@
 # Dependencies
 node_modules/
-/.pnp
+.pnp
 .pnp.js
 
 # Testing
-/coverage
+coverage/
 
-# Production
-/build
-/dist
+# Production / Build
+dist/
+build/
+.next/
+out/
 
-# Environment variables
+# Environment Variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+*.env
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Firebase
-.firebase/
-firebase-debug.log
-firestore-debug.log
-
-# Build
-*.tsbuildinfo
+logs/
+*.log
 
 # Misc
-.cache/
-imp.txt
-question.txt
-QUICK_SQL_SETUP.sql
-setup-database.ps1
-ANSWER_GUIDE.md
-ANSWER_GUIDE_CONTINUATION.md
+.vercel
+.turbo
+temp/
+tmp/
+*.zip
+*.sql
+seed_challenges.sql
+seedChallenges.js
+seedChallenges.ts
 
-# Documentation files
-Shared-Utilities.md
-SYSTEM_DESIGN.md
-TECHNICAL_GUIDE.md
-Thought-Process.md
-VPS_DEPLOYMENT.md
+# Project Documentation & Internal Guides
 AI-and-External-Services.md
+ANSWER_GUIDE_CONTINUATION.md
+ANSWER_GUIDE.md
 Backend-Tech-Stack.md
+CHALLENGE_TRANSLATION_GUIDE.md
+DATABASE_SCHEMA.md
 Database-Tech-Stack.md
 DevOps-and-Deployment.md
+DEPLOYMENT_ARCHITECTURE.md
 Frontend-Tech-Stack.md
 GOOGLE_OAUTH_DEPLOYMENT.md
-JUDGE0_REPLACEMENT_GUIDE.md
-DATABASE_SCHEMA.md
-IMPLEMENTED_FEATURES.md
-PROJECT_OVERVIEW.md
-
-CHALLENGE_TRANSLATION_GUIDE.md
-DEPLOYMENT_ARCHITECTURE.md
+imp.txt
 IMPLEMENTATION_SUMMARY.md
-QUICK_START.md
-SKILL.md
+IMPLEMENTED_FEATURES.md
+JUDGE0_REPLACEMENT_GUIDE.md
 VPS_MULTILANGUAGE_SETUP.md
-challenges/java/Challenge1.java
-challenges/java/Challenge2.java
-challenges/python/challenge-1.py
-challenges/python/challenge-2.py
-challenges/python/README.md
-client/src/index.css
+VPS_DEPLOYMENT.md
+Thought-Process.md
+TECHNICAL_GUIDE.md
+SYSTEM_DESIGN.md
+SKILL.md
+Shared-Utilities.md
+setup-database.ps1
+QUICK_START.md
+question.txt
+PROJECT_OVERVIEW.md
