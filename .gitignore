@@ -72,3 +72,6 @@ setup-database.ps1
 QUICK_START.md
 question.txt
 PROJECT_OVERVIEW.md
+
+# Agent Internal Skills
+.agents/

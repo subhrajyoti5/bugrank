@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -27,7 +27,7 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
+  keyGenerator: (req: any) => {
     return (req.headers['x-forwarded-for'] as string) || req.ip || 'unknown';
   },
 });
@@ -36,13 +36,15 @@ app.use('/api/', limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [
-    "https://bugrank-client.vercel.app",
-    "https://bugrank.in",
-    "https://www.bugrank.in",
-    "http://localhost:5173",
-    "http://localhost:3000",
-  ],
+  origin: (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean).length > 0
+    ? (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean)
+    : [
+      "https://bugrank-client.vercel.app",
+      "https://bugrank.in",
+      "https://www.bugrank.in",
+      "http://localhost:5173",
+      "http://localhost:3000",
+    ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "x-session-token"],
   credentials: true,
@@ -85,7 +87,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
   console.log(`🐛 Bugrank server running on port ${PORT}`);
-  
+
   // Verify DB connection
   try {
     const count = await challengeDb.getAll();
