@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -12,6 +12,7 @@ import authRouter from './routes/auth';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import authService from './services/AuthService';
 import { challengeDb } from './data/storage';
+import { seedChallenges } from './data/seedChallenges';
 
 
 // Load environment variables
@@ -61,10 +62,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.use(
-helmet(
-{
-    crossOriginResourcePolicy: false,
-  }));
+  helmet(
+    {
+      crossOriginResourcePolicy: false,
+    }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -97,21 +98,7 @@ app.use(passport.initialize());
 // Trust nginx proxy for correct client IP in rate limiter
 app.set('trust proxy', 1);
 
-// Rate limiting - more lenient for general API usage
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 100, // Limit each IP to 100 requests per minute
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  // Skip rate limiting for successful requests to reduce false positives
-  skipSuccessfulRequests: false,
-  // Use X-Forwarded-For header from Nginx
-  keyGenerator: (req: Request) => {
-    return req.ip || 'unknown';
-  },
-});
-app.use('/api/', limiter);
+
 
 // Root route
 app.get('/', (req: Request, res: Response) => {
@@ -154,9 +141,23 @@ app.listen(PORT, async () => {
   console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🤖 Gemini API: ${process.env.GEMINI_API_KEY ? 'Configured' : 'Not configured (using defaults)'}`);
   console.log(`🔐 Auth: PostgreSQL + JWT enabled`);
-  
 
-  
+
+
+  // Auto-seed challenges if database is empty
+  try {
+    const existing = await challengeDb.getAll();
+    if (existing.length === 0) {
+      console.log('📚 Database empty. Seeding initial challenges...');
+      for (const challenge of seedChallenges) {
+        await challengeDb.create(challenge);
+      }
+      console.log(`✅ Seeded ${seedChallenges.length} challenges`);
+    }
+  } catch (error) {
+    console.error('❌ Auto-seeding failed:', error);
+  }
+
   // Start session cleanup job (runs every hour)
   setInterval(async () => {
     try {

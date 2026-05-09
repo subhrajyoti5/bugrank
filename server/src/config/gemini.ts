@@ -11,7 +11,7 @@ const genAI = new GoogleGenerativeAI(apiKey || 'dummy-key');
 
 // Use Gemini 1.5 Flash (free tier)
 export const geminiModel = genAI.getGenerativeModel({ 
-  model: 'gemini-1.5-flash' 
+  model: 'gemini-1.5-flash-latest' 
 });
 
 export default genAI;
