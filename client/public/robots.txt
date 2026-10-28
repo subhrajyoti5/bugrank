@@ -1,0 +1,39 @@
+# robots.txt for https://bugrank.in/
+
+User-agent: *
+Allow: /
+
+# Google & Gemini AI Crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic & Claude Crawlers
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+# OpenAI & ChatGPT Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Common Crawl & Open Web Crawlers
+User-agent: CCBot
+Allow: /
+
+# Sitemap Index
+Sitemap: https://bugrank.in/sitemap.xml
+

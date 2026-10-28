@@ -4,126 +4,213 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    /* BugRank Design Tokens - Light Canvas */
+    --bg-canvas: #FFFFF5;
+    --surface-card: #FFFFFF;
+    --surface-subtle: #F7F7EC;
+    --border-line: rgba(28, 27, 31, 0.08);
+    --border-line-subtle: rgba(28, 27, 31, 0.05);
+    --text-primary: #1C1B1F;
+    --text-secondary: #333333;
+    --text-muted: #6B6A63;
+    --status-green: #2F9E44;
+    --toggle-neutral: #55544F;
+    --btn-primary-bg: #000000;
+    --btn-primary-fg: #FFFFFF;
+    --btn-secondary-border: #1C1B1F;
+
+    /* Typography */
+    --font-serif: "GFS Didot", Georgia, serif;
+    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Radii - Rectangles with refined rounded corners */
+    --radius-btn: 8px;
+    --radius-card: 16px;
+    --radius-card-xl: 24px;
+    --radius-badge: 6px;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-white selection:text-black;
-    min-height: 100vh;
-    background-color: #000000;
-  }
-
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  .dark {
+    /* Luxury Obsidian Companion */
+    --bg-canvas: #0C0C0B;
+    --surface-card: #151514;
+    --surface-subtle: #1C1C1A;
+    --border-line: rgba(255, 255, 255, 0.08);
+    --border-line-subtle: rgba(255, 255, 255, 0.04);
+    --text-primary: #F7F7EE;
+    --text-secondary: #B8B7AD;
+    --text-muted: #8E8D84;
+    --status-green: #34D399;
+    --toggle-neutral: #8E8D84;
+    --btn-primary-bg: #F7F7EE;
+    --btn-primary-fg: #0C0C0B;
+    --btn-secondary-border: rgba(255, 255, 255, 0.22);
   }
 
   * {
-    @apply border-border;
-  }
-}
-
-@layer utilities {
-  .glass {
-    @apply bg-white/[0.02] backdrop-blur-2xl border border-white/[0.05] shadow-2xl;
+    border-color: var(--border-line);
   }
 
-  .glass-morphism {
-    @apply bg-surface backdrop-blur-md border border-white/[0.05] shadow-[0_8px_32px_0_rgba(0,0,0,0.8)];
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    selection-background-color: var(--text-primary);
+    selection-color: var(--bg-canvas);
   }
 
-  .glass-hover {
-    @apply hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-300;
+  ::selection {
+    background: var(--text-primary);
+    color: var(--bg-canvas);
   }
 
-  .text-gradient {
-    @apply bg-gradient-to-br from-white via-white/90 to-white/50 bg-clip-text text-transparent;
+  /* Custom Clean Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 
-  .text-gradient-cyan {
-    @apply bg-gradient-to-r from-accent-cyan via-white to-accent-purple bg-clip-text text-transparent;
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .grid-bg {
-    background-image: 
-      linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
+  ::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.2);
+    border-radius: 4px;
   }
 
-  .radial-glow {
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0%, transparent 70%);
-  }
-
-  .ai-slope-border {
-    position: relative;
-    border: 1px solid transparent;
-    background: linear-gradient(black, black) padding-box,
-                linear-gradient(to right, #1F1F1F, #3F3F3F, #1F1F1F) border-box;
-  }
-
-  .ai-slope-border-hover {
-    @apply hover:border-white/20 transition-all duration-300;
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.35);
   }
 }
 
 @layer components {
-  .btn-premium {
-    @apply relative px-6 py-2.5 rounded-lg font-medium transition-all duration-200 
-    flex items-center justify-center gap-2 overflow-hidden
-    bg-white/[0.03] border border-white/10 text-white/90
-    hover:bg-white/[0.08] hover:border-white/20 hover:text-white
-    active:scale-[0.98];
+  /* Rectangular buttons with refined rounded corners */
+  .btn-primary,
+  .btn-pill-primary {
+    @apply inline-flex items-center justify-center font-medium transition-all duration-200 select-none cursor-pointer;
+    border-radius: var(--radius-btn);
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-fg);
+    padding: 0.72rem 1.6rem;
+    font-size: 0.92rem;
+    letter-spacing: normal;
   }
 
-  .btn-primary-premium {
-    @apply relative px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 
-    flex items-center justify-center gap-2 overflow-hidden
-    bg-white text-black hover:bg-white/90
-    active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.15)];
+  .btn-primary:hover,
+  .btn-pill-primary:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
   }
 
-  .card-premium {
-    @apply bg-surface border border-border rounded-xl p-6 transition-all duration-300
-    hover:border-white/10 hover:shadow-[0_0_30px_rgba(0,0,0,0.5)];
+  .btn-primary:active,
+  .btn-pill-primary:active {
+    transform: translateY(0);
+    opacity: 0.95;
   }
 
-  .input-premium {
-    @apply w-full px-4 py-2.5 bg-white/[0.02] border border-border rounded-lg
-    focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/30
-    text-white placeholder-muted transition-all duration-200;
+  .btn-secondary,
+  .btn-pill-secondary {
+    @apply inline-flex items-center justify-center font-medium transition-all duration-200 select-none cursor-pointer bg-transparent;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--btn-secondary-border);
+    color: var(--text-primary);
+    padding: 0.7rem 1.5rem;
+    font-size: 0.92rem;
   }
 
-  .badge-premium {
-    @apply px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wider
-    bg-white/5 border border-white/10 text-white/60;
+  .btn-secondary:hover,
+  .btn-pill-secondary:hover {
+    background-color: rgba(128, 128, 128, 0.06);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary:active,
+  .btn-pill-secondary:active {
+    transform: translateY(0);
+  }
+
+  /* Card frames */
+  .card-frame {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-card);
+    transition: all 0.2s ease;
+  }
+
+  .card-frame-xl {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius-card-xl);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .card-frame-xl {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Eyebrow Label */
+  .eyebrow-text {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Headline scale */
+  .headline-hero {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 7vw, 92px);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    color: var(--text-primary);
+  }
+
+  .headline-section {
+    font-family: var(--font-serif);
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .headline-feature {
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+  }
+
+  /* Rectangular status badge */
+  .status-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 text-[0.78rem] font-medium rounded-md;
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border-line);
+    color: var(--text-secondary);
+  }
+
+  .status-pill {
+    @apply inline-flex items-center gap-2 px-3 py-1 text-[0.78rem] font-medium rounded-md;
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border-line);
+    color: var(--text-secondary);
   }
 }
-
+
+/* Subtle decorative grid */
+.grid-subtle-pattern {
+  background-image: 
+    linear-gradient(to right, var(--border-line-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-line-subtle) 1px, transparent 1px);
+  background-size: 48px 48px;
+}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { leaderboardService } from '@/services/leaderboardService';
 import { LeaderboardEntry } from '@bugpulse/shared';
-import { Trophy, Medal, Award, Crown, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -41,53 +40,56 @@ const LeaderboardPage: React.FC = () => {
   const TopPodium = ({ entry, rank }: { entry: LeaderboardEntry; rank: number }) => {
     if (!entry) return null;
 
-    let height = 'h-32';
-    let color = 'bg-white/[0.02] border-white/5';
-    let ringColor = 'ring-white/10';
-    let icon = null;
+    let height = 'h-36';
+    let podiumBg = 'bg-surface-card border-border-line';
     let order = 'order-2';
+    let rankBadge = 'bg-surface-subtle text-text-primary border-border-line';
 
     if (rank === 1) {
-      height = 'h-40';
-      color = 'bg-white/5 border-white/20';
-      ringColor = 'ring-white/40';
-      icon = <Crown className="h-6 w-6 text-white absolute -top-8 left-1/2 -translate-x-1/2" />;
-      order = 'order-2 scale-110 z-10';
+      height = 'h-44';
+      podiumBg = 'bg-surface-card border-text-primary/30 shadow-card-hover';
+      order = 'order-2 z-10';
+      rankBadge = 'bg-text-primary text-canvas border-transparent';
     } else if (rank === 2) {
-      height = 'h-32';
-      color = 'bg-white/[0.03] border-white/10';
-      ringColor = 'ring-white/20';
-      icon = <Medal className="h-5 w-5 text-white/60 absolute -top-7 left-1/2 -translate-x-1/2" />;
+      height = 'h-36';
+      podiumBg = 'bg-surface-card border-border-line';
       order = 'order-1';
     } else if (rank === 3) {
-      height = 'h-28';
-      color = 'bg-white/[0.01] border-white/[0.05]';
-      ringColor = 'ring-white/10';
-      icon = <Award className="h-5 w-5 text-white/40 absolute -top-7 left-1/2 -translate-x-1/2" />;
+      height = 'h-32';
+      podiumBg = 'bg-surface-card border-border-line';
       order = 'order-3';
     }
 
     return (
-      <div className={`relative flex flex-col items-center justify-end ${order} mb-4`}>
-        <div className="relative mb-6">
-          {icon}
-          <img
-            src={entry.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.displayName)}
-            alt={entry.displayName}
-            className={`h-20 w-20 rounded-full ring-2 ${ringColor} shadow-2xl transition-all duration-500`}
-          />
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-            RANK {rank}
+      <div className={`relative flex flex-col items-center justify-end ${order} mb-2 w-full max-w-[200px]`}>
+        <div className="relative mb-5 flex flex-col items-center">
+          <div className="relative">
+            <img
+              src={entry.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.displayName)}&background=1C1B1F&color=FFFFF5`}
+              alt={entry.displayName}
+              className="h-18 w-18 rounded-lg object-cover border border-border-line shadow-sm"
+            />
+            <div className={`absolute -bottom-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold font-mono px-2 py-0.5 rounded border shadow-sm ${rankBadge}`}>
+              #{rank}
+            </div>
+          </div>
+
+          <div className="mt-4 text-center">
+            <p className="font-medium text-text-primary text-sm truncate max-w-[150px]">
+              {entry.displayName}
+            </p>
+            <p className="text-[11px] text-text-muted font-mono">
+              {entry.successfulSubmissions} SOLVED
+            </p>
           </div>
         </div>
 
-        <div className={`w-40 ${height} ${color} backdrop-blur-md rounded-t-2xl border-t border-x flex flex-col items-center justify-center p-4 transition-all duration-500`}>
-          <p className="font-bold text-white text-sm truncate w-full text-center tracking-tight">{entry.displayName}</p>
-          <div className="mt-2 flex items-center gap-1.5">
-            <span className="text-white font-bold text-lg tracking-tighter">{entry.totalScore}</span>
-            <span className="text-white/20 text-[9px] font-bold uppercase tracking-widest mt-1">XP</span>
-          </div>
-          <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest mt-1">{entry.successfulSubmissions} SOLVED</p>
+        {/* Podium Block */}
+        <div className={`w-full ${height} ${podiumBg} rounded-t-lg border-t border-x flex flex-col items-center justify-center p-4 transition-all duration-200`}>
+          <span className="font-serif text-3xl font-normal text-text-primary leading-none">
+            {entry.totalScore}
+          </span>
+          <span className="eyebrow-text text-[9px] mt-1">XP EARNED</span>
         </div>
       </div>
     );
@@ -95,115 +97,133 @@ const LeaderboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-64px)] bg-black flex items-center justify-center">
-        <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin" />
+      <div className="min-h-[calc(100vh-80px)] bg-canvas flex flex-col items-center justify-center">
+        <div className="w-8 h-8 rounded-md border-2 border-border-line border-t-text-primary animate-spin mb-4" />
+        <span className="font-mono text-xs text-text-muted tracking-widest uppercase">
+          Compiling Global Leaderboard...
+        </span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans relative overflow-hidden">
-      {/* Background elements */}
-      <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 radial-glow pointer-events-none" />
-      
-      {/* Animated Light Beams - Match LandingPage */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }} />
-
-      <div className="relative z-10 pt-8 pb-24">
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-
-        {/* Header */}
-        <div className="mb-20 text-center">
-          <div className="flex items-center justify-center gap-2 text-white/40 mb-3">
-             <Trophy className="w-4 h-4" />
-             <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Global Ranking Protocol</span>
+    <div className="min-h-screen bg-canvas text-text-primary selection:bg-charcoal selection:text-offwhite dark:selection:bg-offwhite dark:selection:text-charcoal py-10 px-6 sm:px-10 lg:px-12">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header - Centered */}
+        <div className="text-center mb-14 flex flex-col items-center">
+          <div className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-md border border-border-line bg-surface-subtle mb-3">
+            <span className="eyebrow-text text-[10px]">ENGINEERING RANKINGS</span>
           </div>
-          <h1 className="text-5xl font-bold text-white tracking-tighter">Leaderboard</h1>
+          <h1 className="headline-section mb-2 text-center">
+            Global Standings
+          </h1>
+          <p className="text-[1rem] text-text-secondary max-w-lg mx-auto text-center">
+            Rankings calibrated by surgical patch economy, incident resolution speed, and code invariance.
+          </p>
         </div>
 
-        {/* Podium */}
+        {/* Podium for Top 3 - Centered */}
         {entries.length > 0 && (
-          <div className="flex justify-center items-end gap-2 mb-20 min-h-[300px]">
+          <div className="flex justify-center items-end gap-3 sm:gap-6 mb-14 px-4 pt-4 border-b border-border-line">
             {entries.length >= 2 && <TopPodium entry={entries[1]} rank={2} />}
             {entries.length >= 1 && <TopPodium entry={entries[0]} rank={1} />}
             {entries.length >= 3 && <TopPodium entry={entries[2]} rank={3} />}
           </div>
         )}
 
-        {/* User Rank Card */}
-        {userRank > 0 && userRank > 20 && (
-          <div className="p-8 rounded-2xl border border-white/10 bg-white/[0.02] mb-12 flex flex-col md:flex-row items-center justify-between gap-8 backdrop-blur-xl">
-            <div className="flex items-center gap-6">
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.3em] mb-2">Internal Standing</p>
-                <div className="flex items-baseline gap-4">
-                  <span className="text-4xl font-bold text-white tracking-tighter">#{userRank}</span>
-                  <span className="text-sm text-white/40 font-medium">Continue deployment to optimize ranking.</span>
-                </div>
+        {/* User Rank Card - Centered */}
+        {userRank > 0 && (
+          <div className="card-frame p-6 sm:p-7 bg-surface-card mb-10 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm text-center sm:text-left">
+            <div className="flex flex-col items-center sm:items-start">
+              <span className="eyebrow-text block mb-1 text-[10px]">YOUR CURRENT STANDING</span>
+              <div className="flex items-baseline gap-3">
+                <span className="font-serif text-3xl sm:text-4xl text-text-primary">
+                  #{userRank}
+                </span>
+                <span className="text-sm text-text-secondary">
+                  {userRank <= 10 ? 'Tier 1 Operative' : 'Keep resolving incidents to ascend rankings.'}
+                </span>
               </div>
             </div>
-            <button onClick={handleSolveMore} className="btn-premium px-8 py-3 text-[10px] font-bold uppercase tracking-widest shrink-0">
-              New Mission
+
+            <button
+              onClick={handleSolveMore}
+              className="btn-primary text-xs py-2.5 px-6 shrink-0 cursor-pointer rounded-lg"
+            >
+              <span>Solve Next Incident</span>
+              <span className="ml-2 font-mono text-xs">-&gt;</span>
             </button>
           </div>
         )}
 
-        {/* Leaderboard Table/List */}
-        <div className="space-y-3">
+        {/* Leaderboard Table */}
+        <div className="card-frame bg-surface-card overflow-hidden">
+          <div className="p-4 border-b border-border-line flex items-center justify-between bg-surface-subtle">
+            <span className="eyebrow-text text-[10px]">LEADERBOARD DIRECTORY</span>
+            <span className="font-mono text-xs text-text-muted">TOP 20 OPERATIVES</span>
+          </div>
+
           {entries.length === 0 ? (
-            <div className="text-center py-24 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
-              <Trophy className="h-12 w-12 text-white/10 mx-auto mb-6" />
-              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">No operative data</h3>
-              <p className="text-white/30 text-sm font-medium">Be the first to establish a ranking presence.</p>
+            <div className="py-16 text-center">
+              <h3 className="font-serif text-lg text-text-primary mb-1">No Operative Data Recorded</h3>
+              <p className="text-xs text-text-secondary">Be the first to record a solution.</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {/* List Header */}
-              <div className="grid grid-cols-12 gap-4 px-8 py-4 text-[10px] font-bold text-white/20 uppercase tracking-[0.3em] border-b border-white/[0.05]">
-                <div className="col-span-1">Rank</div>
-                <div className="col-span-1"></div>
-                <div className="col-span-6">Operative</div>
-                <div className="col-span-2 text-right">XP</div>
-                <div className="col-span-2 text-right">Resolved</div>
+            <div className="divide-y divide-border-line">
+              {/* Header row */}
+              <div className="grid grid-cols-12 gap-4 px-6 py-2.5 text-[10px] font-semibold text-text-muted uppercase tracking-wider bg-surface-subtle/50 font-mono">
+                <div className="col-span-2 sm:col-span-1">Rank</div>
+                <div className="col-span-6 sm:col-span-7">User</div>
+                <div className="col-span-2 text-right">Solved</div>
+                <div className="col-span-2 text-right">Score</div>
               </div>
 
-              {entries.slice(3).map((entry, index) => {
-                const rank = index + 4;
+              {entries.map((entry, index) => {
+                const rank = index + 1;
                 const isMe = entry.userId === user?.id;
+
                 return (
                   <div
                     key={entry.userId}
-                    className={`grid grid-cols-12 gap-4 px-8 py-4 items-center rounded-xl border transition-all duration-300 ${isMe
-                      ? 'bg-white/[0.05] border-white/20'
-                      : 'bg-[#050505] border-white/[0.05] hover:border-white/10 hover:bg-white/[0.02]'
-                      }`}
+                    className={`grid grid-cols-12 gap-4 px-6 py-3.5 items-center transition-colors ${
+                      isMe
+                        ? 'bg-amber-500/5 font-medium'
+                        : 'hover:bg-surface-subtle'
+                    }`}
                   >
-                    <div className="col-span-1 font-bold text-white/20 text-xs tracking-widest">
-                       {rank.toString().padStart(2, '0')}
+                    {/* Rank */}
+                    <div className="col-span-2 sm:col-span-1 font-mono text-xs font-semibold text-text-muted">
+                      #{rank.toString().padStart(2, '0')}
                     </div>
-                    <div className="col-span-1">
+
+                    {/* Operative */}
+                    <div className="col-span-6 sm:col-span-7 flex items-center gap-3 min-w-0">
                       <img
-                        src={entry.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.displayName)}
+                        src={entry.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.displayName)}&background=1C1B1F&color=FFFFF5`}
                         alt={entry.displayName}
-                        className="h-10 w-10 rounded-full border border-white/10"
+                        className="h-7 w-7 rounded-md border border-border-line object-cover shrink-0"
                       />
+                      <div className="truncate flex items-center gap-2">
+                        <span className={`text-sm truncate ${isMe ? 'font-semibold text-text-primary' : 'text-text-primary'}`}>
+                          {entry.displayName}
+                        </span>
+                        {isMe && (
+                          <span className="text-[9px] bg-text-primary text-canvas px-1.5 py-0.5 rounded font-bold uppercase tracking-wider font-mono">
+                            YOU
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="col-span-6 flex items-center gap-3">
-                      <span className={`font-bold text-sm tracking-tight ${isMe ? 'text-white' : 'text-white/80'}`}>
-                        {entry.displayName}
-                      </span>
-                      {isMe && <span className="text-[9px] bg-white text-black px-2 py-0.5 rounded font-bold uppercase tracking-widest">Self</span>}
+
+                    {/* Solved */}
+                    <div className="col-span-2 text-right font-mono text-xs text-text-secondary">
+                      {entry.successfulSubmissions}
                     </div>
-                    <div className="col-span-2 text-right">
-                      <span className="font-bold text-white tracking-tighter text-lg">{entry.totalScore}</span>
-                    </div>
-                    <div className="col-span-2 text-right">
-                      <span className="text-white/20 text-xs font-bold">{entry.successfulSubmissions}</span>
+
+                    {/* XP */}
+                    <div className="col-span-2 text-right font-serif text-lg text-text-primary leading-none">
+                      {entry.totalScore}
                     </div>
                   </div>
                 );
@@ -211,11 +231,10 @@ const LeaderboardPage: React.FC = () => {
             </div>
           )}
         </div>
+
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default LeaderboardPage;
-

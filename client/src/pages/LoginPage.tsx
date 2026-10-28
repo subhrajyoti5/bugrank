@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Hash, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const LoginPage: React.FC = () => {
   const { user, loading, login, register } = useAuth();
-  const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,8 +13,11 @@ const LoginPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="h-12 w-12 rounded-full border border-white/10 border-t-white animate-spin" />
+      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center">
+        <div className="w-8 h-8 rounded-md border-2 border-border-line border-t-text-primary animate-spin mb-4" />
+        <span className="font-mono text-xs text-text-muted tracking-widest uppercase">
+          Verifying Identity...
+        </span>
       </div>
     );
   }
@@ -42,140 +44,171 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 grid-bg opacity-40" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/[0.03] rounded-full blur-[128px] animate-pulse-slow" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/[0.01] rounded-full blur-[128px] animate-pulse-slow" />
+    <div className="min-h-screen bg-canvas text-text-primary selection:bg-charcoal selection:text-offwhite dark:selection:bg-offwhite dark:selection:text-charcoal flex flex-col justify-between p-6 relative overflow-hidden transition-colors duration-200">
+      
+      {/* Decorative Grid */}
+      <div className="absolute inset-0 grid-subtle-pattern opacity-40 pointer-events-none" />
 
+      {/* Top Bar */}
+      <div className="relative z-10 max-w-5xl mx-auto w-full flex items-center justify-between py-2">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-text-secondary hover:text-text-primary transition-colors"
+        >
+          <span>&lt;-</span>
+          <span>Return to Portal</span>
+        </Link>
 
-      <div className="max-w-md w-full relative z-10 animate-slide-up">
-        {/* Branding */}
-        <div className="text-center mb-10 group cursor-pointer" onClick={() => navigate('/')}>
-          <div className="inline-flex p-3 bg-white/5 rounded-xl border border-white/10 mb-6 group-hover:border-white/20 transition-all duration-300">
-             <Hash className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold text-white tracking-tighter">Bug<span className="text-white/40">Rank</span></h1>
-          <p className="text-muted text-sm font-medium mt-2 tracking-wide">Elevate your debugging game</p>
+        <ThemeToggle showLabel />
+      </div>
+
+      {/* Center Auth Card */}
+      <div className="max-w-md w-full mx-auto my-auto relative z-10 py-8">
+        
+        {/* Brand Display */}
+        <div className="text-center mb-6">
+          <Link to="/" className="inline-flex items-center gap-2.5 mb-3 select-none">
+            <div className="w-8 h-8 rounded-lg border border-border-line flex items-center justify-center bg-surface-card">
+              <span className="font-serif text-base font-normal text-text-primary">β</span>
+            </div>
+            <span className="font-serif text-2xl tracking-[-0.03em] text-text-primary">
+              Bug<span className="italic font-normal">Rank</span>
+            </span>
+          </Link>
+          <p className="eyebrow-text text-[10px]">AUTHENTICATION GATEWAY</p>
         </div>
 
-        {/* Form Card */}
-        <div className="card-premium p-8 border border-white/5 bg-[#050505]/80 backdrop-blur-xl">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
-              {isRegister ? 'Join the Hunt' : 'Welcome Back'}
-            </h2>
-            <p className="text-muted text-sm">
-              {isRegister 
-                ? 'Create an account to start solving real-world bugs.' 
-                : 'Sign in to pick up where you left off.'}
+        {/* Card Box - Rectangular with rounded corners */}
+        <div className="card-frame-xl p-8 sm:p-9 bg-surface-card border border-border-line">
+          
+          <div className="mb-6 text-center sm:text-left">
+            <h1 className="font-serif text-2xl sm:text-3xl text-text-primary mb-1.5">
+              {isRegister ? 'Create Account' : 'Sign In'}
+            </h1>
+            <p className="text-xs text-text-secondary">
+              {isRegister
+                ? 'Register your profile to begin diagnostic benchmarking.'
+                : 'Enter your credentials to access missions.'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] ml-1">Display Name</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="input-premium pl-12"
-                    placeholder="Bug Hunter #1"
-                    required={isRegister}
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block font-mono">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-surface-subtle border border-border-line rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-text-primary transition-colors font-sans"
+                  placeholder="hunter"
+                  required={isRegister}
+                />
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] ml-1">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-premium pl-12"
-                  placeholder="hunter@bugrank.com"
-                  required
-                />
-              </div>
+            <div className="space-y-1">
+              <label className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block font-mono">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-surface-subtle border border-border-line rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-text-primary transition-colors font-sans"
+                placeholder="engineer@bugrank.in"
+                required
+              />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center ml-1">
-                <label className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Password</label>
-                {!isRegister && <button type="button" className="text-[10px] text-white/40 hover:text-white transition-colors uppercase tracking-widest font-bold">Forgot?</button>}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-semibold text-text-muted uppercase tracking-wider font-mono">
+                  Password
+                </label>
+                {!isRegister && (
+                  <span className="text-[11px] text-text-muted hover:text-text-primary transition-colors cursor-pointer font-mono">
+                    Forgot?
+                  </span>
+                )}
               </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-premium pl-12"
-                  placeholder="••••••••"
-                  minLength={6}
-                  required
-                />
-              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-surface-subtle border border-border-line rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-text-primary transition-colors font-sans"
+                placeholder="••••••••••••"
+                minLength={6}
+                required
+              />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-primary-premium h-12 text-sm group mt-4"
+              className="w-full btn-primary py-2.5 text-sm mt-2 rounded-lg cursor-pointer"
             >
-              {isSubmitting ? 'Initializing...' : (isRegister ? 'Initialize Account' : 'Authenticate')}
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <span>{isSubmitting ? 'Authenticating...' : (isRegister ? 'Register Account' : 'Sign In')}</span>
+              <span className="ml-2 font-mono text-xs">-&gt;</span>
             </button>
           </form>
 
-          <div className="mt-8">
-            <div className="relative flex items-center justify-center mb-6">
-              <div className="absolute w-full h-px bg-white/5"></div>
-              <span className="relative px-4 bg-[#050505] text-[10px] font-bold text-muted uppercase tracking-[0.2em]">External Access</span>
-            </div>
-
+          {/* Social Auth */}
+          <div className="mt-6 pt-5 border-t border-border-line">
             <a
-              href={`${import.meta.env.VITE_API_URL}/api/auth/google`}
-              className="w-full btn-premium py-3 text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3"
+              href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/google`}
+              className="w-full btn-secondary py-2 text-xs flex items-center justify-center gap-2.5 rounded-lg"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Google Identity
+              <span>Continue with Google</span>
             </a>
           </div>
 
-          <div className="mt-8 text-center border-t border-white/5 pt-6">
-            <button
-              onClick={() => setIsRegister(!isRegister)}
-              className="text-[10px] font-bold text-white/60 hover:text-white transition-colors uppercase tracking-[0.2em]"
-            >
-              {isRegister 
-                ? 'Already have credentials? Sign In' 
-                : "New Hunter? Register Here"}
-            </button>
+          {/* Toggle Register/Login */}
+          <div className="mt-5 text-center text-xs text-text-secondary">
+            {isRegister ? (
+              <p>
+                Already registered?{' '}
+                <button
+                  type="button"
+                  onClick={() => setIsRegister(false)}
+                  className="text-text-primary font-semibold hover:underline cursor-pointer"
+                >
+                  Sign in
+                </button>
+              </p>
+            ) : (
+              <p>
+                Need an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => setIsRegister(true)}
+                  className="text-text-primary font-semibold hover:underline cursor-pointer"
+                >
+                  Create one
+                </button>
+              </p>
+            )}
           </div>
+
         </div>
 
-        {/* Trust Badge */}
-        <div className="mt-8 flex items-center justify-center gap-2 text-muted">
-           <ShieldCheck className="w-3.5 h-3.5" />
-           <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Encrypted Connection</span>
-        </div>
       </div>
-    </div>
 
+      {/* Footer copyright */}
+      <div className="text-center text-[11px] text-text-muted py-2 relative z-10 font-mono">
+        PROTECTED BY BUGRANK SECURITY PROTOCOLS / V2.4
+      </div>
+
+    </div>
   );
 };
 
 export default LoginPage;
-

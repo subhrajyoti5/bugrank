@@ -4,13 +4,161 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/bug-icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Bugrank - AI-powered debugging challenge platform" />
+    
+    <!-- Primary Meta Tags -->
+    <title>BugRank - Practice the Art of Debugging | Real-World Engineering Challenges</title>
+    <meta name="title" content="BugRank - Practice the Art of Debugging | Real-World Engineering Challenges" />
+    <meta name="description" content="BugRank is the competitive debugging platform for software engineers. Solve real-world production incidents, conquer concurrency races, fix memory leaks, and master architectural invariants." />
+    <meta name="keywords" content="debugging, competitive programming, software engineering, c++, java, rust, memory leaks, race conditions, code challenges, bug hunting, production incidents" />
+    <meta name="author" content="BugRank" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#FFFFF5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0C0C0B" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href="https://bugrank.in/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bugrank.in/" />
+    <meta property="og:site_name" content="BugRank" />
+    <meta property="og:title" content="BugRank - Practice the Art of Debugging" />
+    <meta property="og:description" content="Production-grade debugging challenges for software engineers. Master memory invariants, race conditions, and surgical code patches." />
+    <meta property="og:image" content="https://bugrank.in/og.png" />
+    <meta property="og:image:secure_url" content="https://bugrank.in/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="BugRank - Engineering Debugging Challenges" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:domain" content="bugrank.in" />
+    <meta name="twitter:url" content="https://bugrank.in/" />
+    <meta name="twitter:title" content="BugRank - Practice the Art of Debugging" />
+    <meta name="twitter:description" content="Production-grade debugging challenges for software engineers. Master memory invariants, race conditions, and surgical code patches." />
+    <meta name="twitter:image" content="https://bugrank.in/og.png" />
+    <meta name="twitter:image:alt" content="BugRank - Engineering Debugging Challenges" />
+
+    <!-- JSON-LD Structured Data: WebApplication -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "BugRank",
+        "url": "https://bugrank.in/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All",
+        "description": "Competitive debugging platform for software engineers to diagnose production incidents, race conditions, and memory leaks.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+
+    <!-- JSON-LD Structured Data: FAQPage for Google, Gemini, Claude, ChatGPT Search -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does BugRank fundamentally differ from conventional competitive programming platforms?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Traditional platforms ask you to implement an algorithm from a blank slate to pass synthetic test vectors. BugRank immerses you in real production incidents: existing codebases with concurrency races, off-by-one pointer corruptions, memory leaks, and distributed split-brains. You must diagnose root causes using call stacks, telemetry, and minimal-diff surgery."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are the sandboxed execution environments secured and measured?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Every submission executes inside a micro-containerized runtime with deterministic CPU cycles, hard memory limits, and trace instrumentation. We measure execution latency, heap fragmentation, and source diff invariants to evaluate patch precision."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What criteria govern the scoring formula?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Submissions are scored on three orthogonal pillars: (1) Correctness across adversarial edge cases, (2) Patch conciseness (fewer lines modified yields a higher precision rating), and (3) Memory and CPU efficiency deltas between original and patched execution."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which languages and hardware runtimes are currently supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "We currently support C++20 (GCC/Clang with AddressSanitizer and ThreadSanitizer enabled), Java 21 LTS with JVM heap diagnostics, Rust 1.76+, and Go 1.22. Every runtime includes full symbol demangling and stack unwinding."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I track my global standing and share verified credentials?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Every verified patch contributes to your global Elo rank on the public leaderboard. You can showcase verified surgical badges, diagnostic precision rates, and specialized domain competencies on your engineering portfolio."
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>Bugrank - Debug. Compete. Win.</title>
+    <link href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Anti-FOUC Theme Script -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          var isDark = saved ? (saved === 'dark') : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body>
+  <body class="bg-canvas text-primary antialiased transition-colors duration-300">
+    <!-- Static Crawlable Semantic Content for Search Engines & AI Crawlers (Gemini, Claude, ChatGPT, Googlebot) -->
+    <noscript>
+      <header>
+        <h1>BugRank - Practice the Art of Debugging</h1>
+        <p>Production-grade debugging challenges for software engineers.</p>
+        <nav>
+          <a href="/problems">Missions</a> |
+          <a href="/leaderboard">Leaderboard</a> |
+          <a href="/login">Sign In</a>
+        </nav>
+      </header>
+      <main>
+        <section>
+          <h2>Turn broken code into pure architecture</h2>
+          <p>BugRank is the premier proving ground for software engineers. Solve production-grade incidents, conquer concurrency races, fix memory leaks, and master architectural invariants.</p>
+        </section>
+        <section>
+          <h2>Core Capabilities</h2>
+          <ul>
+            <li><strong>Deterministic Micro-Runtimes:</strong> Containerized sandbox executions with zero-latency feedback.</li>
+            <li><strong>Architectural Flaws:</strong> Debug race conditions, lock-free phenomena, and memory fragmentation.</li>
+            <li><strong>Surgical Diff Scoring:</strong> Evaluate patches by minimal line changes and semantic precision.</li>
+            <li><strong>Global Engineering Standings:</strong> Mathematical Elo rating system calibrated for software engineers.</li>
+            <li><strong>Automated Telemetry:</strong> Invariant call stacks, flamegraphs, and memory allocation timelines.</li>
+          </ul>
+        </section>
+      </main>
+      <footer>
+        <p>&copy; BugRank. All rights reserved. Canonical domain: https://bugrank.in/</p>
+      </footer>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

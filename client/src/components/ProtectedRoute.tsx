@@ -11,8 +11,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-indigo"></div>
+      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center">
+        <div className="w-10 h-10 rounded-full border-2 border-border-line border-t-text-primary animate-spin mb-4" />
+        <span className="font-mono text-xs text-text-muted tracking-widest uppercase">
+          Authenticating Operative...
+        </span>
       </div>
     );
   }

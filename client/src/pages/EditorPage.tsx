@@ -5,9 +5,10 @@ import { diffLines } from 'diff';
 import { challengeService } from '@/services/challengeService';
 import { submissionService } from '@/services/submissionService';
 import { Challenge, RunResult, SubmitResult } from '@bugpulse/shared';
-import { Play, Send, ArrowLeft, Clock, AlertCircle, CheckCircle, FileText, BookOpen, Users, List, Terminal, Sparkles, ChevronRight, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 type TabType = 'description' | 'editorial' | 'solutions' | 'submissions';
 type PanelType = 'testcase' | 'result';
@@ -16,6 +17,8 @@ const EditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const { isDark } = useTheme();
+
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [code, setCode] = useState('');
   const [originalCode, setOriginalCode] = useState('');
@@ -30,8 +33,8 @@ const EditorPage: React.FC = () => {
   const [activePanel, setActivePanel] = useState<PanelType>('testcase');
 
   // Resizable Panel States
-  const [sidebarWidth, setSidebarWidth] = useState(400);
-  const [panelHeight, setPanelHeight] = useState(320);
+  const [sidebarWidth, setSidebarWidth] = useState(420);
+  const [panelHeight, setPanelHeight] = useState(300);
   const isResizingSidebar = useRef(false);
   const isResizingPanel = useRef(false);
 
@@ -42,11 +45,11 @@ const EditorPage: React.FC = () => {
 
     const handleMouseMove = (e: MouseEvent) => {
       if (isResizingSidebar.current) {
-        const newWidth = Math.max(300, Math.min(600, e.clientX));
+        const newWidth = Math.max(300, Math.min(650, e.clientX));
         setSidebarWidth(newWidth);
       }
       if (isResizingPanel.current) {
-        const newHeight = Math.max(150, Math.min(window.innerHeight - 200, window.innerHeight - e.clientY - 16));
+        const newHeight = Math.max(160, Math.min(window.innerHeight - 200, window.innerHeight - e.clientY - 16));
         setPanelHeight(newHeight);
       }
     };
@@ -116,7 +119,7 @@ const EditorPage: React.FC = () => {
     try {
       const result = await submissionService.run(challenge.id, code);
       setRunResult(result);
-      toast.success('Analysis complete');
+      toast.success('Diagnostics completed');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Execution failed');
     } finally {
@@ -141,9 +144,9 @@ const EditorPage: React.FC = () => {
 
       if (result.submission.isCorrect && result.score) {
         await refreshUser();
-        toast.success(`Correct fix! +${result.score} XP`);
+        toast.success(`Correct surgical fix: +${result.score} XP`);
       } else {
-        toast.error('Validation failed.');
+        toast.error('Verification failed. Diagnostic invariants not satisfied.');
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Submission failed');
@@ -152,19 +155,26 @@ const EditorPage: React.FC = () => {
     }
   };
 
-  const getDifficultyStyles = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return 'text-white/40 border-white/5';
-      case 'medium': return 'text-white/60 border-white/10';
-      case 'hard': return 'text-white border-white/20';
-      default: return 'text-white/30 border-white/5';
+  const getDifficultyBadge = (difficulty: string) => {
+    switch (difficulty.toLowerCase()) {
+      case 'easy':
+        return 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20';
+      case 'medium':
+        return 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20';
+      case 'hard':
+        return 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20';
+      default:
+        return 'bg-surface-subtle text-text-muted border-border-line';
     }
   };
 
   if (loading) {
     return (
-      <div className="h-screen bg-black flex items-center justify-center">
-        <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin" />
+      <div className="h-screen bg-canvas flex flex-col items-center justify-center">
+        <div className="w-8 h-8 rounded-md border-2 border-border-line border-t-text-primary animate-spin mb-4" />
+        <span className="font-mono text-xs text-text-muted tracking-widest uppercase">
+          Initializing Sandbox Environment...
+        </span>
       </div>
     );
   }
@@ -175,201 +185,227 @@ const EditorPage: React.FC = () => {
   const timeTakenSec = Math.floor((Date.now() - startTimeRef.current) / 1000);
 
   const tabs = [
-    { id: 'description' as TabType, label: 'Docs', icon: FileText },
-    { id: 'editorial' as TabType, label: 'Intel', icon: BookOpen },
-    { id: 'solutions' as TabType, label: 'Peers', icon: Users },
-    { id: 'submissions' as TabType, label: 'Logs', icon: List },
+    { id: 'description' as TabType, label: 'Briefing' },
+    { id: 'editorial' as TabType, label: 'Analysis' },
+    { id: 'solutions' as TabType, label: 'Submissions' },
+    { id: 'submissions' as TabType, label: 'Logs' },
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-black text-white overflow-hidden font-sans">
-      {/* Top Header */}
-      <div className="h-14 border-b border-white/[0.05] flex items-center px-6 bg-black shrink-0 relative z-10">
-        <button
-          onClick={() => navigate('/problems')}
-          className="flex items-center gap-2 text-white/40 hover:text-white transition-all group"
-        >
-          <div className="p-1.5 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
-            <ArrowLeft className="h-3.5 w-3.5" />
+    <div className="h-screen flex flex-col bg-canvas text-text-primary overflow-hidden font-sans select-none transition-colors duration-200">
+      
+      {/* ─────────────────────────────────────────────────────────────
+          TOP WORKSPACE HEADER
+          ───────────────────────────────────────────────────────────── */}
+      <div className="h-14 border-b border-border-line flex items-center justify-between px-6 bg-surface-card shrink-0 relative z-20">
+        
+        {/* Left: Exit & Title */}
+        <div className="flex items-center gap-4 min-w-0">
+          <button
+            onClick={() => navigate('/problems')}
+            className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-xs font-mono font-medium cursor-pointer"
+          >
+            <div className="px-2 py-1 rounded-md border border-border-line bg-surface-subtle hover:border-text-primary transition-colors">
+              &lt;-
+            </div>
+            <span className="hidden sm:inline uppercase tracking-wider text-[11px]">Missions</span>
+          </button>
+          
+          <div className="h-4 w-px bg-border-line" />
+          
+          <div className="flex items-center gap-2.5 truncate">
+            <h1 className="text-sm font-medium text-text-primary truncate">
+              {challenge.title}
+            </h1>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border shrink-0 ${getDifficultyBadge(challenge.difficulty)}`}>
+              {challenge.difficulty}
+            </span>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Exit</span>
-        </button>
-        
-        <div className="h-4 w-px bg-white/10 mx-6" />
-        
-        <div className="flex items-center gap-3">
-          <h1 className="text-sm font-bold text-white tracking-tight">{challenge.title}</h1>
-          <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest border ${getDifficultyStyles(challenge.difficulty)}`}>
-            {challenge.difficulty}
-          </span>
         </div>
 
-        <div className="ml-auto flex items-center gap-6">
-           <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.02] rounded-full border border-white/[0.05]">
-              <Clock className="w-3 h-3 text-white/40" />
-              <span className="text-[10px] font-mono font-bold text-white/60">
-                {Math.floor(timeTakenSec / 60)}:{(timeTakenSec % 60).toString().padStart(2, '0')}
-              </span>
-           </div>
+        {/* Right: Timer & Theme Toggle */}
+        <div className="flex items-center gap-3">
+          <div className="px-3 py-1 bg-surface-subtle rounded-md border border-border-line text-xs font-mono font-medium text-text-secondary">
+            <span>
+              {Math.floor(timeTakenSec / 60).toString().padStart(2, '0')}:{(timeTakenSec % 60).toString().padStart(2, '0')}
+            </span>
+          </div>
+
+          <ThemeToggle />
         </div>
       </div>
 
-      {/* Workspace Area */}
+      {/* ─────────────────────────────────────────────────────────────
+          MAIN SPLIT WORKSPACE
+          ───────────────────────────────────────────────────────────── */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar Tabs Area */}
+        
+        {/* Left: Sidebar Tabs Area */}
         <div 
-          className="border-r border-white/[0.05] flex flex-col bg-black shrink-0 relative"
+          className="border-r border-border-line flex flex-col bg-surface-card shrink-0 relative"
           style={{ width: `${sidebarWidth}px` }}
         >
-          <div className="flex p-1 bg-white/[0.01] border-b border-white/[0.05]">
+          {/* Tab selector - Rectangular */}
+          <div className="flex p-1.5 bg-surface-subtle border-b border-border-line gap-1">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[0.2em] transition-all ${
+                className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
                   activeTab === tab.id
-                    ? 'text-white bg-white/5 shadow-sm'
-                    : 'text-white/30 hover:text-white/60'
+                    ? 'bg-surface-card text-text-primary font-semibold shadow-sm border border-border-line'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
               >
-                <tab.icon className="h-3 w-3" />
-                {tab.label}
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
 
-          <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#050505]">
+          {/* Tab Content */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 select-text">
             {activeTab === 'description' && (
-              <div className="p-8 space-y-10">
-                <section>
-                   <div className="flex items-center gap-2 text-white/20 mb-4">
-                      <Terminal className="w-3.5 h-3.5" />
-                      <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Briefing</span>
-                   </div>
-                   <h2 className="text-3xl font-bold text-white mb-6 leading-[1.1] tracking-tighter">{challenge.title}</h2>
-                   <div className="text-white/50 leading-relaxed text-sm font-medium whitespace-pre-wrap">
+              <div className="space-y-6">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-md border border-border-line bg-surface-subtle mb-3">
+                    <span className="eyebrow-text text-[9px]">INCIDENT BRIEF</span>
+                  </div>
+                  <h2 className="font-serif text-2xl text-text-primary mb-3">
+                    {challenge.title}
+                  </h2>
+                  <div className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap font-normal">
                     {challenge.description}
-                   </div>
-                </section>
-
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest mb-1">XP Reward</div>
-                      <div className="text-2xl font-bold text-white tracking-tighter">{challenge.baseScore}</div>
-                   </div>
-                   <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest mb-1">Runtime</div>
-                      <div className="text-2xl font-bold text-white tracking-tighter uppercase">{challenge.language}</div>
-                   </div>
+                  </div>
                 </div>
 
-                <div className="p-6 rounded-xl bg-white/[0.01] border border-white/[0.05] space-y-4">
-                   <div className="flex items-center gap-2 text-white/40">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span className="text-[9px] font-bold uppercase tracking-widest">Rules of Engagement</span>
-                   </div>
-                   <ul className="space-y-3">
-                      {[
-                        "Isolate the logical inconsistency",
-                        "Verify fix via diagnostic dry runs",
-                        "Final submission requires 100% test pass",
-                        "Inefficient fixes will impact final XP"
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-3 text-xs text-white/40 font-medium">
-                           <div className="w-1 h-1 rounded-full bg-white/20 mt-1.5 shrink-0" />
-                           {item}
-                        </li>
-                      ))}
-                   </ul>
+                {/* Metadata */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 rounded-lg bg-surface-subtle border border-border-line">
+                    <span className="eyebrow-text text-[9px] block mb-1">XP Value</span>
+                    <span className="font-serif text-2xl text-text-primary">
+                      {challenge.baseScore}
+                    </span>
+                  </div>
+                  <div className="p-4 rounded-lg bg-surface-subtle border border-border-line">
+                    <span className="eyebrow-text text-[9px] block mb-1">Dialect</span>
+                    <span className="font-mono text-sm font-semibold uppercase text-text-primary">
+                      {challenge.language === 'cpp' ? 'C++20' : challenge.language}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Directives */}
+                <div className="p-4 rounded-lg border border-border-line bg-surface-subtle/50 space-y-2.5">
+                  <span className="eyebrow-text text-[10px] block">DIRECTIVES</span>
+                  <ul className="space-y-1.5 text-xs text-text-secondary">
+                    <li className="flex items-start gap-2">
+                      <span className="text-text-muted font-mono">-</span>
+                      <span>Isolate the root invalid memory or race invariant.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-text-muted font-mono">-</span>
+                      <span>Modify the minimal contiguous lines necessary.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-text-muted font-mono">-</span>
+                      <span>Verify through diagnostics before submitting final fix.</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             )}
-            
+
             {activeTab !== 'description' && (
-              <div className="h-full flex flex-col items-center justify-center p-12 text-center space-y-4">
-                 <div className="p-4 bg-white/[0.02] rounded-full border border-white/[0.05]">
-                    <Activity className="w-6 h-6 text-white/10 animate-pulse" />
-                 </div>
-                 <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">Sector Locked</p>
-                 <p className="text-white/40 text-sm font-medium">This tactical data is currently being synthesized.</p>
+              <div className="h-full flex flex-col items-center justify-center p-8 text-center space-y-3">
+                <span className="font-mono text-xs text-text-muted uppercase tracking-wider block">
+                  SECTION UNDER REVIEW
+                </span>
+                <p className="text-xs text-text-secondary max-w-xs">
+                  Additional peer solutions and telemetry archives are accessible after completing your first verified fix.
+                </p>
               </div>
             )}
           </div>
 
-          {/* Vertical Resizer Divider */}
+          {/* Vertical Resizer Handle */}
           <div 
             onMouseDown={startResizingSidebar}
-            className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-white/20 transition-colors z-20"
+            className="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-text-primary/30 transition-colors z-30"
           />
         </div>
 
-        {/* Editor & Panel Area */}
-        <div className="flex-1 flex flex-col bg-black">
+        {/* Right: Editor & Diagnostics Panel */}
+        <div className="flex-1 flex flex-col bg-canvas overflow-hidden">
+          
+          {/* Monaco Editor Canvas */}
           <div className="flex-1 relative">
             <Editor
               height="100%"
               language={challenge.language === 'cpp' ? 'cpp' : 'java'}
               value={code}
               onChange={(value) => setCode(value || '')}
-              theme="vs-dark"
+              theme={isDark ? 'vs-dark' : 'light'}
               options={{
                 minimap: { enabled: false },
-                fontSize: 14,
+                fontSize: 13.5,
                 lineNumbers: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
-                padding: { top: 24, bottom: 24 },
-                contextmenu: false,
+                padding: { top: 20, bottom: 20 },
                 fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
                 cursorSmoothCaretAnimation: 'on',
                 smoothScrolling: true,
                 renderLineHighlight: 'all',
+                tabSize: 4,
               }}
             />
           </div>
 
-          {/* Horizontal Resizer Divider */}
+          {/* Horizontal Resizer Handle */}
           <div 
             onMouseDown={startResizingPanel}
-            className="h-1 w-full cursor-row-resize hover:bg-white/20 transition-colors z-20 shrink-0"
+            className="h-1.5 w-full cursor-row-resize hover:bg-text-primary/30 transition-colors z-30 shrink-0 bg-border-line"
           />
 
-          {/* Bottom Diagnostics Panel */}
+          {/* Bottom Diagnostics Drawer */}
           <div 
-            className="flex flex-col bg-black border-t border-white/[0.05]"
+            className="flex flex-col bg-surface-card border-t border-border-line shrink-0"
             style={{ height: `${panelHeight}px` }}
           >
-            <div className="flex border-b border-white/[0.05] px-2 bg-white/[0.01]">
-              {[
-                { id: 'testcase' as PanelType, label: 'Schema', icon: Terminal },
-                { id: 'result' as PanelType, label: 'Diagnostics', icon: Activity }
-              ].map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => setActivePanel(p.id)}
-                  className={`px-8 py-3 text-[10px] font-bold uppercase tracking-[0.2em] transition-all border-b flex items-center gap-2 ${
-                    activePanel === p.id 
-                      ? 'text-white border-white' 
-                      : 'text-white/30 border-transparent hover:text-white/60'
-                  }`}
-                >
-                  <p.icon className="w-3 h-3" />
-                  {p.label}
-                </button>
-              ))}
-              
-              <div className="ml-auto flex items-center gap-6 px-6 text-[10px] font-bold text-white/20 uppercase tracking-widest">
-                 <span>Diff: <span className="text-white/60">{linesChanged} nodes</span></span>
-                 <span>Attempts: <span className={attempts > 0 ? 'text-white' : 'text-white/20'}>{attempts}</span></span>
+            {/* Panel Selector Header */}
+            <div className="flex items-center justify-between px-4 border-b border-border-line bg-surface-subtle">
+              <div className="flex gap-1">
+                {[
+                  { id: 'testcase' as PanelType, label: 'Expected Output' },
+                  { id: 'result' as PanelType, label: 'Diagnostic Output' },
+                ].map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setActivePanel(p.id)}
+                    className={`px-3 py-2 text-xs font-medium transition-all border-b-2 cursor-pointer ${
+                      activePanel === p.id 
+                        ? 'text-text-primary border-text-primary font-semibold' 
+                        : 'text-text-muted border-transparent hover:text-text-primary'
+                    }`}
+                  >
+                    <span>{p.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-4 text-xs font-mono text-text-muted">
+                <span>Diff: <strong className="text-text-primary">{linesChanged} lines</strong></span>
+                <span>Attempts: <strong className="text-text-primary">{attempts}</strong></span>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-[#020202]">
+            {/* Panel Body Content */}
+            <div className="flex-1 overflow-y-auto p-4 select-text">
               {activePanel === 'testcase' && (
-                <div className="space-y-6 max-w-2xl">
+                <div className="space-y-3 max-w-2xl">
                   <div>
-                    <label className="text-[9px] font-bold text-white/20 uppercase tracking-[0.3em] block mb-4">Target Output Stream</label>
-                    <pre className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-6 text-xs font-mono text-white/80 overflow-x-auto">
+                    <span className="eyebrow-text text-[10px] block mb-1.5">TARGET OUTPUT STREAM</span>
+                    <pre className="bg-surface-subtle border border-border-line rounded-lg p-3.5 text-xs font-mono text-text-primary overflow-x-auto leading-relaxed">
                       {challenge.expectedOutput}
                     </pre>
                   </div>
@@ -377,58 +413,62 @@ const EditorPage: React.FC = () => {
               )}
 
               {activePanel === 'result' && (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {!(runResult || submitResult) && !running && !submitting ? (
-                    <div className="h-full flex flex-col items-center justify-center py-12 text-white/10">
-                       <Terminal className="w-6 h-6 mb-4" />
-                       <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Standby for execution</span>
+                    <div className="h-full flex flex-col items-center justify-center py-6 text-text-muted font-mono text-xs">
+                      <span>Ready for diagnostic execution</span>
                     </div>
                   ) : (
-                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                      {/* Compilation / Running State */}
+                    <div>
+                      {/* Loading spinner */}
                       {(running || submitting) && (
-                         <div className="flex items-center gap-3 text-white/60 mb-6 animate-pulse">
-                            <Activity className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Analyzing Logic...</span>
-                         </div>
-                      )}
-
-                      {/* AI Diagnostics */}
-                      {(runResult?.aiAnalysis || submitResult?.aiAnalysis) && (
-                        <div className="grid md:grid-cols-2 gap-6 mb-8">
-                           <div className="p-6 rounded-2xl border border-white/[0.05] bg-white/[0.02]">
-                              <div className="flex items-center gap-2 mb-6">
-                                 <Sparkles className="w-3.5 h-3.5 text-white/40" />
-                                 <span className="text-[10px] font-bold text-white uppercase tracking-[0.3em]">Neural Insights</span>
-                              </div>
-                              <p className="text-white/60 text-xs leading-relaxed italic font-medium">
-                                "{(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.feedback}"
-                              </p>
-                           </div>
-                           <div className="grid grid-cols-2 gap-4">
-                              <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/[0.05]">
-                                 <div className="text-[9px] font-bold text-white/20 uppercase mb-2 tracking-widest">Efficiency</div>
-                                 <div className="text-2xl font-bold text-white tracking-tighter">{(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.accuracyScore}/10</div>
-                              </div>
-                              <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/[0.05]">
-                                 <div className="text-[9px] font-bold text-white/20 uppercase mb-2 tracking-widest">Complexity</div>
-                                 <div className="text-xs font-mono font-bold text-white truncate">{(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.timeComplexity}</div>
-                              </div>
-                           </div>
+                        <div className="flex items-center gap-2.5 text-text-secondary py-3">
+                          <div className="w-3.5 h-3.5 rounded-sm border-2 border-border-line border-t-text-primary animate-spin" />
+                          <span className="text-xs font-mono uppercase tracking-wider">
+                            Executing sandbox diagnostics...
+                          </span>
                         </div>
                       )}
 
-                      {/* Status */}
+                      {/* Analysis Card */}
+                      {(runResult?.aiAnalysis || submitResult?.aiAnalysis) && (
+                        <div className="grid md:grid-cols-2 gap-3 mb-3">
+                          <div className="p-3.5 rounded-lg border border-border-line bg-surface-subtle">
+                            <span className="eyebrow-text text-[10px] block mb-1">ANALYSIS SUMMARY</span>
+                            <p className="text-xs text-text-secondary leading-relaxed">
+                              {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.feedback}
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <div className="p-3.5 rounded-lg bg-surface-subtle border border-border-line text-center">
+                              <span className="eyebrow-text text-[9px] block mb-1">Efficiency</span>
+                              <span className="font-serif text-2xl text-text-primary">
+                                {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.accuracyScore}/10
+                              </span>
+                            </div>
+                            <div className="p-3.5 rounded-lg bg-surface-subtle border border-border-line text-center">
+                              <span className="eyebrow-text text-[9px] block mb-1">Complexity</span>
+                              <span className="font-mono text-xs font-bold text-text-primary">
+                                {(runResult?.aiAnalysis || submitResult?.aiAnalysis)?.timeComplexity}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Submit result callout - No emdashes */}
                       {submitResult && (
-                        <div className={`p-6 rounded-xl flex items-center gap-4 border ${
+                        <div className={`p-3.5 rounded-lg border ${
                           submitResult.submission.isCorrect 
-                            ? 'bg-white/5 border-white/20 text-white' 
-                            : 'bg-white/[0.02] border-white/5 text-white/40'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-800 dark:text-emerald-300' 
+                            : 'bg-rose-500/10 border-rose-500/20 text-rose-800 dark:text-rose-300'
                         }`}>
-                           {submitResult.submission.isCorrect ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                           <span className="text-xs font-bold uppercase tracking-[0.3em]">
-                             {submitResult.submission.isCorrect ? `Verified Resolution — +${submitResult.score} XP` : "System Rejected Fix"}
-                           </span>
+                          <span className="text-xs font-semibold">
+                            {submitResult.submission.isCorrect 
+                              ? `Verified Resolution: Awarded +${submitResult.score} XP` 
+                              : "Verification Failed: Invariants not satisfied"}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -437,42 +477,41 @@ const EditorPage: React.FC = () => {
               )}
             </div>
 
-            {/* Terminal Actions */}
-            <div className="h-16 border-t border-white/[0.05] bg-black flex items-center justify-between px-8 shrink-0 relative z-10">
-               <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                     <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                     <span className="text-[9px] font-bold text-white/20 uppercase tracking-[0.3em]">Neural Link Stable</span>
-                  </div>
-               </div>
+            {/* Bottom Actions Bar - Rectangular buttons with rounded corners */}
+            <div className="h-14 border-t border-border-line bg-surface-card flex items-center justify-between px-6 shrink-0 relative z-20">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-status-green" />
+                <span className="text-xs font-mono text-text-muted uppercase">SANDBOX NOMINAL</span>
+              </div>
 
-               <div className="flex items-center gap-3">
-                  <button
-                    onClick={handleRun}
-                    disabled={running || submitting}
-                    className="btn-premium py-2 px-8 text-[10px] font-bold uppercase tracking-widest h-10 group"
-                  >
-                    {running ? <Activity className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
-                    {running ? 'Processing' : 'Diagnostic'}
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={running || submitting}
-                    className="btn-primary-premium py-2 px-10 text-[10px] font-bold uppercase tracking-widest h-10 group"
-                  >
-                    {submitting ? <Activity className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                    {submitting ? 'Authenticating' : 'Finalize Fix'}
-                    <ChevronRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </button>
-               </div>
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={handleRun}
+                  disabled={running || submitting}
+                  className="btn-secondary text-xs py-2 px-4 rounded-lg cursor-pointer"
+                >
+                  <span>{running ? 'Processing...' : 'Run Diagnostics'}</span>
+                </button>
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={running || submitting}
+                  className="btn-primary text-xs py-2 px-5 rounded-lg cursor-pointer"
+                >
+                  <span>{submitting ? 'Verifying...' : 'Submit Fix'}</span>
+                  <span className="ml-1.5 font-mono text-xs">-&gt;</span>
+                </button>
+              </div>
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 };
 
-
 export default EditorPage;
-

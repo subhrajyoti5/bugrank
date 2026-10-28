@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { challengeService } from '@/services/challengeService';
 import { submissionService } from '@/services/submissionService';
 import { Challenge } from '@bugpulse/shared';
-import { Search, Code2, Filter, ChevronRight, Trophy, Zap, Terminal } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -58,227 +57,264 @@ const ProblemsPage: React.FC = () => {
     return matchSearch && matchDifficulty && matchLanguage;
   });
 
-  const getDifficultyStyles = (difficulty: string) => {
-    switch (difficulty) {
+  const getDifficultyBadge = (difficulty: string) => {
+    switch (difficulty.toLowerCase()) {
       case 'easy':
-        return 'text-white/40 border-white/5';
+        return 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20';
       case 'medium':
-        return 'text-white/60 border-white/10';
+        return 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20';
       case 'hard':
-        return 'text-white border-white/20';
+        return 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20';
       default:
-        return 'text-white/30 border-white/5';
+        return 'bg-surface-subtle text-text-muted border-border-line';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-64px)] bg-black flex items-center justify-center">
-        <div className="relative">
-          <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin" />
-        </div>
+      <div className="min-h-[calc(100vh-80px)] bg-canvas flex flex-col items-center justify-center">
+        <div className="w-8 h-8 rounded-md border-2 border-border-line border-t-text-primary animate-spin mb-4" />
+        <span className="font-mono text-xs text-text-muted tracking-widest uppercase">
+          Loading Mission Library...
+        </span>
       </div>
     );
   }
 
+  const completionPercent = challenges.length > 0 
+    ? Math.round((solvedChallengeIds.size / challenges.length) * 100) 
+    : 0;
+
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans relative overflow-hidden">
-      {/* Background elements */}
-      <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
-      <div className="fixed inset-0 radial-glow pointer-events-none" />
-      
-      {/* Animated Light Beams - Match LandingPage */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }} />
+    <div className="min-h-screen bg-canvas text-text-primary selection:bg-charcoal selection:text-offwhite dark:selection:bg-offwhite dark:selection:text-charcoal py-10 px-6 sm:px-10 lg:px-12">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Page Header - Centered */}
+        <div className="mb-10 text-center flex flex-col items-center">
+          <div className="inline-flex items-center justify-center gap-2 px-2.5 py-1 rounded-md border border-border-line bg-surface-subtle mb-3">
+            <span className="eyebrow-text text-[10px]">INCIDENT REPOSITORY</span>
+          </div>
+          <h1 className="headline-section text-center">
+            Mission Archives
+          </h1>
+          <p className="text-[1rem] text-text-secondary mt-1.5 max-w-xl text-center">
+            Production incident scenarios. Isolate failures, inspect core dumps, and submit surgical minimal patches.
+          </p>
 
-      <div className="relative z-10 pt-8 pb-24">
-        <div className="max-w-7xl mx-auto px-6">
-          {/* Header & Filters */}
-          <div className="mb-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-              <div>
-                <div className="flex items-center gap-2 text-white/40 mb-3">
-                  <Terminal className="w-4 h-4" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Operational Terminal</span>
-                </div>
-                <h1 className="text-5xl font-bold text-white tracking-tighter">Missions</h1>
-              </div>
+          {/* Search Input - Centered */}
+          <div className="w-full max-w-lg mt-6">
+            <input
+              type="text"
+              placeholder="Search by incident keyword or error signature..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2.5 bg-surface-card border border-border-line rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-text-primary transition-colors shadow-sm font-sans text-center"
+            />
+          </div>
+        </div>
 
-              <div className="relative group w-full max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-white transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Query system database..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input-premium pl-12 h-12 text-sm"
-                />
-              </div>
-            </div>
+        {/* Filter Bar - Centered */}
+        <div className="p-4 rounded-xl bg-surface-card border border-border-line flex flex-wrap items-center justify-center gap-6 mb-8">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs font-mono text-text-muted uppercase tracking-wider mr-2">
+                Difficulty:
+              </span>
 
-
-            <div className="flex flex-wrap items-center gap-4 py-6 border-y border-white/[0.05]">
-              <div className="flex items-center gap-2 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mr-4">
-                <Filter className="w-3.5 h-3.5" />
-                <span>Filter Engine</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                {['easy', 'medium', 'hard'].map(diff => (
+              {['all', 'easy', 'medium', 'hard'].map((diff) => {
+                const isSelected = diff === 'all' ? selectedDifficulty === '' : selectedDifficulty === diff;
+                return (
                   <button
                     key={diff}
-                    onClick={() => setSelectedDifficulty(selectedDifficulty === diff ? '' : diff)}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border transition-all duration-200 ${
-                      selectedDifficulty === diff
-                        ? 'bg-white text-black border-white'
-                        : 'bg-white/[0.02] text-white/40 border-white/[0.05] hover:border-white/20 hover:text-white'
+                    onClick={() => setSelectedDifficulty(diff === 'all' ? '' : diff)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition-all duration-150 cursor-pointer ${
+                      isSelected
+                        ? 'bg-text-primary text-canvas font-semibold'
+                        : 'bg-surface-subtle hover:bg-surface-card text-text-secondary hover:text-text-primary border border-border-line'
                     }`}
                   >
                     {diff}
                   </button>
-                ))}
-              </div>
+                );
+              })}
+            </div>
 
-              <div className="w-px h-4 bg-white/10 mx-2" />
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs font-mono text-text-muted uppercase tracking-wider mr-2">
+                Language:
+              </span>
 
-              <div className="flex items-center gap-2">
-                {['cpp', 'java'].map(lang => (
+              {['all', 'cpp', 'java'].map((lang) => {
+                const isSelected = lang === 'all' ? selectedLanguage === '' : selectedLanguage === lang;
+                return (
                   <button
                     key={lang}
-                    onClick={() => setSelectedLanguage(selectedLanguage === lang ? '' : lang)}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border transition-all duration-200 ${
-                      selectedLanguage === lang
-                        ? 'bg-white text-black border-white'
-                        : 'bg-white/[0.02] text-white/40 border-white/[0.05] hover:border-white/20 hover:text-white'
+                    onClick={() => setSelectedLanguage(lang === 'all' ? '' : lang)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition-all duration-150 cursor-pointer ${
+                      isSelected
+                        ? 'bg-text-primary text-canvas font-semibold'
+                        : 'bg-surface-subtle hover:bg-surface-card text-text-secondary hover:text-text-primary border border-border-line'
                     }`}
                   >
-                    {lang}
+                    {lang === 'all' ? 'All' : lang === 'cpp' ? 'C++20' : 'Java 21'}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-12">
-            {/* List */}
-            <div className="lg:col-span-8 space-y-4">
-              {filteredChallenges.length === 0 ? (
-                <div className="py-24 text-center border border-dashed border-white/10 rounded-2xl">
-                  <div className="p-4 bg-white/5 rounded-full w-fit mx-auto mb-6">
-                    <Search className="w-6 h-6 text-white/20" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 tracking-tight">No results in sector</h3>
-                  <p className="text-white/30 text-sm font-medium">Reconfigure filters or query parameters.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {filteredChallenges.map((challenge, index) => {
-                    const isSolved = solvedChallengeIds.has(challenge.id);
-                    return (
-                      <Link
-                        key={challenge.id}
-                        to={`/editor/${challenge.id}`}
-                        className="group block"
-                      >
-                        <div className={`p-6 rounded-xl flex items-center gap-6 border border-white/[0.05] transition-all duration-300 hover:border-white/20 hover:bg-white/[0.02] ${isSolved ? 'bg-white/[0.01]' : 'bg-[#050505]'}`}>
-                          <div className="hidden sm:flex items-center justify-center w-8 text-white/10 font-bold text-[10px] tracking-widest">
-                            {(index + 1).toString().padStart(2, '0')}
-                          </div>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-lg font-bold text-white tracking-tight group-hover:text-white transition-colors">
-                                {challenge.title}
-                              </h3>
-                              {isSolved && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
-                            </div>
-                            <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">
-                              <span className={`px-2 py-0.5 rounded border ${getDifficultyStyles(challenge.difficulty)}`}>
-                                {challenge.difficulty}
+        {/* Layout: Main List (8 cols) + Sidebar (4 cols) */}
+        <div className="grid lg:grid-cols-12 gap-8">
+          
+          {/* Challenge List */}
+          <div className="lg:col-span-8 space-y-3">
+            {filteredChallenges.length === 0 ? (
+              <div className="p-14 text-center rounded-xl border border-dashed border-border-line bg-surface-card">
+                <h3 className="font-serif text-xl text-text-primary mb-2">No Matching Incidents</h3>
+                <p className="text-xs text-text-secondary max-w-sm mx-auto">
+                  No challenges matched your query or filter criteria. Try adjusting your search term.
+                </p>
+              </div>
+            ) : (
+              filteredChallenges.map((challenge, index) => {
+                const isSolved = solvedChallengeIds.has(challenge.id);
+                return (
+                  <Link
+                    key={challenge.id}
+                    to={`/editor/${challenge.id}`}
+                    className="block group"
+                  >
+                    <div className="card-frame p-5 hover:border-text-primary/40 transition-all duration-150 flex items-center justify-between gap-6">
+                      
+                      <div className="flex items-center gap-4 min-w-0">
+                        {/* Number index */}
+                        <span className="font-mono text-xs text-text-muted font-semibold tracking-wider shrink-0 w-6">
+                          {(index + 1).toString().padStart(2, '0')}
+                        </span>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h2 className="text-[1.05rem] font-medium text-text-primary truncate group-hover:underline">
+                              {challenge.title}
+                            </h2>
+                            {isSolved && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-status-green bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shrink-0 font-mono">
+                                SOLVED
                               </span>
-                              <div className="flex items-center gap-1.5">
-                                <Code2 className="w-3 h-3" />
-                                {challenge.language}
-                              </div>
-                            </div>
+                            )}
                           </div>
 
-                          <div className="text-right shrink-0">
-                            <div className="text-2xl font-bold text-white tracking-tighter">
-                              {challenge.baseScore}
-                            </div>
-                            <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest">XP</div>
-                          </div>
-                          
-                          <div className="p-2 rounded-lg bg-white/5 group-hover:bg-white group-hover:text-black transition-all text-white/20">
-                            <ChevronRight className="w-4 h-4" />
+                          <div className="flex items-center gap-3 text-xs text-text-secondary font-mono">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider border ${getDifficultyBadge(challenge.difficulty)}`}>
+                              {challenge.difficulty}
+                            </span>
+                            <span className="text-border-line">/</span>
+                            <span className="text-[11px] uppercase text-text-muted">
+                              {challenge.language === 'cpp' ? 'C++20' : challenge.language}
+                            </span>
                           </div>
                         </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                      </div>
 
-            {/* Sidebar */}
-            <div className="lg:col-span-4 space-y-8">
-              <div className="p-8 rounded-2xl border border-white/[0.05] bg-[#050505] sticky top-24">
-                <div className="flex items-center gap-3 mb-10">
-                  <div className="p-2 bg-white/5 rounded-lg border border-white/10">
-                    <Trophy className="w-4 h-4 text-white" />
-                  </div>
-                  <h3 className="text-md font-bold text-white uppercase tracking-widest">Mission Status</h3>
-                </div>
+                      {/* Right side: Score & Action */}
+                      <div className="flex items-center gap-5 shrink-0">
+                        <div className="text-right hidden sm:block">
+                          <div className="font-serif text-2xl text-text-primary font-normal leading-none">
+                            {challenge.baseScore}
+                          </div>
+                          <span className="eyebrow-text text-[9px]">MAX XP</span>
+                        </div>
 
-                <div className="space-y-8">
-                  <div>
-                    <div className="flex justify-between items-end mb-3">
-                      <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Global Completion</span>
-                      <span className="text-sm font-bold text-white tracking-tighter">{solvedChallengeIds.size} <span className="text-white/30">/ {challenges.length}</span></span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-white transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.5)]" 
-                        style={{ width: `${(solvedChallengeIds.size / Math.max(challenges.length, 1)) * 100}%` }}
-                      />
-                    </div>
-                  </div>
+                        <div className="px-3 py-1.5 rounded-md border border-border-line bg-surface-subtle group-hover:bg-text-primary group-hover:text-canvas transition-colors font-mono text-xs font-semibold">
+                          Open -&gt;
+                        </div>
+                      </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">Solved</div>
-                      <div className="text-3xl font-bold text-white tracking-tighter">{solvedChallengeIds.size}</div>
                     </div>
-                    <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">Rank</div>
-                      <div className="text-3xl font-bold text-white tracking-tighter">--</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-8 rounded-2xl border border-white/[0.05] bg-[#020202]">
-                <h4 className="text-[10px] font-bold text-white/40 mb-6 uppercase tracking-[0.3em]">Directives</h4>
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] mb-6">
-                   <div className="p-2 bg-white/5 rounded-lg border border-white/10">
-                      <Zap className="w-3.5 h-3.5 text-white" />
-                   </div>
-                   <div className="flex-1">
-                      <div className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Daily Quota</div>
-                      <div className="text-[10px] text-white/20 font-bold uppercase tracking-tighter">0 / 2 Missions Solved</div>
-                   </div>
-                </div>
-                <button className="w-full btn-premium py-2 text-[10px] font-bold uppercase tracking-widest">Access Roadmap</button>
-              </div>
-            </div>
+                  </Link>
+                );
+              })
+            )}
           </div>
+
+          {/* Sidebar Status (4 cols) */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Status Card */}
+            <div className="card-frame p-6 bg-surface-card">
+              <div className="flex items-center justify-between mb-5 pb-3 border-b border-border-line">
+                <div>
+                  <h2 className="text-xs font-semibold text-text-primary uppercase tracking-wider">Progress Overview</h2>
+                  <p className="text-[11px] text-text-muted">Incident Resolution Metrics</p>
+                </div>
+                <span className="font-mono text-xs text-status-green font-semibold">ONLINE</span>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="mb-5">
+                <div className="flex items-center justify-between text-xs mb-1.5">
+                  <span className="text-text-secondary font-medium">Clearance Rate</span>
+                  <span className="font-mono font-bold text-text-primary">
+                    {solvedChallengeIds.size} / {challenges.length} ({completionPercent}%)
+                  </span>
+                </div>
+                <div className="h-1.5 w-full rounded-md bg-surface-subtle border border-border-line overflow-hidden">
+                  <div
+                    className="h-full bg-text-primary transition-all duration-500 rounded-md"
+                    style={{ width: `${completionPercent}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="p-3.5 rounded-lg bg-surface-subtle border border-border-line text-center">
+                  <span className="eyebrow-text block mb-1 text-[10px]">Solved</span>
+                  <span className="font-serif text-2xl text-text-primary">
+                    {solvedChallengeIds.size}
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-lg bg-surface-subtle border border-border-line text-center">
+                  <span className="eyebrow-text block mb-1 text-[10px]">Standing</span>
+                  <span className="font-serif text-2xl text-text-primary">
+                    {user ? "Top 12%" : "--"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border-line bg-canvas">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-text-primary">Daily Goal</span>
+                  <span className="font-mono text-[10px] text-text-muted">1 / 2</span>
+                </div>
+                <p className="text-xs text-text-secondary leading-relaxed mb-3">
+                  Resolve 1 memory anomaly and 1 concurrency race to maintain your daily streak.
+                </p>
+                <Link
+                  to="/leaderboard"
+                  className="w-full btn-secondary text-xs py-2 rounded-lg flex items-center justify-center gap-1.5"
+                >
+                  <span>View Global Standing</span>
+                  <span className="font-mono text-xs">-&gt;</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Directive Guidelines */}
+            <div className="p-5 rounded-xl border border-border-line bg-surface-subtle text-xs space-y-2">
+              <span className="eyebrow-text block text-[10px]">ENGINEERING DISCIPLINE</span>
+              <p className="text-text-secondary leading-relaxed">
+                Do not introduce global locks to eliminate data races. Seek fine-grained atomic sequencing, 
+                acquire-release memory orders, and zero-allocation invariants.
+              </p>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
     </div>
   );
 };
 
 export default ProblemsPage;
-
-

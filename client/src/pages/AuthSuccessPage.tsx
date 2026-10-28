@@ -33,10 +33,12 @@ const AuthSuccessPage: React.FC = () => {
   }, [searchParams, navigate, setAuthToken, setSessionToken, refreshUser]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-canvas text-text-primary">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-indigo mx-auto mb-4"></div>
-        <p className="text-premium-muted">Completing authentication...</p>
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-border-line border-t-text-primary mx-auto mb-4" />
+        <p className="font-mono text-xs text-text-muted uppercase tracking-widest">
+          Finalizing Operative Session...
+        </p>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Layout from '@/components/Layout';
 import LoginPage from '@/pages/LoginPage';
@@ -15,66 +16,72 @@ import '@/index.css';
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/auth-success" element={<AuthSuccessPage />} />
-
-          <Route
-            path="/editor/:id"
-            element={
-              <ProtectedRoute>
-                <EditorPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route element={<Layout />}>
-            <Route path="/" element={<LandingPage />} />
-
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/auth-success" element={<AuthSuccessPage />} />
 
             <Route
-              path="/problems"
+              path="/editor/:id"
               element={
                 <ProtectedRoute>
-                  <ProblemsPage />
+                  <EditorPage />
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/leaderboard"
-              element={
-                <ProtectedRoute>
-                  <LeaderboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+            <Route element={<Layout />}>
+              <Route path="/" element={<LandingPage />} />
 
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#333',
-            color: '#fff',
-          },
-        }}
-      />
-    </AuthProvider>
+              <Route
+                path="/problems"
+                element={
+                  <ProtectedRoute>
+                    <ProblemsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <LeaderboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              background: 'var(--surface-card)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-line)',
+              borderRadius: '9999px',
+              padding: '10px 20px',
+              fontSize: '0.88rem',
+              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.12)',
+            },
+          }}
+        />
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

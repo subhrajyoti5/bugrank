@@ -4,15 +4,13 @@ import Navbar from './Navbar';
 
 const Layout: React.FC = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-canvas text-text-primary flex flex-col transition-colors duration-300">
       <Navbar />
-      <main className="pt-16">
+      <main className="pt-20 flex-1">
         <Outlet />
       </main>
-
     </div>
   );
 };
 
 export default Layout;
-

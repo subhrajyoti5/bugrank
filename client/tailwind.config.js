@@ -8,64 +8,64 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        serif: ['"GFS Didot"', 'serif'],
+        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
-        // AI Slope / Hyper-Dark Palette
-        background: '#000000',
-        foreground: '#FFFFFF',
-        surface: '#0A0A0A',
-        'surface-lighter': '#121212',
-        border: '#1F1F1F',
-        'border-hover': '#2D2D2D',
+        // Dynamic Design System Tokens from design-tokens.md
+        canvas: 'var(--bg-canvas)',
+        'surface-card': 'var(--surface-card)',
+        'surface-subtle': 'var(--surface-subtle)',
+        'border-line': 'var(--border-line)',
+        'border-subtle': 'var(--border-line-subtle)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
+        'status-green': 'var(--status-green)',
+        'toggle-neutral': 'var(--toggle-neutral)',
         
-        // Accents
-        primary: {
-          500: '#FFFFFF',
-          600: '#E5E5E5',
-          DEFAULT: '#FFFFFF',
-        },
-        accent: {
-          cyan: '#00F2FF',
-          purple: '#7000FF',
-          green: '#00DC82',
-        },
-        muted: {
-          DEFAULT: '#737373',
-          dark: '#404040',
-        }
+        // Semantic fixed references
+        charcoal: '#1C1B1F',
+        offwhite: '#FFFFF5',
       },
-      animation: {
-        'fade-in': 'fadeIn 0.3s ease-out',
-        'slide-up': 'slideUp 0.4s ease-out',
-        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'border-flow': 'borderFlow 3s linear infinite',
-        'grid-scroll': 'gridScroll 20s linear infinite',
+      borderRadius: {
+        'xl': '28px',
+        'lg': '20px',
+        'pill': '9999px',
+      },
+      boxShadow: {
+        'hero-card': '0 16px 40px rgba(0, 0, 0, 0.12)',
+        'inner-frame': '0 -2px 16px rgba(0, 0, 0, 0.04)',
+        'card-soft': '0 8px 30px rgba(0, 0, 0, 0.04)',
+        'card-hover': '0 20px 45px rgba(0, 0, 0, 0.08)',
+        'dark-card': '0 16px 40px rgba(0, 0, 0, 0.5)',
       },
       keyframes: {
-        fadeIn: {
+        'faq-reveal': {
+          '0%': { opacity: '0', transform: 'translateY(-6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
-        slideUp: {
-          '0%': { transform: 'translateY(12px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
+        'slide-up': {
+          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        borderFlow: {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-        },
-        gridScroll: {
-          '0%': { transform: 'translateY(0)' },
-          '100%': { transform: 'translateY(40px)' },
+        'pulse-subtle': {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.85', transform: 'scale(1.02)' },
         }
       },
-      backgroundImage: {
-        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.04)' stroke-dasharray='5 3'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E\")",
+      animation: {
+        'faq-reveal': 'faq-reveal 0.25s ease-out forwards',
+        'fade-in': 'fade-in 0.3s ease-out forwards',
+        'slide-up': 'slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
       }
     },
   },
   plugins: [],
 }
-

@@ -1,160 +1,165 @@
 import React, { useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Target, Trophy, Code2, Zap, Activity } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ProfilePage: React.FC = () => {
-
   const { user, refreshUser } = useAuth();
 
   useEffect(() => {
-    refreshUser().catch(error => {
+    refreshUser().catch((error) => {
       console.error('Failed to refresh user data:', error);
     });
   }, [refreshUser]);
 
-  // Generate stable heatmap heights using useMemo
-  const heatmapHeights = useMemo(() => {
-    return Array.from({ length: 40 }, () => Math.random() * 100);
+  // Stable activity heights
+  const activityHeights = useMemo(() => {
+    return Array.from({ length: 48 }, () => Math.floor(Math.random() * 80) + 20);
   }, []);
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="h-10 w-10 rounded-full border border-white/10 border-t-white animate-spin"></div>
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] bg-canvas">
+        <div className="w-8 h-8 rounded-md border-2 border-border-line border-t-text-primary animate-spin mb-4" />
+        <span className="font-mono text-xs text-text-muted tracking-widest uppercase">
+          Loading Profile...
+        </span>
       </div>
     );
   }
 
   const successRate = user.totalSubmissions > 0
-    ? ((user.successfulSubmissions || 0) / (user.totalSubmissions || 1) * 100).toFixed(0)
+    ? Math.round(((user.successfulSubmissions || 0) / user.totalSubmissions) * 100)
     : 0;
 
-  return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black pb-20 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="fixed inset-0 grid-bg opacity-10 pointer-events-none" />
-      <div className="fixed inset-0 radial-glow pointer-events-none" />
+  const level = Math.floor((user.totalScore || 0) / 100) + 1;
 
-      {/* Animated Light Beams - Match LandingPage */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }} />
+  return (
+    <div className="min-h-screen bg-canvas text-text-primary selection:bg-charcoal selection:text-offwhite dark:selection:bg-offwhite dark:selection:text-charcoal pb-20">
       
-      {/* Hero Banner */}
-      <div className="relative h-64 w-full overflow-hidden">
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="absolute inset-0 grid-bg opacity-30"></div>
-        <div className="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-        <div className="absolute top-0 right-0 w-[50%] h-full bg-white/[0.02] blur-[120px] rounded-full"></div>
+      {/* Banner */}
+      <div className="h-36 w-full bg-surface-subtle border-b border-border-line relative overflow-hidden">
+        <div className="absolute inset-0 grid-subtle-pattern opacity-40" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 relative z-10 -mt-32">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 relative z-10 -mt-16">
+        
+        {/* Profile Header - Centered Layout */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-border-line text-center md:text-left">
+          
+          <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+            {/* Avatar Frame - Rounded rectangle */}
+            <div className="w-28 h-28 rounded-xl border-2 border-border-line bg-surface-card overflow-hidden shadow-sm flex items-center justify-center">
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName || 'User'}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="font-serif text-3xl font-normal text-text-primary">
+                  {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
 
-        {/* Player Card Header */}
-        <div className="flex flex-col items-center text-center">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-white/20 rounded-full blur opacity-50 group-hover:opacity-100 transition-all duration-700"></div>
-            <img
-              src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=000&color=fff&size=200`}
-              alt={user.displayName}
-              className="w-40 h-40 rounded-full object-cover border border-white/20 relative z-10 shadow-2xl transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute bottom-2 right-2 z-20 bg-white text-black p-2 rounded-full border border-black shadow-lg">
-              <Trophy className="w-5 h-5" />
+            {/* Name and Level */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md border border-border-line bg-surface-subtle mb-2">
+                <span className="eyebrow-text text-[10px]">ENGINEER PROFILE / TIER {level}</span>
+              </div>
+              <h1 className="font-serif text-3xl sm:text-4xl text-text-primary font-normal tracking-tight">
+                {user.displayName || 'Anonymous Engineer'}
+              </h1>
+              <p className="text-xs font-mono text-text-muted mt-0.5">
+                @{user.username || user.email?.split('@')[0] || 'engineer'}
+              </p>
             </div>
           </div>
 
-          <div className="mt-8">
-            <div className="flex items-center justify-center gap-2 text-white/40 mb-4">
-               <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Internal Profile Verified</span>
-            </div>
-            <h1 className="text-6xl font-bold text-white tracking-tighter mb-3 leading-none">{user.displayName}</h1>
-            <div className="flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em]">
-              <span className="px-4 py-1 bg-white/5 text-white/60 rounded-full border border-white/10">Level {Math.floor(user.totalScore / 100) + 1} Operative</span>
-              <span className="text-white/20">•</span>
-              <span className="text-white/30">@{user.username || 'unknown_node'}</span>
-            </div>
+          <Link
+            to="/problems"
+            className="btn-primary text-xs py-2.5 px-6 rounded-lg"
+          >
+            Open Missions
+          </Link>
+        </div>
+
+        {/* 3 Main Stat Cards - Centered text */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8 text-center">
+          <div className="card-frame p-6 bg-surface-card text-center">
+            <span className="font-serif text-3xl font-normal text-text-primary leading-none block">
+              {user.totalScore || 0}
+            </span>
+            <span className="eyebrow-text block mt-1.5 text-[10px] text-center">Total Score</span>
           </div>
 
-          {/* Main Stats - Floating Pills */}
-          <div className="flex flex-wrap justify-center gap-4 mt-12">
-            <div className="p-6 rounded-2xl bg-[#050505] border border-white/[0.05] flex items-center gap-6 transition-all hover:border-white/20 group min-w-[200px]">
-              <div className="bg-white/5 p-3 rounded-xl border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
-                <Target className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-3xl font-bold text-white tracking-tighter">{user.totalScore}</div>
-                <div className="text-[10px] text-white/20 uppercase font-bold tracking-widest mt-1">Total XP</div>
-              </div>
-            </div>
+          <div className="card-frame p-6 bg-surface-card text-center">
+            <span className="font-serif text-3xl font-normal text-text-primary leading-none block">
+              {user.successfulSubmissions || 0}
+            </span>
+            <span className="eyebrow-text block mt-1.5 text-[10px] text-center">Missions Solved</span>
+          </div>
 
-            <div className="p-6 rounded-2xl bg-[#050505] border border-white/[0.05] flex items-center gap-6 transition-all hover:border-white/20 group min-w-[200px]">
-              <div className="bg-white/5 p-3 rounded-xl border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
-                <Code2 className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-3xl font-bold text-white tracking-tighter">{user.successfulSubmissions || 0}</div>
-                <div className="text-[10px] text-white/20 uppercase font-bold tracking-widest mt-1">Missions</div>
-              </div>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-[#050505] border border-white/[0.05] flex items-center gap-6 transition-all hover:border-white/20 group min-w-[200px]">
-              <div className="bg-white/5 p-3 rounded-xl border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
-                <Zap className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-3xl font-bold text-white tracking-tighter">{successRate}%</div>
-                <div className="text-[10px] text-white/20 uppercase font-bold tracking-widest mt-1">Accuracy</div>
-              </div>
-            </div>
+          <div className="card-frame p-6 bg-surface-card text-center">
+            <span className="font-serif text-3xl font-normal text-text-primary leading-none block">
+              {successRate}%
+            </span>
+            <span className="eyebrow-text block mt-1.5 text-[10px] text-center">Patch Accuracy</span>
           </div>
         </div>
 
-        {/* Content Bento Grid */}
-        <div className="grid md:grid-cols-12 gap-8 mt-24">
-          {/* Left Col - Attributes & Skills (4 cols) */}
-          <div className="md:col-span-4 space-y-8">
-            <div className="p-8 rounded-3xl bg-[#050505] border border-white/[0.05] relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.01] rounded-full blur-3xl pointer-events-none"></div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] mb-10 flex items-center gap-3">
-                <Activity className="w-4 h-4 text-white/40" /> Attributes
-              </h3>
+        {/* Content Grid */}
+        <div className="grid md:grid-cols-12 gap-6">
+          
+          {/* Left: Competencies (4 cols) */}
+          <div className="md:col-span-4 space-y-6">
+            <div className="card-frame p-6 bg-surface-card">
+              <div className="mb-5 pb-3 border-b border-border-line">
+                <span className="eyebrow-text text-[10px]">ENGINEERING COMPETENCIES</span>
+              </div>
 
-              <div className="space-y-8">
+              <div className="space-y-5">
                 <div>
-                  <div className="flex justify-between text-[10px] font-bold text-white/30 mb-3 uppercase tracking-widest">
-                    <span>Problem Identification</span>
-                    <span className="text-white">85%</span>
+                  <div className="flex justify-between text-xs font-medium text-text-secondary mb-1.5">
+                    <span>Root Cause Isolation</span>
+                    <span className="font-mono text-text-primary font-bold">88%</span>
                   </div>
-                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-white w-[85%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
+                  <div className="h-1.5 w-full bg-surface-subtle rounded-md overflow-hidden border border-border-line">
+                    <div className="h-full bg-text-primary w-[88%] rounded-md" />
                   </div>
                 </div>
+
                 <div>
-                  <div className="flex justify-between text-[10px] font-bold text-white/30 mb-3 uppercase tracking-widest">
-                    <span>Code Optimization</span>
-                    <span className="text-white">92%</span>
+                  <div className="flex justify-between text-xs font-medium text-text-secondary mb-1.5">
+                    <span>Diff Minimization</span>
+                    <span className="font-mono text-text-primary font-bold">92%</span>
                   </div>
-                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-white w-[92%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
+                  <div className="h-1.5 w-full bg-surface-subtle rounded-md overflow-hidden border border-border-line">
+                    <div className="h-full bg-text-primary w-[92%] rounded-md" />
                   </div>
                 </div>
+
                 <div>
-                  <div className="flex justify-between text-[10px] font-bold text-white/30 mb-3 uppercase tracking-widest">
-                    <span>Tactical Consistency</span>
-                    <span className="text-white">74%</span>
+                  <div className="flex justify-between text-xs font-medium text-text-secondary mb-1.5">
+                    <span>Concurrency Safety</span>
+                    <span className="font-mono text-text-primary font-bold">79%</span>
                   </div>
-                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-white w-[74%] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"></div>
+                  <div className="h-1.5 w-full bg-surface-subtle rounded-md overflow-hidden border border-border-line">
+                    <div className="h-full bg-text-primary w-[79%] rounded-md" />
                   </div>
                 </div>
               </div>
 
-              <div className="mt-12 pt-8 border-t border-white/[0.05]">
-                <h4 className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-6">Internal Stack</h4>
-                <div className="flex flex-wrap gap-2">
-                  {['C++', 'Java', 'Python', 'Rust'].map(tag => (
-                    <span key={tag} className="px-4 py-1.5 bg-white/[0.02] text-white/40 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-white/[0.05] hover:border-white/20 hover:text-white transition-all cursor-default">
-                      {tag}
+              {/* Supported Languages */}
+              <div className="pt-5 mt-5 border-t border-border-line">
+                <span className="eyebrow-text block mb-2.5 text-[10px]">ENVIRONMENTS</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {['C++20', 'Java 21', 'Rust', 'Go'].map((lang) => (
+                    <span
+                      key={lang}
+                      className="px-2.5 py-1 bg-surface-subtle text-text-secondary text-[11px] font-mono rounded-md border border-border-line"
+                    >
+                      {lang}
                     </span>
                   ))}
                 </div>
@@ -162,55 +167,66 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Col - Activity & Badges (8 cols) */}
-          <div className="md:col-span-8 space-y-8">
-            {/* Activity Heatmap */}
-            <div className="p-8 rounded-3xl bg-[#050505] border border-white/[0.05] relative overflow-hidden">
-              <div className="flex items-center justify-between mb-10">
+          {/* Right: Submission Activity & Milestones (8 cols) */}
+          <div className="md:col-span-8 space-y-6">
+            
+            {/* Activity Pulse */}
+            <div className="card-frame p-6 bg-surface-card">
+              <div className="flex items-center justify-between mb-5 pb-3 border-b border-border-line">
                 <div>
-                  <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] mb-1">Operational Pulse</h3>
-                  <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest">Historical deployment frequency</p>
+                  <h2 className="text-xs font-semibold text-text-primary uppercase tracking-wider">Execution History</h2>
+                  <p className="text-xs text-text-muted">Trace verification activity over recent cycles</p>
                 </div>
-                <div className="text-right hidden sm:block">
-                  <span className="text-3xl font-bold text-white tracking-tighter">{user.totalSubmissions}</span>
-                  <p className="text-[9px] text-white/20 font-bold uppercase tracking-[0.2em]">Deployments</p>
+                <div className="text-right">
+                  <span className="font-serif text-2xl text-text-primary">
+                    {user.totalSubmissions}
+                  </span>
+                  <span className="text-[10px] text-text-muted font-mono block">RUNS</span>
                 </div>
               </div>
 
-              <div className="flex gap-1.5 h-32 items-end justify-between opacity-30">
-                {heatmapHeights.map((height, i) => (
+              {/* Bar visualization */}
+              <div className="flex gap-1 h-24 items-end justify-between pt-2">
+                {activityHeights.map((h, i) => (
                   <div
                     key={i}
-                    className="w-full bg-white/10 rounded-sm hover:bg-white/60 transition-all duration-300"
-                    style={{ height: `${height}%` }}
-                  ></div>
+                    title={`Session ${i + 1}: ${h}%`}
+                    className="w-full bg-surface-subtle hover:bg-text-primary transition-colors duration-150 rounded-t-sm"
+                    style={{ height: `${h}%` }}
+                  />
                 ))}
               </div>
             </div>
 
-            {/* Badges Cabinet */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {
-                [
-                  { name: 'Slayer', icon: '⚔️', desc: '10+ Missions', bg: 'bg-white/[0.01] border-white/[0.05]' },
-                  { name: 'Wraith', icon: '👻', desc: 'Ghost Fixer', bg: 'bg-white/[0.01] border-white/[0.05]' },
-                  { name: 'Sniper', icon: '🎯', desc: 'Zero Failures', bg: 'bg-white/[0.01] border-white/[0.05]' },
-                  { name: 'Veteran', icon: '🎖️', desc: 'Legacy User', bg: 'bg-white/[0.01] border-white/[0.05]' },
-                ].map((badge, i) => (
-                  <div key={i} className={`rounded-2xl p-6 border ${badge.bg} flex flex-col items-center text-center transition-all hover:border-white/20 cursor-pointer group`}>
-                    <div className="text-3xl mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">{badge.icon}</div>
-                    <div className="font-bold text-white text-[10px] uppercase tracking-widest mb-1">{badge.name}</div>
-                    <div className="text-[9px] text-white/20 font-bold uppercase tracking-tighter">{badge.desc}</div>
+            {/* Milestones Card */}
+            <div className="card-frame p-6 bg-surface-card">
+              <span className="eyebrow-text block mb-3 text-[10px]">VERIFIED MILESTONES</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { name: 'Clean Patches', desc: '10+ Zero-Warning Fixes' },
+                  { name: 'Race Resolver', desc: 'Lock-Free Fixes' },
+                  { name: 'Zero Allocation', desc: 'No Memory Leaks' },
+                  { name: 'Top Tier', desc: 'Top 10% Leaderboard' },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="p-3.5 rounded-lg border border-border-line bg-surface-subtle/50 text-left"
+                  >
+                    <span className="font-mono text-xs text-text-muted block mb-1">0{i + 1}</span>
+                    <div className="text-xs font-semibold text-text-primary">{item.name}</div>
+                    <div className="text-[11px] text-text-muted mt-0.5">{item.desc}</div>
                   </div>
-                ))
-              }
+                ))}
+              </div>
             </div>
+
           </div>
+
         </div>
+
       </div>
     </div>
   );
 };
 
 export default ProfilePage;
-
