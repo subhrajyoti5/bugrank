@@ -91,9 +91,6 @@ const ProblemsPage: React.FC = () => {
         
         {/* Page Header - Centered */}
         <div className="mb-10 text-center flex flex-col items-center">
-          <div className="inline-flex items-center justify-center gap-2 px-2.5 py-1 rounded-md border border-border-line bg-surface-subtle mb-3">
-            <span className="eyebrow-text text-[10px]">INCIDENT REPOSITORY</span>
-          </div>
           <h1 className="headline-section text-center">
             Mission Archives
           </h1>

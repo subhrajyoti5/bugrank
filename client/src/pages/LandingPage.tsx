@@ -6,10 +6,6 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Showcase state
-  const [isPatched, setIsPatched] = useState(false);
-  const [activeTab, setActiveTab] = useState<'editor' | 'diff' | 'telemetry'>('editor');
-
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -57,13 +53,7 @@ const LandingPage: React.FC = () => {
         {/* Constant left/right margin container */}
         <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 relative z-10 text-center">
           
-          <div className="max-w-3xl mx-auto flex flex-col items-center text-center mb-16 md:mb-20">
-            {/* Section Eyebrow - Centered */}
-            <div className="inline-flex items-center justify-center gap-2 px-3.5 py-1 rounded-md border border-border-line bg-surface-subtle mb-6">
-              <span className="w-2 h-2 rounded-full bg-status-green" />
-              <span className="eyebrow-text">BUGRANK PLATFORM / V2.4</span>
-            </div>
-
+          <div className="max-w-3xl mx-auto flex flex-col items-center text-center mb-12 md:mb-16">
             {/* Hero Headline - Centered */}
             <h1 className="headline-hero mb-6 text-center">
               Practice the art <br className="hidden sm:inline" />
@@ -86,216 +76,12 @@ const LandingPage: React.FC = () => {
                 <span className="ml-2 font-mono text-xs">-&gt;</span>
               </button>
 
-              <a
-                href="#showcase"
+              <button
+                onClick={() => navigate('/leaderboard')}
                 className="btn-secondary w-full sm:w-auto text-[0.93rem] py-3 px-8 rounded-lg cursor-pointer text-center"
               >
-                Inspect Telemetry
-              </a>
-            </div>
-          </div>
-
-          {/* ─────────────────────────────────────────────────────────────
-              SHOWCASE CONTAINER
-              Constant margin & centered container
-              ───────────────────────────────────────────────────────────── */}
-          <div id="showcase" className="w-full mx-auto">
-            <div className="card-frame-xl p-3 sm:p-5 md:p-6 bg-surface-card border border-border-line relative overflow-hidden">
-              
-              {/* Inner Frame */}
-              <div className="rounded-xl bg-canvas border border-border-line overflow-hidden shadow-inner-frame">
-                
-                {/* Showcase Window Header - Centered Layout */}
-                <div className="px-5 py-3 border-b border-border-line bg-surface-subtle flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-sm bg-red-400/80" />
-                      <div className="w-2.5 h-2.5 rounded-sm bg-amber-400/80" />
-                      <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400/80" />
-                    </div>
-                    <span className="font-mono text-xs text-text-muted tracking-wider">
-                      INCIDENT #4092 // RING_BUFFER_CORRUPT
-                    </span>
-                  </div>
-
-                  {/* Window Tab Controls */}
-                  <div className="flex items-center justify-center gap-1 bg-surface-card p-1 rounded-lg border border-border-line mx-auto sm:mx-0">
-                    <button
-                      onClick={() => setActiveTab('editor')}
-                      className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
-                        activeTab === 'editor'
-                          ? 'bg-text-primary text-canvas'
-                          : 'text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      Source Code
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('diff')}
-                      className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
-                        activeTab === 'diff'
-                          ? 'bg-text-primary text-canvas'
-                          : 'text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      AST Diff
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('telemetry')}
-                      className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
-                        activeTab === 'telemetry'
-                          ? 'bg-text-primary text-canvas'
-                          : 'text-text-muted hover:text-text-primary'
-                      }`}
-                    >
-                      Memory Graph
-                    </button>
-                  </div>
-
-                  {/* Simulation Control */}
-                  <button
-                    onClick={() => setIsPatched(!isPatched)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-line bg-surface-card hover:bg-surface-subtle text-xs font-medium transition-colors cursor-pointer"
-                  >
-                    <span>{isPatched ? "Revert Buggy Code" : "Preview Patch Fix"}</span>
-                    <span className="font-mono text-xs">{isPatched ? "⟲" : "▶"}</span>
-                  </button>
-                </div>
-
-                {/* Showcase Window Body */}
-                <div className="grid lg:grid-cols-12 min-h-[400px]">
-                  
-                  {/* Left: Code Pane (8 cols) */}
-                  <div className="lg:col-span-8 p-6 font-mono text-xs sm:text-[13px] leading-relaxed border-b lg:border-b-0 lg:border-r border-border-line bg-surface-card overflow-x-auto text-left">
-                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-border-line text-xs text-text-muted">
-                      <span>ring_buffer.cpp : C++20 Clang 18.1</span>
-                      <span className={isPatched ? "text-status-green font-semibold" : "text-amber-600 dark:text-amber-400 font-semibold"}>
-                        {isPatched ? "PATCH APPLIED (+1 -1)" : "DEFECT DETECTED"}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="text-text-muted">// BugRank Invariant Benchmark #4092</div>
-                      <div className="text-text-muted">// ThreadSanitizer flags data race on tail write pointer</div>
-                      <div className="text-purple-600 dark:text-purple-400">template &lt;typename T, size_t Capacity&gt;</div>
-                      <div className="text-blue-600 dark:text-blue-400">class <span className="text-text-primary font-bold">LockFreeRingBuffer</span> &#123;</div>
-                      <div className="pl-4 text-text-secondary">private:</div>
-                      <div className="pl-8 text-text-secondary">std::atomic&lt;size_t&gt; head_&#123;0&#125;;</div>
-                      <div className="pl-8 text-text-secondary">std::atomic&lt;size_t&gt; tail_&#123;0&#125;;</div>
-                      <div className="pl-8 text-text-secondary">std::array&lt;T, Capacity&gt; storage_;</div>
-                      <div className="pl-4 text-text-secondary">public:</div>
-                      <div className="pl-8 text-blue-600 dark:text-blue-400">bool <span className="text-text-primary font-semibold">push</span>(const T& val) &#123;</div>
-                      <div className="pl-12 text-text-secondary">const size_t current_tail = tail_.load(std::memory_order_relaxed);</div>
-                      <div className="pl-12 text-text-secondary">const size_t next_tail = (current_tail + 1) % Capacity;</div>
-                      
-                      {/* Highlighted Line */}
-                      {isPatched ? (
-                        <div className="pl-12 py-1 -mx-2 px-2 bg-emerald-500/10 border-l-2 border-status-green text-status-green flex items-center justify-between rounded-r">
-                          <span>if (next_tail == head_.load(std::memory_order_acquire)) return false;</span>
-                          <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-status-green">Optimal Invariant</span>
-                        </div>
-                      ) : (
-                        <div className="pl-12 py-1 -mx-2 px-2 bg-red-500/10 border-l-2 border-red-500 text-red-600 dark:text-red-400 flex items-center justify-between rounded-r">
-                          <span>if (next_tail == head_.load(std::memory_order_relaxed)) return false;</span>
-                          <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-red-500">Data Race</span>
-                        </div>
-                      )}
-
-                      <div className="pl-12 text-text-secondary">storage_[current_tail] = val;</div>
-                      
-                      {isPatched ? (
-                        <div className="pl-12 py-0.5 -mx-2 px-2 bg-emerald-500/10 border-l-2 border-status-green text-status-green">
-                          tail_.store(next_tail, std::memory_order_release);
-                        </div>
-                      ) : (
-                        <div className="pl-12 text-text-secondary">
-                          tail_.store(next_tail, std::memory_order_relaxed);
-                        </div>
-                      )}
-
-                      <div className="pl-12 text-blue-600 dark:text-blue-400">return true;</div>
-                      <div className="pl-8 text-text-secondary">&#125;</div>
-                      <div className="text-blue-600 dark:text-blue-400">&#125;;</div>
-                    </div>
-                  </div>
-
-                  {/* Right: Telemetry & Invariant Output (4 cols) */}
-                  <div className="lg:col-span-4 p-6 bg-surface-subtle flex flex-col justify-between text-center">
-                    <div>
-                      <div className="flex items-center justify-between mb-4 pb-2 border-b border-border-line">
-                        <span className="eyebrow-text text-[10px]">Test Suite</span>
-                        <span className="status-badge text-[10px]">
-                          {isPatched ? "STATUS: PASSED" : "STATUS: CRASH"}
-                        </span>
-                      </div>
-
-                      {/* Diagnostic Suite */}
-                      <div className="space-y-2.5 mb-6 text-left">
-                        <div className="p-3 rounded-lg bg-surface-card border border-border-line flex items-center justify-between">
-                          <div>
-                            <p className="text-xs font-medium text-text-primary">Concurrent Producer 4T</p>
-                            <p className="text-[11px] text-text-muted">10,000,000 operations</p>
-                          </div>
-                          <span className={`font-mono text-xs font-semibold ${isPatched ? "text-status-green" : "text-red-500"}`}>
-                            {isPatched ? "PASS (0.19s)" : "RACE CRASH"}
-                          </span>
-                        </div>
-
-                        <div className="p-3 rounded-lg bg-surface-card border border-border-line flex items-center justify-between">
-                          <div>
-                            <p className="text-xs font-medium text-text-primary">Single-thread FIFO</p>
-                            <p className="text-[11px] text-text-muted">Boundary check</p>
-                          </div>
-                          <span className="font-mono text-xs font-semibold text-status-green">
-                            PASS (0.02s)
-                          </span>
-                        </div>
-
-                        <div className="p-3 rounded-lg bg-surface-card border border-border-line flex items-center justify-between">
-                          <div>
-                            <p className="text-xs font-medium text-text-primary">Memory Invariant Order</p>
-                            <p className="text-[11px] text-text-muted">Acquire-Release semantic</p>
-                          </div>
-                          <span className={`font-mono text-xs font-semibold ${isPatched ? "text-status-green" : "text-amber-600 dark:text-amber-400"}`}>
-                            {isPatched ? "OPTIMAL" : "VIOLATION"}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Memory & Efficiency Metrics - Centered */}
-                      <div className="grid grid-cols-2 gap-3 pt-3 border-t border-border-line text-center">
-                        <div className="p-3 rounded-lg bg-surface-card border border-border-line">
-                          <span className="text-[10px] text-text-muted uppercase font-semibold tracking-wider block">
-                            Memory Delta
-                          </span>
-                          <span className="font-serif text-lg text-text-primary font-normal">
-                            {isPatched ? "0.00 KB" : "+4.2 MB leak"}
-                          </span>
-                        </div>
-                        <div className="p-3 rounded-lg bg-surface-card border border-border-line">
-                          <span className="text-[10px] text-text-muted uppercase font-semibold tracking-wider block">
-                            Patch Precision
-                          </span>
-                          <span className="font-serif text-lg text-text-primary font-normal">
-                            {isPatched ? "99.8%" : "0.0%"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-border-line flex items-center justify-between">
-                      <span className="text-xs text-text-muted font-mono">Live Sandbox Preview</span>
-                      <button
-                        onClick={handleStartSolving}
-                        className="text-xs font-medium text-text-primary hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Solve Live</span>
-                        <span className="font-mono text-xs">-&gt;</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                View Leaderboard
+              </button>
             </div>
           </div>
 
@@ -303,7 +89,7 @@ const LandingPage: React.FC = () => {
               METRICS & STATS BAR
               Strictly centered
               ───────────────────────────────────────────────────────────── */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto pt-16 mt-16 border-t border-border-line text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto pt-16 mt-10 border-t border-border-line text-center">
             <div className="flex flex-col items-center text-center">
               <div className="font-serif text-4xl md:text-5xl text-text-primary font-normal tracking-tight mb-2">
                 500+
