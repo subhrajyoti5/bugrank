@@ -1,194 +1,103 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import ProfileDropdown from './ProfileDropdown';
-import ThemeToggle from './ThemeToggle';
+import { useTheme } from '@/contexts/ThemeContext';
+import PillNav, { PillNavItem } from './PillNav';
+import toast from 'react-hot-toast';
 
-const Navbar: React.FC = () => {
-  const { user, signOut } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  const isActive = (path: string) => location.pathname === path;
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 15);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { path: '/problems', label: 'Missions' },
-    { path: '/leaderboard', label: 'Leaderboard' },
-  ];
-
+// Custom router link that handles both client-side routing and anchor jumps
+const RouterLink: React.FC<{
+  href?: string;
+  to?: string;
+  children?: React.ReactNode;
+  className?: string;
+  [key: string]: any;
+}> = ({ href, to, children, ...props }) => {
+  const target = href || to || '#';
+  if (target.startsWith('/#') || target.startsWith('#')) {
+    return (
+      <a href={target} {...props}>
+        {children}
+      </a>
+    );
+  }
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-200 border-b ${
-        scrolled
-          ? 'bg-canvas/92 backdrop-blur-md border-border-line shadow-sm'
-          : 'bg-canvas/80 backdrop-blur-sm border-border-line'
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 h-20 flex items-center justify-between">
-        {/* Brand Logo - GFS Didot Serif */}
-        <Link to="/" className="flex items-center gap-3 select-none">
-          <div className="w-8 h-8 rounded-lg border border-border-line flex items-center justify-center bg-surface-card">
-            <span className="font-serif text-base font-normal text-text-primary leading-none">β</span>
-          </div>
-          <span className="font-serif text-2xl tracking-[-0.03em] text-text-primary">
-            Bug<span className="italic font-normal">Rank</span>
-          </span>
-        </Link>
-
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ path, label }) => {
-            const active = isActive(path);
-            return (
-              <Link
-                key={path}
-                to={path}
-                className={`text-[0.93rem] transition-colors duration-150 relative py-1 ${
-                  active
-                    ? 'text-text-primary font-semibold'
-                    : 'text-text-secondary hover:text-text-primary font-normal'
-                }`}
-              >
-                {label}
-                {active && (
-                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-text-primary rounded" />
-                )}
-              </Link>
-            );
-          })}
-
-          <a
-            href="/#features"
-            className="text-[0.93rem] text-text-secondary hover:text-text-primary transition-colors duration-150"
-          >
-            Capabilities
-          </a>
-          <a
-            href="/#faq"
-            className="text-[0.93rem] text-text-secondary hover:text-text-primary transition-colors duration-150"
-          >
-            FAQ
-          </a>
-        </div>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          {/* Theme Switch */}
-          <ThemeToggle />
-
-          {user ? (
-            <div className="flex items-center gap-3 ml-1">
-              <ProfileDropdown onLogout={signOut} />
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 sm:gap-3">
-              <button
-                onClick={() => navigate('/login')}
-                className="hidden sm:inline-flex px-3.5 py-2 text-[0.9rem] rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors cursor-pointer"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => navigate('/login')}
-                className="btn-primary text-[0.88rem] py-2 px-4 sm:px-5 rounded-lg cursor-pointer"
-              >
-                Get Started
-              </button>
-            </div>
-          )}
-
-          {/* Mobile Menu Toggle - Clean Minimal SVG */}
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="md:hidden p-2 text-text-secondary hover:text-text-primary rounded-lg border border-border-line hover:border-text-primary transition-colors ml-1 cursor-pointer"
-            aria-label="Toggle Navigation Menu"
-          >
-            {isMobileOpen ? (
-              <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 17h16" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {isMobileOpen && (
-        <div className="md:hidden border-b border-border-line bg-canvas/98 backdrop-blur-xl px-6 py-6 space-y-4 animate-fade-in shadow-lg">
-          <div className="space-y-1">
-            {navLinks.map(({ path, label }) => (
-              <Link
-                key={path}
-                to={path}
-                onClick={() => setIsMobileOpen(false)}
-                className={`flex items-center justify-between p-3 rounded-lg text-[0.93rem] transition-colors ${
-                  isActive(path)
-                    ? 'bg-surface-card text-text-primary font-semibold border border-border-line'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-subtle'
-                }`}
-              >
-                <span>{label}</span>
-                <span className="font-mono text-xs text-text-muted">/&gt;</span>
-              </Link>
-            ))}
-
-            <a
-              href="/#features"
-              onClick={() => setIsMobileOpen(false)}
-              className="flex items-center justify-between p-3 rounded-lg text-[0.93rem] text-text-secondary hover:text-text-primary hover:bg-surface-subtle"
-            >
-              <span>Capabilities</span>
-              <span className="font-mono text-xs text-text-muted">/&gt;</span>
-            </a>
-
-            <a
-              href="/#faq"
-              onClick={() => setIsMobileOpen(false)}
-              className="flex items-center justify-between p-3 rounded-lg text-[0.93rem] text-text-secondary hover:text-text-primary hover:bg-surface-subtle"
-            >
-              <span>FAQ</span>
-              <span className="font-mono text-xs text-text-muted">/&gt;</span>
-            </a>
-          </div>
-
-          {!user && (
-            <div className="pt-4 border-t border-border-line flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setIsMobileOpen(false);
-                  navigate('/login');
-                }}
-                className="w-full btn-primary py-2.5 text-sm rounded-lg"
-              >
-                Launch Console
-              </button>
-              <button
-                onClick={() => {
-                  setIsMobileOpen(false);
-                  navigate('/login');
-                }}
-                className="w-full btn-secondary py-2.5 text-sm rounded-lg"
-              >
-                Sign In
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </nav>
+    <Link to={target} {...props}>
+      {children}
+    </Link>
   );
 };
 
-export default Navbar;
+const Navbar: React.FC = () => {
+  const { user, signOut } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  const location = useLocation();
+
+  const handleSignOut = () => {
+    signOut();
+    toast.success('Signed out successfully');
+  };
+
+  const navItems: PillNavItem[] = [
+    { label: 'Home', href: '/' },
+    { label: 'Missions', href: '/problems' },
+    { label: 'Leaderboard', href: '/leaderboard' },
+    { label: 'Capabilities', href: '/#features' },
+    { label: 'FAQ', href: '/#faq' },
+    ...(user
+      ? [
+        { label: 'Profile', href: '/profile' },
+        {
+          label: 'Sign Out',
+          onClick: handleSignOut
+        }
+      ]
+      : [
+        { label: 'Sign In', href: '/login' }
+      ]
+    ),
+    {
+      label: isDark ? 'Light' : 'Dark',
+      ariaLabel: `Switch to ${isDark ? 'light' : 'dark'} mode`,
+      onClick: toggleTheme,
+      icon: (
+        <span className="w-3.5 h-3.5 inline-flex items-center justify-center">
+          {isDark ? (
+            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+              <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+            </svg>
+          ) : (
+            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16">
+              <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.79.79 0 0 1 .91.972A8 8 0 1 1 6 .278z" />
+            </svg>
+          )}
+        </span>
+      )
+    }
+  ];
+
+  return (
+        <header className="fixed top-4 sm:top-5 left-0 right-0 z-50 flex items-center justify-center px-4 sm:px-6 pointer-events-none">
+          <div className="pointer-events-auto w-full max-w-4xl flex items-center justify-center">
+            <PillNav
+              logo="/bug-icon.svg"
+              logoAlt="BugRank"
+              logoHref="/"
+              items={navItems}
+              activeHref={location.pathname}
+              theme={isDark ? 'dark' : 'light'}
+              layout="split"
+              itemStyle="pill"
+              hoverEffect="fill"
+              indicator="dot"
+              surface="glass"
+              size="md"
+              linkComponent={RouterLink}
+              ariaLabel="Primary Navigation"
+            />
+          </div>
+      </header>
+      );
+};
+
+      export default Navbar;
