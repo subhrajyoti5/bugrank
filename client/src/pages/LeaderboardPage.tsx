@@ -70,7 +70,7 @@ const LeaderboardPage: React.FC = () => {
               className="h-18 w-18 rounded-lg object-cover border border-border-line shadow-sm"
             />
             <div className={`absolute -bottom-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold font-mono px-2 py-0.5 rounded border shadow-sm ${rankBadge}`}>
-              #{rank}
+              RANK {rank}
             </div>
           </div>
 
@@ -136,7 +136,7 @@ const LeaderboardPage: React.FC = () => {
               <span className="eyebrow-text block mb-1 text-[10px]">YOUR CURRENT STANDING</span>
               <div className="flex items-baseline gap-3">
                 <span className="font-serif text-3xl sm:text-4xl text-text-primary">
-                  #{userRank}
+                  RANK {userRank}
                 </span>
                 <span className="text-sm text-text-secondary">
                   {userRank <= 10 ? 'Tier 1 Operative' : 'Keep resolving incidents to ascend rankings.'}
@@ -191,7 +191,7 @@ const LeaderboardPage: React.FC = () => {
                   >
                     {/* Rank */}
                     <div className="col-span-2 sm:col-span-1 font-mono text-xs font-semibold text-text-muted">
-                      #{rank.toString().padStart(2, '0')}
+                      {rank.toString().padStart(2, '0')}
                     </div>
 
                     {/* Operative */}

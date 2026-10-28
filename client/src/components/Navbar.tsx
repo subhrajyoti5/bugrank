@@ -5,7 +5,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import PillNav, { PillNavItem } from './PillNav';
 import toast from 'react-hot-toast';
 
-// Custom router link that handles both client-side routing and anchor jumps
+// Custom router link that handles clean client-side routing with no hash URLs
 const RouterLink: React.FC<{
   href?: string;
   to?: string;
@@ -13,14 +13,7 @@ const RouterLink: React.FC<{
   className?: string;
   [key: string]: any;
 }> = ({ href, to, children, ...props }) => {
-  const target = href || to || '#';
-  if (target.startsWith('/#') || target.startsWith('#')) {
-    return (
-      <a href={target} {...props}>
-        {children}
-      </a>
-    );
-  }
+  const target = href || to || '/';
   return (
     <Link to={target} {...props}>
       {children}
@@ -42,19 +35,17 @@ const Navbar: React.FC = () => {
     { label: 'Home', href: '/' },
     { label: 'Missions', href: '/problems' },
     { label: 'Leaderboard', href: '/leaderboard' },
-    { label: 'Capabilities', href: '/#features' },
-    { label: 'FAQ', href: '/#faq' },
     ...(user
       ? [
-        { label: 'Profile', href: '/profile' },
-        {
-          label: 'Sign Out',
-          onClick: handleSignOut
-        }
-      ]
+          { label: 'Profile', href: '/profile' },
+          {
+            label: 'Sign Out',
+            onClick: handleSignOut
+          }
+        ]
       : [
-        { label: 'Sign In', href: '/login' }
-      ]
+          { label: 'Sign In', href: '/login' }
+        ]
     ),
     {
       label: isDark ? 'Light' : 'Dark',
@@ -77,27 +68,27 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-        <header className="fixed top-4 sm:top-5 left-0 right-0 z-50 flex items-center justify-center px-4 sm:px-6 pointer-events-none">
-          <div className="pointer-events-auto w-full max-w-4xl flex items-center justify-center">
-            <PillNav
-              logo="/bug-icon.svg"
-              logoAlt="BugRank"
-              logoHref="/"
-              items={navItems}
-              activeHref={location.pathname}
-              theme={isDark ? 'dark' : 'light'}
-              layout="split"
-              itemStyle="pill"
-              hoverEffect="fill"
-              indicator="dot"
-              surface="glass"
-              size="md"
-              linkComponent={RouterLink}
-              ariaLabel="Primary Navigation"
-            />
-          </div>
-      </header>
-      );
+    <header className="fixed top-4 sm:top-5 left-0 right-0 z-50 flex items-center justify-center px-4 sm:px-6 pointer-events-none">
+      <div className="pointer-events-auto w-full max-w-4xl flex items-center justify-center">
+        <PillNav
+          logo="/bug-icon.svg"
+          logoAlt="BugRank"
+          logoHref="/"
+          items={navItems}
+          activeHref={location.pathname}
+          theme={isDark ? 'dark' : 'light'}
+          layout="split"
+          itemStyle="pill"
+          hoverEffect="fill"
+          indicator="dot"
+          surface="glass"
+          size="md"
+          linkComponent={RouterLink}
+          ariaLabel="Primary Navigation"
+        />
+      </div>
+    </header>
+  );
 };
 
-      export default Navbar;
+export default Navbar;

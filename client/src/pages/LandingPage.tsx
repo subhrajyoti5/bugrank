@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Clean up any hash in the URL on mount
+  useEffect(() => {
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
 
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -392,18 +399,24 @@ const LandingPage: React.FC = () => {
             >
               Global Standings
             </button>
-            <a
-              href="#features"
-              className="text-text-secondary hover:text-text-primary transition-colors"
+            <button
+              onClick={() => {
+                const el = document.getElementById('features');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             >
               Capabilities
-            </a>
-            <a
-              href="#faq"
-              className="text-text-secondary hover:text-text-primary transition-colors"
+            </button>
+            <button
+              onClick={() => {
+                const el = document.getElementById('faq');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             >
               FAQ
-            </a>
+            </button>
             <a
               href="https://subhrajyotisahoo.cloud"
               target="_blank"
