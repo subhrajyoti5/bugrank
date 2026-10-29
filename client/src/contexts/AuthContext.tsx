@@ -11,17 +11,16 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, displayName?: string) => Promise<void>;
   signOut: () => Promise<void>;
-  refreshUser: () => Promise<void>;
-  setAuthToken: (token: string) => Promise<void>;
+  refreshUser: () => Promise<User | null>;
+  setAuthToken: (token: string) => Promise<User | null>;
   setSessionToken: (token: string) => Promise<void>;
-  // Keep for backward compatibility
   signInWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Synchronously restore user from localStorage to eliminate flicker and redundant requests
+  // Synchronously restore cached user from localStorage
   const [user, setUser] = useState<User | null>(() => {
     try {
       const stored = localStorage.getItem('bugrank_user');
@@ -34,91 +33,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(() => {
     const hasToken = localStorage.getItem('bugrank_token') || localStorage.getItem('token');
     const hasUser = localStorage.getItem('bugrank_user');
-    // If we have token and user cached, don't block initial render
     return Boolean(hasToken && !hasUser);
   });
 
-  // Guard against simultaneous or recursive /api/auth/me calls
-  const isFetchingMe = useRef(false);
+  // Share in-flight request promise across simultaneous calls to prevent duplicate /api/auth/me requests
+  const inFlightPromiseRef = useRef<Promise<User | null> | null>(null);
 
-  // Refresh user data from server
-  const refreshUser = useCallback(async () => {
-    if (isFetchingMe.current) return;
+  // Core user fetcher that deduplicates requests
+  const refreshUser = useCallback(async (): Promise<User | null> => {
+    if (inFlightPromiseRef.current) {
+      return inFlightPromiseRef.current;
+    }
 
     const token = localStorage.getItem('bugrank_token') || localStorage.getItem('token');
     const sessionToken = localStorage.getItem('bugrank_session') || localStorage.getItem('sessionToken');
 
-    if (token || sessionToken) {
-      isFetchingMe.current = true;
+    if (!token && !sessionToken) {
+      setUser(null);
+      setLoading(false);
+      return null;
+    }
+
+    const requestPromise = (async () => {
       try {
         const response = await axios.get(`${API_URL}/api/auth/me`, {
           headers: {
             Authorization: token ? `Bearer ${token}` : '',
             'x-session-token': sessionToken || '',
           },
+          timeout: 15000,
         });
 
-        if (response.data.user) {
-          setUser(response.data.user);
-          localStorage.setItem('bugrank_user', JSON.stringify(response.data.user));
+        const fetchedUser: User | null = response.data?.user || null;
+        if (fetchedUser) {
+          setUser(fetchedUser);
+          localStorage.setItem('bugrank_user', JSON.stringify(fetchedUser));
         }
+        return fetchedUser;
       } catch (error) {
-        console.error('Failed to refresh user data:', error);
+        console.error('Failed to verify session:', error);
+        localStorage.removeItem('bugrank_token');
+        localStorage.removeItem('bugrank_session');
+        localStorage.removeItem('bugrank_user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('sessionToken');
+        setUser(null);
+        return null;
       } finally {
-        isFetchingMe.current = false;
+        inFlightPromiseRef.current = null;
+        setLoading(false);
       }
-    }
+    })();
+
+    inFlightPromiseRef.current = requestPromise;
+    return requestPromise;
   }, []);
 
+  // Run session check on initial mount once
   useEffect(() => {
-    let mounted = true;
-
-    // Check for existing session on mount
-    const checkAuth = async () => {
-      const token = localStorage.getItem('bugrank_token') || localStorage.getItem('token');
-      const sessionToken = localStorage.getItem('bugrank_session') || localStorage.getItem('sessionToken');
-
-      if (token || sessionToken) {
-        if (isFetchingMe.current) {
-          if (mounted) setLoading(false);
-          return;
-        }
-
-        isFetchingMe.current = true;
-        try {
-          const response = await axios.get(`${API_URL}/api/auth/me`, {
-            headers: {
-              Authorization: token ? `Bearer ${token}` : '',
-              'x-session-token': sessionToken || '',
-            },
-          });
-
-          if (mounted && response.data.user) {
-            setUser(response.data.user);
-            localStorage.setItem('bugrank_user', JSON.stringify(response.data.user));
-          }
-        } catch (error) {
-          // Token invalid, clear storage
-          localStorage.removeItem('bugrank_token');
-          localStorage.removeItem('bugrank_session');
-          localStorage.removeItem('bugrank_user');
-          localStorage.removeItem('token');
-          localStorage.removeItem('sessionToken');
-          if (mounted) setUser(null);
-        } finally {
-          isFetchingMe.current = false;
-        }
-      }
-
-      if (mounted) setLoading(false);
-    };
-
-    checkAuth();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    void refreshUser();
+  }, [refreshUser]);
 
   const register = useCallback(async (email: string, password: string, displayName?: string) => {
     try {
@@ -185,6 +159,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('bugrank_user');
       localStorage.removeItem('bugrank_token');
       localStorage.removeItem('bugrank_session');
+      localStorage.removeItem('token');
+      localStorage.removeItem('sessionToken');
 
       toast.success('Signed out successfully!');
     } catch (error: any) {
@@ -193,17 +169,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Backward compatibility - redirect to login page
+  // Backward compatibility
   const signInWithGoogle = useCallback(async () => {
     toast.error('Please use email/password login');
   }, []);
 
-  // Set auth token and refresh user data
-  const setAuthToken = useCallback(async (token: string) => {
-    localStorage.setItem('bugrank_token', token);
-    localStorage.setItem('token', token);
-    await refreshUser();
-  }, [refreshUser]);
+  // Set auth token and fetch user
+  const setAuthToken = useCallback(
+    async (token: string): Promise<User | null> => {
+      localStorage.setItem('bugrank_token', token);
+      localStorage.setItem('token', token);
+      return await refreshUser();
+    },
+    [refreshUser]
+  );
 
   // Set session token
   const setSessionToken = useCallback(async (token: string) => {

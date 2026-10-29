@@ -5,11 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 const AuthSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setAuthToken, setSessionToken } = useAuth();
+  const { setSessionToken, setAuthToken } = useAuth();
   const processedRef = useRef(false);
 
   useEffect(() => {
-    // Ensure we only process tokens once and avoid recursive loops
     if (processedRef.current) return;
 
     const token = searchParams.get('token');
@@ -24,23 +23,18 @@ const AuthSuccessPage: React.FC = () => {
 
     const finalizeAuth = async () => {
       try {
-        if (token) {
-          localStorage.setItem('bugrank_token', token);
-          localStorage.setItem('token', token);
-        }
-        if (sessionToken) {
-          localStorage.setItem('bugrank_session', sessionToken);
-          localStorage.setItem('sessionToken', sessionToken);
-        }
-
         if (sessionToken) {
           await setSessionToken(sessionToken);
         }
         if (token) {
-          await setAuthToken(token);
+          const user = await setAuthToken(token);
+          if (user) {
+            navigate('/problems', { replace: true });
+            return;
+          }
         }
 
-        // Navigate cleanly to problems
+        // Fallback navigation
         navigate('/problems', { replace: true });
       } catch (error) {
         console.error('Finalize auth error:', error);
