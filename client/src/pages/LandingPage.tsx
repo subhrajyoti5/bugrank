@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { getAppUrl } from '@/utils/domain';
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
   // Clean up any hash in the URL on mount
   useEffect(() => {
     if (window.location.hash) {
@@ -17,11 +13,11 @@ const LandingPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const handleStartSolving = () => {
-    if (user) {
-      navigate('/problems');
-    } else {
-      navigate('/login');
-    }
+    window.location.href = getAppUrl('/problems');
+  };
+
+  const handleViewLeaderboard = () => {
+    window.location.href = getAppUrl('/leaderboard');
   };
 
   const faqItems = [
@@ -84,7 +80,7 @@ const LandingPage: React.FC = () => {
               </button>
 
               <button
-                onClick={() => navigate('/leaderboard')}
+                onClick={handleViewLeaderboard}
                 className="btn-secondary w-full sm:w-auto text-[0.93rem] py-3 px-8 rounded-lg cursor-pointer text-center"
               >
                 View Leaderboard
@@ -345,7 +341,7 @@ const LandingPage: React.FC = () => {
               <span className="ml-2 font-mono text-xs">-&gt;</span>
             </button>
             <button
-              onClick={() => navigate('/leaderboard')}
+              onClick={handleViewLeaderboard}
               className="btn-secondary text-[0.93rem] py-3 px-7 rounded-lg cursor-pointer w-full sm:w-auto"
             >
               Examine Global Roster
@@ -388,13 +384,13 @@ const LandingPage: React.FC = () => {
           {/* Centered Navigation Links */}
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-[0.92rem] py-6 border-y border-border-line w-full max-w-3xl mb-8">
             <button
-              onClick={() => navigate('/problems')}
+              onClick={handleStartSolving}
               className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             >
               Missions Archive
             </button>
             <button
-              onClick={() => navigate('/leaderboard')}
+              onClick={handleViewLeaderboard}
               className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             >
               Global Standings

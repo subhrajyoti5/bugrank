@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { getAppUrl } from '@/utils/domain';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -46,7 +47,7 @@ apiClient.interceptors.response.use(
       
       // Only redirect if not already on login page
       if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+        window.location.href = getAppUrl('/login');
       }
     }
     

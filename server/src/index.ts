@@ -42,6 +42,7 @@ const corsOptions = {
       "https://bugrank-client.vercel.app",
       "https://bugrank.in",
       "https://www.bugrank.in",
+      "https://app.bugrank.in",
       "http://localhost:5173",
       "http://localhost:3000",
     ],

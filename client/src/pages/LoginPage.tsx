@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { getLandingUrl } from '@/utils/domain';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const LoginPage: React.FC = () => {
@@ -51,13 +52,13 @@ const LoginPage: React.FC = () => {
 
       {/* Top Bar */}
       <div className="relative z-10 max-w-5xl mx-auto w-full flex items-center justify-between py-2">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-text-secondary hover:text-text-primary transition-colors"
+        <a
+          href={getLandingUrl('/')}
+          className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
         >
           <span>&lt;-</span>
           <span>Return to Portal</span>
-        </Link>
+        </a>
 
         <ThemeToggle showLabel />
       </div>
@@ -67,14 +68,14 @@ const LoginPage: React.FC = () => {
         
         {/* Brand Display */}
         <div className="text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-2.5 mb-3 select-none">
+          <a href={getLandingUrl('/')} className="inline-flex items-center gap-2.5 mb-3 select-none">
             <div className="w-8 h-8 rounded-lg border border-border-line flex items-center justify-center bg-surface-card">
               <span className="font-serif text-base font-normal text-text-primary">β</span>
             </div>
             <span className="font-serif text-2xl tracking-[-0.03em] text-text-primary">
               Bug<span className="italic font-normal">Rank</span>
             </span>
-          </Link>
+          </a>
           <p className="eyebrow-text text-[10px]">AUTHENTICATION GATEWAY</p>
         </div>
 
