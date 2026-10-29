@@ -1,36 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 const AuthSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setAuthToken, setSessionToken, refreshUser } = useAuth();
+  const { setAuthToken, setSessionToken } = useAuth();
+  const processedRef = useRef(false);
 
   useEffect(() => {
+    // Ensure we only process tokens once and avoid recursive loops
+    if (processedRef.current) return;
+
     const token = searchParams.get('token');
     const sessionToken = searchParams.get('sessionToken');
 
+    if (!token && !sessionToken) {
+      navigate('/login', { replace: true });
+      return;
+    }
+
+    processedRef.current = true;
+
     const finalizeAuth = async () => {
-      if (token && sessionToken) {
-        // Store tokens in localStorage and context
-        localStorage.setItem('bugrank_token', token);
-        localStorage.setItem('bugrank_session', sessionToken);
+      try {
+        if (token) {
+          localStorage.setItem('bugrank_token', token);
+          localStorage.setItem('token', token);
+        }
+        if (sessionToken) {
+          localStorage.setItem('bugrank_session', sessionToken);
+          localStorage.setItem('sessionToken', sessionToken);
+        }
 
-        await setAuthToken(token);
-        await setSessionToken(sessionToken);
-        await refreshUser();
+        if (sessionToken) {
+          await setSessionToken(sessionToken);
+        }
+        if (token) {
+          await setAuthToken(token);
+        }
 
-        // Redirect to problems page
+        // Navigate cleanly to problems
         navigate('/problems', { replace: true });
-      } else {
-        // No tokens provided, redirect to login
+      } catch (error) {
+        console.error('Finalize auth error:', error);
         navigate('/login', { replace: true });
       }
     };
 
     void finalizeAuth();
-  }, [searchParams, navigate, setAuthToken, setSessionToken, refreshUser]);
+  }, [searchParams, navigate, setAuthToken, setSessionToken]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-canvas text-text-primary">

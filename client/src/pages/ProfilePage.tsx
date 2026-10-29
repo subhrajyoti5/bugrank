@@ -9,7 +9,7 @@ const ProfilePage: React.FC = () => {
     refreshUser().catch((error) => {
       console.error('Failed to refresh user data:', error);
     });
-  }, [refreshUser]);
+  }, []);
 
   // Stable activity heights
   const activityHeights = useMemo(() => {
